@@ -1,23 +1,51 @@
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>지도 생성하기</title>
-    
-</head>
-<body>
-<!-- 지도를 표시할 div 입니다 -->
-<div id="map" style="width:100%;height:350px;"></div>
+import React, { useEffect, useRef } from "react";
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=발급받은 APP KEY를 사용하세요"></script>
-<script>
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = { 
-        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-        level: 3 // 지도의 확대 레벨
-    };
+declare global {
+	const kakao: any;
+}
 
-// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-var map = new kakao.maps.Map(mapContainer, mapOption); 
-</script>
-</body>
-</html>
+interface Location {
+	name: string;
+	addressRoad: string;
+	addressLot: string;
+	latitude: string;
+	longitude: string;
+	levelList: Array<{ level: number; color: string }>;
+	logoUrl: string;
+}
+
+const Map: React.FC<Location> = (props) => {
+	const {
+		name,
+		addressRoad,
+		addressLot,
+		latitude,
+		longitude,
+		levelList,
+		logoUrl,
+	} = props;
+	const mapRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!mapRef.current) return;
+		const options = {
+			center: new kakao.maps.LatLng(Number(latitude), Number(longitude)),
+			level: 3,
+		};
+
+		const map = new kakao.maps.Map(mapRef.current, options);
+
+		const markerPosition = new kakao.maps.LatLng(
+			Number(latitude),
+			Number(longitude)
+		);
+		const marker = new kakao.maps.Marker({
+			position: markerPosition,
+		});
+		marker.setMap(map);
+	}, []);
+
+	return <div ref={mapRef} style={{ width: "500px", height: "400px" }}></div>;
+};
+
+export default Map;
