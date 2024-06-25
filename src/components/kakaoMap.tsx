@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
 declare global {
 	const kakao: any;
@@ -45,7 +45,7 @@ const Map: React.FC<Location> = (props) => {
 		marker.setMap(map);
 	}, []);
 
-	return <div ref={mapRef} style={{ width: "500px", height: "400px" }}></div>;
+	return <div ref={mapRef} style={{ width: '500px', height: '400px' }}></div>;
 };
 
 export default Map;
