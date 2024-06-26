@@ -1,9 +1,10 @@
 import React from 'react';
+import SearchBar from './searchBar';
 
 const navigation = () => {
 	return (
 		<div>
-			<div className="text-red-700">dd</div>
+			<SearchBar />
 		</div>
 	);
 };
