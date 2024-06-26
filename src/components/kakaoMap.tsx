@@ -1,51 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 
-declare global {
-	const kakao: any;
-}
-
-interface Location {
-	name: string;
-	addressRoad: string;
-	addressLot: string;
-	latitude: string;
-	longitude: string;
-	levelList: Array<{ level: number; color: string }>;
-	logoUrl: string;
-}
-
-const Map: React.FC<Location> = (props) => {
-	const {
-		name,
-		addressRoad,
-		addressLot,
-		latitude,
-		longitude,
-		levelList,
-		logoUrl,
-	} = props;
-	const mapRef = useRef<HTMLDivElement>(null);
+const KakaoMap = () => {
+	const mapRef = useRef(null);
 
 	useEffect(() => {
-		if (!mapRef.current) return;
-		const options = {
-			center: new kakao.maps.LatLng(Number(latitude), Number(longitude)),
-			level: 3,
-		};
-
-		const map = new kakao.maps.Map(mapRef.current, options);
-
-		const markerPosition = new kakao.maps.LatLng(
-			Number(latitude),
-			Number(longitude)
-		);
-		const marker = new kakao.maps.Marker({
-			position: markerPosition,
+		kakao.maps.load(() => {
+			const center = new kakao.maps.LatLng(37.5665, 126.978);
+			const options = {
+				center,
+				level: 3,
+			};
+			const map = new kakao.maps.Map(mapRef.current, options);
 		});
-		marker.setMap(map);
 	}, []);
 
-	return <div ref={mapRef} style={{ width: '500px', height: '400px' }}></div>;
+	return (
+		<div className="w-full h-screen">
+			<div className="w-3/4 h-3/4" ref={mapRef} />
+		</div>
+	);
 };
 
-export default Map;
+export default KakaoMap;

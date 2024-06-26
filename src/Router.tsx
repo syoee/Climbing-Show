@@ -1,20 +1,18 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./index.css";
-import Nav from "./component/Nav/Nav";
-import Main from "./pages/Main/Main";
-import Detail from "./pages/Detail/Detail";
-import Footer from "./component/Footer/Footer";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css';
+import Navigation from './components/navigation';
+import Main from './pages/main';
+import Detail from './pages/detail';
 
 const Router = () => {
 	return (
 		<BrowserRouter>
-			<Nav />
+			<Navigation />
 			<Routes>
 				<Route path="/" element={<Main />} />
 				<Route path="/Detail" element={<Detail />} />
 			</Routes>
-			<Footer />
 		</BrowserRouter>
 	);
 };

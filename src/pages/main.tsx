@@ -1,10 +1,10 @@
 import React from 'react';
-import kakaoMap from '../components/kakaoMap';
+import KakaoMap from '../components/kakaoMap';
 
 const Main = () => {
 	return (
 		<div>
-			<kakaoMap />
+			<KakaoMap />
 		</div>
 	);
 };
