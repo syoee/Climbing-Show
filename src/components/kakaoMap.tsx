@@ -15,7 +15,7 @@ const KakaoMap = () => {
 	}, []);
 
 	return (
-		<div className="w-full h-screen">
+		<div className="flex justify-center w-full h-screen">
 			<div className="w-3/4 h-3/4" ref={mapRef} />
 		</div>
 	);
