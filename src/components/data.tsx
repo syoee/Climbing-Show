@@ -7,7 +7,7 @@ const App = () => {
 	const dataToSave = [
 		{
 			name: '더클라임 마곡점',
-			addressRoad: '서울  강서구 마곡동로 62 마곡사이언스타워 7층',
+			addressRoad: '서울 강서구 마곡동로 62 마곡사이언스타워 7층',
 			addressLot: '서울 강서구 마곡동 727-500 마곡사이언스타워 7층',
 			latitude: '37.5606',
 			longitude: '126.8337',
