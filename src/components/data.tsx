@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const App = () => {
+const Data = () => {
 	const [responseMessage, setResponseMessage] = useState('');
 
 	const dataToSave = [
@@ -2182,7 +2182,7 @@ const App = () => {
 	};
 
 	return (
-		<div className="App">
+		<div className="Data">
 			<h1>데이터 저장 예시</h1>
 			<button type="button" onClick={saveDataToServer}>
 				데이터 저장하기
@@ -2192,7 +2192,7 @@ const App = () => {
 	);
 };
 
-export default App;
+export default Data;
 
 // serverUrl을 실제 서버의 엔드포인트로 변경하세요.
 // dataToSave 객체에 저장할 데이터를 추가하세요.
