@@ -2172,7 +2172,7 @@ const Data = () => {
 
 	const saveDataToServer = async () => {
 		try {
-			const serverUrl = 'https://your-server.com/api/save-data';
+			const serverUrl = 'https://api.climbing-show.com/climbing-info';
 			const response = await axios.post(serverUrl, dataToSave);
 			setResponseMessage(`데이터 저장 성공: ${response.data}`);
 		} catch (error) {
@@ -2183,7 +2183,6 @@ const Data = () => {
 
 	return (
 		<div className="Data">
-			<h1>데이터 저장 예시</h1>
 			<button type="button" onClick={saveDataToServer}>
 				데이터 저장하기
 			</button>
