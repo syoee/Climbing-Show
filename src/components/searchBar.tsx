@@ -2,19 +2,22 @@ import React, { useState, FormEvent } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 
-const SearchBar: React.FC = () => {
+const SearchBar = () => {
 	const [query, setQuery] = useState<string>(''); // 검색어 상태를 관리
 
 	const handleSearch = async (event: FormEvent) => {
 		event.preventDefault(); // 페이지 새로 고침을 방지
 
 		try {
-			const response = await axios.get(`http://localhost:8080/climbing-info`, {
-				params: {
-					searchKey: 'name',
-					searchValue: query, // 검색어(query)를 서버로 전송
-				},
-			});
+			const response = await axios.get(
+				`http://localhost:8080/climbing-info?searchKey=name&searchValue=구`,
+				{
+					params: {
+						searchKey: 'name',
+						searchValue: query, // 검색어(query)를 서버로 전송
+					},
+				}
+			);
 
 			console.log('서버 응답 데이터:', response.data);
 			// 여기에서 서버 응답 데이터를 처리하거나 다른 작업을 수행 가능
