@@ -6,11 +6,10 @@ const SearchBar: React.FC = () => {
 	const [query, setQuery] = useState<string>(''); // 검색어 상태를 관리
 
 	const handleSearch = async (event: FormEvent) => {
-		event.preventDefault(); // 페이지 새로 고침을 방지합니다.
+		event.preventDefault(); // 페이지 새로 고침을 방지
 
 		try {
-			// 서버로 GET 요청을 보냅니다.
-			const response = await axios.get('http://localhost:8080/climbing-info', {
+			const response = await axios.get(`http://localhost:8080/climbing-info`, {
 				params: {
 					searchKey: 'name',
 					searchValue: query, // 검색어(query)를 서버로 전송
