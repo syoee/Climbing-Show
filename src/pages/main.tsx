@@ -6,7 +6,7 @@ import Data from '../components/data';
 const Main = () => {
 	return (
 		<div>
-			<KakaoMap />
+			{/* <KakaoMap /> */}
 			<RandomImg />
 			<Data />
 		</div>

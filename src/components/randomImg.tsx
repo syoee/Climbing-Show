@@ -4,28 +4,28 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 const ImageComponent = () => {
-	// useState에 제네릭을 사용하여 배열이 문자열을 포함하도록 명시
 	const [images, setImages] = useState<string[]>([]);
 	const [currentImage, setCurrentImage] = useState('');
 	const [isOpen, setIsOpen] = useState(false);
+	const [isPaused, setIsPaused] = useState(false);
 
-	// 이미지 URL을 배열로 저장
 	const imageArray = [
-		'image1.jpg',
-		'image2.jpg',
-		'image3.jpg',
-		'image4.jpg',
-		'image5.jpg',
+		'https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2FC417FCFD0F6042C69022D17BBE467FCE',
+		'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20240611_133%2F1718061147813YWzU2_PNG%2F%25B9%25AE%25B7%25A1_%25C0%25CC%25B9%25CC%25C1%25F6.png',
+		'https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2FA9924AE02FFE4F1489AC8D6E406B515F',
+		'https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F94C92D9DDD0C413B971CC7A0765F7614',
+		'https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F64DF75A758C2485C94EE21090C4288C3',
 	];
 
-	// 이미지를 랜덤으로 바꾸는 함수
 	const changeImage = () => {
-		const randomIndex = Math.floor(Math.random() * imageArray.length);
-		setCurrentImage(imageArray[randomIndex]);
+		if (!isPaused) {
+			const randomIndex = Math.floor(Math.random() * imageArray.length);
+			setCurrentImage(imageArray[randomIndex]);
+		}
 	};
 
-	// 이미지 클릭 시 동작하는 함수
 	const handleImageClick = () => {
+		setIsPaused(!isPaused);
 		setIsOpen(true);
 		setTimeout(() => {
 			setIsOpen(false);
@@ -39,10 +39,13 @@ const ImageComponent = () => {
 	}, []);
 
 	return (
-		<div>
-			{/* img 요소를 button 요소로 감쌈 */}
-			<button type="button" onClick={handleImageClick}>
-				<img src={currentImage} alt="random" />
+		<div className="flex flex-col items-center">
+			<div className="pb-10 text-5xl font-extrabold text-blue-700">
+				{' '}
+				오늘은 여기로 정했다!
+			</div>
+			<button type="button" className="w-1/4 h-1/4" onClick={handleImageClick}>
+				<img className="w-full h-full" src={currentImage} alt="랜덤이미지" />
 			</button>
 			<Modal
 				open={isOpen}
@@ -67,7 +70,7 @@ const ImageComponent = () => {
 						Image Paused
 					</Typography>
 					<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-						The image has been paused. It will resume in 1 second.
+						다음 클라이밍장 추천입니다!
 					</Typography>
 				</Box>
 			</Modal>
