@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import axios from 'axios'; // Axios를 가져옵니다
+import axios from 'axios';
 
 const KakaoMap = () => {
 	const mapRef = useRef(null);
@@ -19,10 +19,10 @@ const KakaoMap = () => {
 					'https://api.climbing-show.com/climbing-info?searchKey=name&searchValue=구'
 				)
 				.then((response) => {
-					// 응답이 클라이밍 체육관 데이터 배열을 포함한다고 가정합니다
+					// 응답이 클라이밍 체육관 데이터 배열을 포함한다고 가정
 					const gyms = response.data;
 
-					// 각 체육관에 대해 가져온 좌표를 사용하여 마커를 지도에 추가합니다
+					// 각 체육관에 대해 가져온 좌표를 사용하여 마커를 지도에 추가
 					gyms.forEach((gym: any) => {
 						const latLng = new kakao.maps.LatLng(gym.latitude, gym.longitude);
 						const marker = new kakao.maps.Marker({ position: latLng });
