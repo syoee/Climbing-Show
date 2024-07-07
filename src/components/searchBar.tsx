@@ -12,7 +12,7 @@ const SearchBar = () => {
 			const response = await axios.get(`http://localhost:8080/climbing-info`, {
 				params: {
 					searchKey: 'name',
-					searchValue: query, // 검색어(query)를 서버로  전송
+					searchValue: query, // 검색어(query)를 서버로 전송
 				},
 			});
 
