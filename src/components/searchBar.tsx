@@ -1,25 +1,49 @@
-import React, { FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
 
-interface SearchBarProps {
-	query: string;
-	setQuery: (query: string) => void;
-	handleSearch: () => void;
+interface Level {
+	level: number;
+	color: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
-	query,
-	setQuery,
-	handleSearch,
-}) => {
-	const onSubmit = (event: FormEvent) => {
-		event.preventDefault();
-		handleSearch();
+interface SearchResult {
+	name: string;
+	addressRoad: string;
+	addressLot: string;
+	latitude: string;
+	longitude: string;
+	levelList: Level[];
+	logoUrl: string;
+}
+
+const SearchBar = () => {
+	const [query, setQuery] = useState<string>(''); // 검색어 상태를 관리
+	const [data, setData] = useState<SearchResult[] | null>(null); // 데이터를 관리
+	const [error, setError] = useState<string | null>(null); // 에러 상태를 관리
+
+	const handleSearch = async (event: FormEvent) => {
+		event.preventDefault(); // 페이지 새로 고침을 방지
+
+		setError(null); // 기존 에러 초기화
+
+		try {
+			const res = await axios.post('http://localhost:8080/climbing-info', {
+				searchKey: 'name',
+				searchValue: query, // 검색어(query)를 서버로 전송
+			});
+
+			console.log('서버 응답 데이터:', res.data);
+			setData(res.data);
+		} catch (err) {
+			console.error('데이터를 가져오는 중 에러 발생:', err);
+			setError('데이터를 가져오는 중 에러가 발생했습니다.');
+		}
 	};
 
 	return (
 		<div className="py-5 flex items-center justify-center">
-			<form className="flex items-center" onSubmit={onSubmit}>
+			<form className="flex items-center" onSubmit={handleSearch}>
 				<div className="px-4 py-2 border rounded-md mr-2 flex items-center">
 					<SearchIcon className="text-[#9BA3AF]" />
 					<input
@@ -37,6 +61,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
 					검색
 				</button>
 			</form>
+
+			<div className="mt-5">
+				{error && <p className="text-red-500">{error}</p>}
+				{data && data.length > 0 ? (
+					<ul>
+						{data.map((item) => (
+							<li key={item.name}>{item.logoUrl}</li>
+						))}
+					</ul>
+				) : (
+					<p>검색 결과가 없습니다.</p>
+				)}
+			</div>
 		</div>
 	);
 };
