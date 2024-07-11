@@ -67,7 +67,29 @@ const SearchBar = () => {
 				{data && data.length > 0 ? (
 					<ul>
 						{data.map((item) => (
-							<li key={item.name}>{item.logoUrl}</li>
+							<li key={item.name}>
+								<div className="flex items-center">
+									<img
+										src={item.logoUrl}
+										alt={item.name}
+										className="w-16 h-16 mr-4"
+									/>
+									<div>
+										<p className="font-bold">{item.name}</p>
+										<p>{item.addressRoad}</p>
+										<p>{item.addressLot}</p>
+										<div className="flex">
+											{item.levelList.map((level) => (
+												<div
+													key={level.level}
+													style={{ backgroundColor: level.color }}
+													className="w-4 h-4 rounded-full mr-1"
+												/>
+											))}
+										</div>
+									</div>
+								</div>
+							</li>
 						))}
 					</ul>
 				) : (
