@@ -28,7 +28,7 @@ const SearchBar = () => {
 		setError(null); // 기존 에러 초기화
 
 		try {
-			const res = await axios.post('http://localhost:8080/climbing-info', {
+			const res = await axios.get('http://localhost:8080/climbing-info', {
 				searchKey: 'name',
 				searchValue: query, // 검색어(query)를 서버로 전송
 			});
@@ -63,7 +63,7 @@ const SearchBar = () => {
 			</form>
 
 			<div className="mt-5">
-				{error && <p className="text-red-500">{error}</p>}
+				{/* {error && <p className="text-red-500">{error}</p>} 에러 보여주기 위한 코드 */}
 				{data && data.length > 0 ? (
 					<ul>
 						{data.map((item) => (
