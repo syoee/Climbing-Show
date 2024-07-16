@@ -1,11 +1,16 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
+import SearchResult from '../components/searchResult';
 
-const detail = () => {
+const Detail = () => {
+	const location = useLocation();
+	const searchResults = location.state?.searchResults || []; // 검색 결과를 가져옴
+
 	return (
 		<div>
-			<p className="bg-blue-100">111</p>
+			<SearchResult searchResults={searchResults} /> {/* 검색 결과 전달 */}
 		</div>
 	);
 };
 
-export default detail;
+export default Detail;

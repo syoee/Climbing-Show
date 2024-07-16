@@ -1,25 +1,29 @@
 import React, { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 
 const SearchBar = () => {
-	const [query, setQuery] = useState<string>(''); // 검색어 상태를 관리
+	// 검색어 상태 관리
+	const [query, setQuery] = useState<string>('');
+	const navigate = useNavigate();
 
 	const handleSearch = async (event: FormEvent) => {
-		event.preventDefault(); // 페이지 새로 고침을 방지
+		event.preventDefault(); // 기본 폼 동작 방지
 
 		try {
-			const response = await axios.get(`http://localhost:8080/climbing-info`, {
+			const res = await axios.get('http://localhost:8080/climbing-info', {
 				params: {
 					searchKey: 'name',
-					searchValue: query, // 검색어(query)를 서버로 전송
+					searchValue: query,
 				},
 			});
 
-			console.log('서버 응답 데이터:', response.data);
-			// 여기에서 서버 응답 데이터를 처리하거나 다른 작업을 수행 가능
-		} catch (error) {
-			console.error('데이터를 가져오는 중 에러 발생:', error);
+			console.log('서버 응답 데이터:', res.data);
+			// 검색 결과를 detail 페이지로 네비게이션
+			navigate('/detail', { state: { searchResults: res.data } });
+		} catch (err) {
+			console.error('데이터를 가져오는 중 에러 발생:', err);
 		}
 	};
 
