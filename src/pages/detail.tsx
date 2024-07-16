@@ -1,9 +1,10 @@
 import React from 'react';
+import SearchResult from '../components/searchResult';
 
 const detail = () => {
 	return (
 		<div>
-			<p className="bg-blue-100">111</p>
+			<SearchResult />
 		</div>
 	);
 };
