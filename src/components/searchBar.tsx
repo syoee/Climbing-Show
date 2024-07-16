@@ -19,18 +19,22 @@ interface SearchResult {
 
 const SearchBar = () => {
 	const [query, setQuery] = useState<string>(''); // 검색어 상태를 관리
-	const [data, setData] = useState<SearchResult[] | null>(null); // 데이터를 관리
+	const [data, setData] = useState<SearchResult[]>([]); // 데이터를 관리
 	const [error, setError] = useState<string | null>(null); // 에러 상태를 관리
+	const [loading, setLoading] = useState<boolean>(false); // 로딩 상태를 관리
 
 	const handleSearch = async (event: FormEvent) => {
 		event.preventDefault(); // 페이지 새로 고침을 방지
 
+		setLoading(true); // 검색 시작 시 로딩 상태로 변경
 		setError(null); // 기존 에러 초기화
 
 		try {
 			const res = await axios.get('http://localhost:8080/climbing-info', {
-				searchKey: 'name',
-				searchValue: query, // 검색어(query)를 서버로 전송
+				params: {
+					searchKey: 'name',
+					searchValue: query, // 검색어(query)를 서버로 전송
+				},
 			});
 
 			console.log('서버 응답 데이터:', res.data);
@@ -38,6 +42,8 @@ const SearchBar = () => {
 		} catch (err) {
 			console.error('데이터를 가져오는 중 에러 발생:', err);
 			setError('데이터를 가져오는 중 에러가 발생했습니다.');
+		} finally {
+			setLoading(false); // 검색 완료 시 로딩 상태 해제
 		}
 	};
 
@@ -63,8 +69,9 @@ const SearchBar = () => {
 			</form>
 
 			<div className="mt-5">
-				{/* {error && <p className="text-red-500">{error}</p>} 에러 보여주기 위한 코드 */}
-				{data && data.length > 0 ? (
+				{loading && <p>로딩 중...</p>}
+				{error && <p className="text-red-500">{error}</p>}
+				{Array.isArray(data) && data.length > 0 ? (
 					<ul>
 						{data.map((item) => (
 							<li key={item.name}>
@@ -79,13 +86,14 @@ const SearchBar = () => {
 										<p>{item.addressRoad}</p>
 										<p>{item.addressLot}</p>
 										<div className="flex">
-											{item.levelList.map((level) => (
-												<div
-													key={level.level}
-													style={{ backgroundColor: level.color }}
-													className="w-4 h-4 rounded-full mr-1"
-												/>
-											))}
+											{Array.isArray(item.levelList) &&
+												item.levelList.map((level) => (
+													<div
+														key={level.level}
+														style={{ backgroundColor: level.color }}
+														className="w-4 h-4 rounded-full mr-1"
+													/>
+												))}
 										</div>
 									</div>
 								</div>
