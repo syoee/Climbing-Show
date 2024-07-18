@@ -1,14 +1,17 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchResult from '../components/searchResult';
+import KakaoMap from '../components/kakaoMap';
 
 const Detail = () => {
 	const location = useLocation();
-	const searchResults = location.state?.searchResults || []; // 검색 결과를 가져옴
+	const searchResults = location.state?.searchResults || [];
+	const searchLocation = location.state?.searchLocation || [];
 
 	return (
 		<div>
-			<SearchResult searchResults={searchResults} /> {/* 검색 결과 전달 */}
+			<KakaoMap searchLocation={searchLocation} />
+			<SearchResult searchResults={searchResults} />
 		</div>
 	);
 };

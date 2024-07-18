@@ -1,43 +1,47 @@
 import React, { useEffect, useRef } from 'react';
-import axios from 'axios';
 
-const KakaoMap = () => {
+interface SearchLocationProps {
+	searchLocation: { latitude: string; longitude: string }[];
+}
+
+const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 	const mapRef = useRef(null);
 
 	useEffect(() => {
-		kakao.maps.load(() => {
-			const center = new kakao.maps.LatLng(37.5665, 126.978);
+		const loadMap = () => {
+			if (searchLocation.length === 0 || !mapRef.current) return;
+
+			const center = new kakao.maps.LatLng(
+				parseFloat(searchLocation[0].latitude),
+				parseFloat(searchLocation[0].longitude)
+			);
 			const options = {
 				center,
 				level: 3,
 			};
 			const map = new kakao.maps.Map(mapRef.current, options);
 
-			// Axios를 사용하여 위도와 경도 데이터 가져오기
-			axios
-				.get(
-					'https://api.climbing-show.com/climbing-info?searchKey=name&searchValue=구'
-				)
-				.then((response) => {
-					// 응답이 클라이밍 체육관 데이터 배열을 포함한다고 가정
-					const gyms = response.data;
-
-					// 각 체육관에 대해 가져온 좌표를 사용하여 마커를 지도에 추가
-					gyms.forEach((gym: any) => {
-						const latLng = new kakao.maps.LatLng(gym.latitude, gym.longitude);
-						const marker = new kakao.maps.Marker({ position: latLng });
-						marker.setMap(map);
-					});
-				})
-				.catch((error) => {
-					console.error('데이터 가져오기 오류:', error);
+			// 검색한 각 위치에 대해 마커를 생성하고 지도에 추가
+			searchLocation.forEach((location) => {
+				const markerPosition = new kakao.maps.LatLng(
+					parseFloat(location.latitude),
+					parseFloat(location.longitude)
+				);
+				const marker = new kakao.maps.Marker({
+					position: markerPosition,
 				});
-		});
-	}, []);
+				marker.setMap(map);
+			});
+		};
+
+		if (window.kakao && window.kakao.maps) {
+			loadMap(); // 이미 카카오 맵 API가 로드된 경우 바로 loadMap 함수 실행
+		}
+	}, [searchLocation]);
 
 	return (
-		<div className="flex justify-center w-full h-screen">
-			<div className="w-3/4 h-3/4" ref={mapRef} />
+		<div className="flex justify-center w-full h-96">
+			<div className="mt-3 mb-10 w-3/4 h-auto" ref={mapRef} />
 		</div>
 	);
 };
