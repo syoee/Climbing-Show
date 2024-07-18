@@ -8,35 +8,26 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 	const mapRef = useRef(null);
 
 	useEffect(() => {
-		const loadMap = () => {
-			if (searchLocation.length === 0 || !mapRef.current) return;
-
-			const center = new kakao.maps.LatLng(
-				parseFloat(searchLocation[0].latitude),
-				parseFloat(searchLocation[0].longitude)
-			);
+		kakao.maps.load(() => {
+			const center = new kakao.maps.LatLng(37.5665, 126.978);
 			const options = {
 				center,
 				level: 3,
 			};
 			const map = new kakao.maps.Map(mapRef.current, options);
 
-			// 검색한 각 위치에 대해 마커를 생성하고 지도에 추가
+			// Display markers for each location
 			searchLocation.forEach((location) => {
 				const markerPosition = new kakao.maps.LatLng(
-					parseFloat(location.latitude),
-					parseFloat(location.longitude)
+					location.latitude,
+					location.longitude
 				);
 				const marker = new kakao.maps.Marker({
 					position: markerPosition,
 				});
 				marker.setMap(map);
 			});
-		};
-
-		if (window.kakao && window.kakao.maps) {
-			loadMap(); // 이미 카카오 맵 API가 로드된 경우 바로 loadMap 함수 실행
-		}
+		});
 	}, [searchLocation]);
 
 	return (
