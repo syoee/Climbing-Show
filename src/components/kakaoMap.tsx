@@ -16,7 +16,7 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 			};
 			const map = new kakao.maps.Map(mapRef.current, options);
 
-			// Display markers for each location
+			// 각 위치에 마커 표시
 			searchLocation.forEach((location) => {
 				const markerPosition = new kakao.maps.LatLng(
 					location.latitude,
