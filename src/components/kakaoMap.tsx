@@ -32,7 +32,7 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 
 	return (
 		<div className="flex justify-center w-full h-96">
-			<div className="mt-3 mb-10 w-3/4 h-auto" ref={mapRef} />
+			<div className="mt-3 mb-10 w-1/4 h-auto" ref={mapRef} />
 		</div>
 	);
 };
