@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 
 interface SearchLocationProps {
-	searchLocation: { latitude: string; longitude: string }[];
+	searchLocation: {
+		name: string;
+		latitude: string;
+		longitude: string;
+	}[];
 }
 
 const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
@@ -23,10 +27,24 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 					location.latitude,
 					location.longitude
 				);
+
 				const marker = new kakao.maps.Marker({
 					position: markerPosition,
 				});
 				marker.setMap(map);
+
+				console.log(location.name);
+				const infoWindow = new kakao.maps.InfoWindow({
+					content: `<div style="padding:5px;">${location.name}</div>`,
+				});
+
+				window.kakao.maps.event.addListener(marker, 'mouseover', () => {
+					infoWindow.open(map, marker);
+				});
+
+				window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+					infoWindow.close();
+				});
 				// 범위에 마커 추가
 				bounds.extend(markerPosition);
 			});

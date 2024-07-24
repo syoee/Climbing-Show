@@ -25,6 +25,7 @@ const SearchBar = () => {
 			const searchLocation = searchResults.map((result: any) => ({
 				latitude: result.latitude,
 				longitude: result.longitude,
+				name: result.name,
 			}));
 
 			// 검색 결과를 detail 페이지로 네비게이션
