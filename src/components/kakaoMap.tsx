@@ -33,7 +33,6 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 				});
 				marker.setMap(map);
 
-				console.log(location.name);
 				const infoWindow = new kakao.maps.InfoWindow({
 					content: `<div style="padding:5px;">${location.name}</div>`,
 				});
