@@ -20,8 +20,14 @@ const SearchBar = () => {
 			});
 
 			console.log('서버 응답 데이터:', res.data);
+
+			const searchResults = res.data;
+			const searchLocation = res.data;
+
 			// 검색 결과를 detail 페이지로 네비게이션
-			navigate('/detail', { state: { searchResults: res.data } });
+			navigate('/detail', {
+				state: { searchResults, searchLocation },
+			});
 		} catch (err) {
 			console.error('데이터를 가져오는 중 에러 발생:', err);
 		}

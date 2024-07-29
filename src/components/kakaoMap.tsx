@@ -1,7 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import axios from 'axios';
 
-const KakaoMap = () => {
+interface SearchLocationProps {
+	searchLocation: {
+		name: string;
+		addressRoad: string;
+		addressLot: string;
+		latitude: string;
+		longitude: string;
+	}[];
+}
+
+const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 	const mapRef = useRef(null);
 
 	useEffect(() => {
@@ -13,31 +22,44 @@ const KakaoMap = () => {
 			};
 			const map = new kakao.maps.Map(mapRef.current, options);
 
-			// Axios를 사용하여 위도와 경도 데이터 가져오기
-			axios
-				.get(
-					'https://api.climbing-show.com/climbing-info?searchKey=name&searchValue=구'
-				)
-				.then((response) => {
-					// 응답이 클라이밍 체육관 데이터 배열을 포함한다고 가정
-					const gyms = response.data;
+			const bounds = new kakao.maps.LatLngBounds();
 
-					// 각 체육관에 대해 가져온 좌표를 사용하여 마커를 지도에 추가
-					gyms.forEach((gym: any) => {
-						const latLng = new kakao.maps.LatLng(gym.latitude, gym.longitude);
-						const marker = new kakao.maps.Marker({ position: latLng });
-						marker.setMap(map);
-					});
-				})
-				.catch((error) => {
-					console.error('데이터 가져오기 오류:', error);
+			searchLocation.forEach((location) => {
+				const markerPosition = new kakao.maps.LatLng(
+					location.latitude,
+					location.longitude
+				);
+
+				const marker = new kakao.maps.Marker({
+					position: markerPosition,
 				});
+				marker.setMap(map);
+
+				console.log(location.name);
+				console.log(location.addressLot);
+				console.log(location.addressRoad);
+				const infoWindow = new kakao.maps.InfoWindow({
+					content: `<div style="padding:5px;">${location.name}</div>`,
+				});
+
+				window.kakao.maps.event.addListener(marker, 'mouseover', () => {
+					infoWindow.open(map, marker);
+				});
+
+				window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+					infoWindow.close();
+				});
+				// 범위에 마커 추가
+				bounds.extend(markerPosition);
+			});
+			// 범위에 맞게 지도 조정
+			map.setBounds(bounds);
 		});
-	}, []);
+	}, [searchLocation]);
 
 	return (
-		<div className="flex justify-center w-full h-screen">
-			<div className="w-3/4 h-3/4" ref={mapRef} />
+		<div className="flex justify-center w-full h-96">
+			<div className="mt-3 mb-10 w-3/4 h-auto" ref={mapRef} />
 		</div>
 	);
 };

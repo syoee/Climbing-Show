@@ -27,7 +27,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ searchResults }) => {
 						<p className="font-bold">{item.name}</p>
 						<p>{item.addressRoad}</p>
 						<p>{item.addressLot}</p>
-						<div className="flex">
+						<div className="flex border rounded-md">
 							{item.levelList?.map((level) => (
 								<div
 									key={level.level}

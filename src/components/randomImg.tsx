@@ -3,7 +3,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-const ImageComponent = () => {
+const RandomImg = () => {
 	const [images, setImages] = useState<string[]>([]);
 	const [currentImage, setCurrentImage] = useState('');
 	const [isOpen, setIsOpen] = useState(false);
@@ -78,4 +78,4 @@ const ImageComponent = () => {
 	);
 };
 
-export default ImageComponent;
+export default RandomImg;
