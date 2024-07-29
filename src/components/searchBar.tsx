@@ -22,11 +22,7 @@ const SearchBar = () => {
 			console.log('서버 응답 데이터:', res.data);
 
 			const searchResults = res.data;
-			const searchLocation = searchResults.map((result: any) => ({
-				latitude: result.latitude,
-				longitude: result.longitude,
-				name: result.name,
-			}));
+			const searchLocation = res.data;
 
 			// 검색 결과를 detail 페이지로 네비게이션
 			navigate('/detail', {

@@ -3,6 +3,8 @@ import React, { useEffect, useRef } from 'react';
 interface SearchLocationProps {
 	searchLocation: {
 		name: string;
+		addressRoad: string;
+		addressLot: string;
 		latitude: string;
 		longitude: string;
 	}[];
@@ -34,6 +36,8 @@ const KakaoMap: React.FC<SearchLocationProps> = ({ searchLocation }) => {
 				marker.setMap(map);
 
 				console.log(location.name);
+				console.log(location.addressLot);
+				console.log(location.addressRoad);
 				const infoWindow = new kakao.maps.InfoWindow({
 					content: `<div style="padding:5px;">${location.name}</div>`,
 				});
