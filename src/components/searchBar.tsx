@@ -19,7 +19,7 @@ const SearchBar = () => {
 				},
 			});
 
-			console.log('서버 응답 데이터:', res.data);
+			console.log('서버 응답 데이터', res.data);
 
 			const searchResults = res.data;
 			const searchLocation = res.data;
