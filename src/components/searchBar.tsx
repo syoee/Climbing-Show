@@ -61,7 +61,7 @@ const SearchBar = () => {
 					검색
 				</button>
 			</form>
-			{isEmpty && <div className="mt-4 text-red-500">검색결과가 없습니다.</div>}
+			{isEmpty && <div className="mt-4 text-red-500">검색결과가 없습니다</div>}
 		</div>
 	);
 };
