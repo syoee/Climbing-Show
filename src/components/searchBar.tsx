@@ -48,7 +48,7 @@ const SearchBar = () => {
 					<SearchIcon className="text-[#9BA3AF]" />
 					<input
 						type="text"
-						placeholder="검색어를 입력하세요"
+						placeholder="검색어를 입력하세요."
 						className="ml-2"
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
