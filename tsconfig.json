@@ -1,20 +1,29 @@
 {
 	"compilerOptions": {
 		"target": "esnext",
-		"allowJs": true,
-		"skipLibCheck": true,
-		"baseUrl": "./src",
+		"module": "esnext",
+		"strict": true,
+		"jsx": "preserve",
+		"importHelpers": true,
+		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"noFallthroughCasesInSwitch": true,
-		"module": "esnext",
-		"moduleResolution": "node",
+		"skipLibCheck": true,
+		"useDefineForClassFields": true,
+		"sourceMap": true,
+		"baseUrl": ".",
+		"types": ["node", "webpack-env", "vue-router"],
+		"paths": {
+			"@/*": ["src/*"]
+		},
+		"lib": ["esnext", "dom"],
 		"resolveJsonModule": true,
-		"isolatedModules": true,
 		"noEmit": true,
-		"jsx": "react"
+		"allowImportingTsExtensions": true
 	},
-	"include": ["src"]
+	"vueCompilerOptions": {
+		"target": 3.3
+	},
+	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "src/**/*.tsx"],
+	"exclude": ["node_modules"]
 }

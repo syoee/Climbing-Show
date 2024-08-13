@@ -1,65 +1,35 @@
 {
 	"env": {
 		"browser": true,
-		"es2021": true
+		"es2021": true,
+		"node": true
 	},
 	"extends": [
-		"plugin:react/recommended",
-		"airbnb",
+		"plugin:vue/vue3-essential",
+		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"prettier"
 	],
-	"parser": "@typescript-eslint/parser",
+	"parser": "vue-eslint-parser",
 	"parserOptions": {
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": "latest",
+		"parser": "@typescript-eslint/parser",
+		"ecmaVersion": 2020,
 		"sourceType": "module"
 	},
-	"plugins": ["react", "react-hooks", "@typescript-eslint"],
+	"plugins": ["vue", "@typescript-eslint", "prettier"],
 	"rules": {
-		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "warn",
+		"@typescript-eslint/no-require-imports": "off",
 		"@typescript-eslint/explicit-function-return-type": "off",
 		"prettier/prettier": "error",
-		"react/jsx-filename-extension": [
-			2,
-			{ "extensions": [".js", ".jsx", ".ts", ".tsx"] }
-		],
-		"react/function-component-definition": [
-			2,
-			{
-				"namedComponents": "arrow-function",
-				"unnamedComponents": "arrow-function"
-			}
-		], //react 함수형 컴포넌트 정의 방식 선언
-
-		"import/extensions": [
-			2,
-			"ignorePackages",
-			{
-				"js": "never",
-				"jsx": "never",
-				"ts": "never",
-				"tsx": "never"
-			}
-		],
-		"import/no-extraneous-dependencies": [
-			"error",
-			{
-				"devDependencies": false,
-				"optionalDependencies": false,
-				"peerDependencies": false
-			}
-		],
-		"react/jsx-props-no-spreading": "off"
+		"arrow-body-style": "off",
+		"prefer-arrow-callback": "off"
 	},
 	"settings": {
 		"import/resolver": {
 			"node": {
-				"extensions": [".js", ".jsx", ".ts", ".tsx"],
-				"moduleDirectory": ["node_modules", "@types"]
+				"extensions": [".js", ".jsx", ".ts", ".tsx", ".vue"],
+				"moduleDirectory": ["node_modules", "src/"]
 			},
 			"typescript": {}
 		}
