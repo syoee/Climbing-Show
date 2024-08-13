@@ -1,7 +1,8 @@
 <template>
-	<div class="flex justify-center text-red-500 text-9xl font-black">
-		PageHeader
+	<div class="my-5 flex justify-center text-purple-500 text-3xl font-bold">
+		Climbing Show
 	</div>
+	<hr />
 </template>
 
 <script>

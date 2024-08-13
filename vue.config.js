@@ -9,4 +9,13 @@ module.exports = defineConfig({
 			filename: 'index.html',
 		},
 	},
+	css: {
+		loaderOptions: {
+			postcss: {
+				postcssOptions: {
+					plugins: [require('tailwindcss'), require('autoprefixer')],
+				},
+			},
+		},
+	},
 });
