@@ -12,11 +12,31 @@
 					<img
 						:src="center.logoUrl"
 						:alt="center.name"
-						class="w-1/12 h-1/12 mr-3 object-cover"
+						class="w-1/12 h-1/12 mr-3 object-contain"
 					/>
-					<div class="flex flex-col justify-center">
+					<div class="gird grid-cols-3">
 						<div class="text-xl font-semibold">{{ center.name }}</div>
-						<div class="mt-1 font-medium">{{ center.addressRoad }}</div>
+						<div class="font-medium">{{ center.addressRoad }}</div>
+						<ul class="grid grid-cols-12">
+							<li
+								v-for="level in center.climbingLevelList"
+								:key="level.level"
+								class="relative flex items-center justify-center"
+								:style="{ width: '70%' }"
+							>
+								<img
+									src="https://velog.velcdn.com/images/syo_ee/post/58892724-cf82-4d0b-ab7b-279874631845/image.png"
+									class="w-full h-full object-cover"
+								/>
+								<div
+									:style="{ backgroundColor: level.color }"
+									class="w-11/12 h-full absolute inset-1 opacity-50 rounded-3xl"
+								></div>
+								<span class="mb-1 mr-1 absolute text-black font-semibold">
+									{{ level.level }}
+								</span>
+							</li>
+						</ul>
 					</div>
 				</li>
 			</ul>
