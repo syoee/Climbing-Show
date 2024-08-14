@@ -1,0 +1,72 @@
+<template>
+	<div>
+		<div class="flex justify-center text-3xl font-semibold">검색 결과</div>
+
+		<div v-if="results.length > 0">
+			<ul class="mx-5">
+				<li
+					v-for="center in results"
+					:key="center.name"
+					class="mb-5 pb-4 flex justify-start border-b-2 border-stone-300"
+				>
+					<img
+						:src="center.logoUrl"
+						:alt="center.name"
+						class="w-1/12 h-1/12 mr-3 object-cover"
+					/>
+					<div class="flex flex-col justify-center">
+						<div class="text-xl font-semibold">{{ center.name }}</div>
+						<div class="mt-1 font-medium">{{ center.addressRoad }}</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div
+			v-else
+			class="mt-5 flex justify-center text-xl text-[#E93A79] font-bold"
+		>
+			<p>검색 결과가 없습니다.</p>
+		</div>
+	</div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+	data() {
+		return {
+			results: [], // 검색 결과를 담을 배열
+		};
+	},
+	watch: {
+		'$route.query.q': {
+			immediate: true,
+			handler() {
+				this.search();
+			},
+		},
+	},
+	methods: {
+		async search() {
+			const searchQuery = this.$route.query.q || '';
+			if (searchQuery) {
+				try {
+					const response = await axios.get(
+						'http://localhost:8080/climbing-info',
+						{
+							params: {
+								searchKey: 'name',
+								searchValue: searchQuery,
+							},
+						}
+					);
+					this.results = response.data;
+				} catch (error) {
+					console.error('검색 중 오류 발생:', error);
+				}
+			}
+		},
+	},
+};
+</script>

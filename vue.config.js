@@ -9,6 +9,9 @@ module.exports = defineConfig({
 			filename: 'index.html',
 		},
 	},
+	devServer: {
+		port: 3000,
+	},
 	css: {
 		loaderOptions: {
 			postcss: {
