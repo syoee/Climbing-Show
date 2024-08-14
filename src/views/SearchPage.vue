@@ -16,8 +16,10 @@
 						class="w-1/12 h-1/12 mr-3 object-contain"
 					/>
 					<div class="gird grid-cols-3">
-						<div class="text-xl font-semibold">{{ center.name }}</div>
-						<div class="font-medium">{{ center.addressRoad }}</div>
+						<div class="text-3xl font-semibold">
+							{{ center.name }}
+						</div>
+						<div class="text-xl font-medium">{{ center.addressRoad }}</div>
 						<ul class="grid grid-cols-12">
 							<li
 								v-for="level in center.climbingLevelList"
@@ -31,7 +33,7 @@
 								/>
 								<div
 									:style="{ backgroundColor: level.color }"
-									class="w-11/12 h-full absolute inset-1 opacity-50 rounded-3xl"
+									class="w-11/12 h-full absolute inset-1 opacity-50 rounded-full"
 								></div>
 								<span class="mb-1 mr-1 absolute text-black font-semibold">
 									{{ level.level }}
@@ -62,9 +64,11 @@ export default {
 
 	data() {
 		return {
-			results: [], // 검색 결과를 담을 배열
+			// 검색 결과를 담을 배열
+			results: [],
 		};
 	},
+
 	computed: {
 		// 검색 결과를 KakaoMap 컴포넌트에 전달할 데이터로 변환
 		mapLocations() {
@@ -74,6 +78,7 @@ export default {
 			}));
 		},
 	},
+
 	watch: {
 		'$route.query.q': {
 			immediate: true,
@@ -82,8 +87,10 @@ export default {
 			},
 		},
 	},
+
 	methods: {
 		async search() {
+			// 현재 라우트의 쿼리 매개변수에서 검색 쿼리(q)를 가져옴
 			const searchQuery = this.$route.query.q || '';
 			if (searchQuery) {
 				try {
@@ -96,6 +103,7 @@ export default {
 							},
 						}
 					);
+					// 요청이 성공적으로 완료되면, 응답 데이터(response.data)를 컴포넌트의 results 데이터 속성에 저장
 					this.results = response.data;
 				} catch (error) {
 					console.error('검색 중 오류 발생:', error);
