@@ -7,6 +7,7 @@
 		</div>
 		<div class="flex justify-center">
 			<input
+				@keyup.enter="goSearch"
 				v-model="searchQuery"
 				type="text"
 				placeholder="암장을 검색해보세요!"
