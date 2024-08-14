@@ -15,7 +15,7 @@
 			<div class="w-full pt-10 mb-10 flex justify-center gap-10">
 				<button
 					@click="loginButton"
-					class="px-5 py-3 bg-[#E93A79] text-white rounded-lg hover:bg-[ff0059] text-xl font-semibold"
+					class="px-5 py-3 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] text-xl font-semibold"
 				>
 					로그인
 				</button>

@@ -1,7 +1,7 @@
 <template>
 	<div class="m-5 grid grid-cols-3">
 		<div class="flex justify-start">
-			<button @click="goHome" class="text-[#E93A79] text-3xl font-bold">
+			<button @click="goHome" class="text-[#0077ff] text-3xl font-bold">
 				Climbing Show
 			</button>
 		</div>
@@ -15,7 +15,7 @@
 			/>
 			<button
 				@click="goSearch"
-				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#E93A79] text-white rounded-lg hover:bg-[ff0059]"
+				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
 			>
 				검 색
 			</button>
@@ -23,7 +23,7 @@
 		<div class="flex justify-end">
 			<button
 				@click="goLogin"
-				class="w-1/4 p-2 flex justify-center items-center bg-[#E93A79] text-white rounded-lg hover:bg-[ff0059]"
+				class="w-1/4 p-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
 			>
 				로그인
 			</button>

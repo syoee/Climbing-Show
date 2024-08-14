@@ -1,7 +1,8 @@
 <template>
 	<div>
-		<div class="flex justify-center text-3xl font-semibold">검색 결과</div>
-
+		<div class="flex justify-center">
+			<KakaoMap v-if="results.length > 0" :locations="mapLocations" />
+		</div>
 		<div v-if="results.length > 0">
 			<ul class="mx-5">
 				<li
@@ -43,7 +44,7 @@
 		</div>
 		<div
 			v-else
-			class="mt-5 flex justify-center text-xl text-[#E93A79] font-bold"
+			class="mt-5 flex justify-center text-5xl text-[#015ECC] font-semibold"
 		>
 			<p>검색 결과가 없습니다.</p>
 		</div>
@@ -51,13 +52,27 @@
 </template>
 
 <script>
+import KakaoMap from '@/components/KakaoMap.vue';
 import axios from 'axios';
 
 export default {
+	components: {
+		KakaoMap,
+	},
+
 	data() {
 		return {
 			results: [], // 검색 결과를 담을 배열
 		};
+	},
+	computed: {
+		// 검색 결과를 KakaoMap 컴포넌트에 전달할 데이터로 변환
+		mapLocations() {
+			return this.results.map((center) => ({
+				name: center.name,
+				position: [center.latitude, center.longitude],
+			}));
+		},
 	},
 	watch: {
 		'$route.query.q': {
