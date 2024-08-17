@@ -41,7 +41,7 @@ export default {
 			};
 			this.map = new kakao.maps.Map(container, options);
 
-			// locations prop이 변경될 때마다 마커와 인포윈도우를 업데이트
+			// locations prop이 변경될 때마다 마커와 인포윈도우를 업뎃
 			watch(
 				() => this.locations,
 				(newLocations) => {
