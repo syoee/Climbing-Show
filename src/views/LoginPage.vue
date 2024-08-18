@@ -54,7 +54,7 @@ export default {
 				return;
 			}
 			axios
-				.post(`http://localhost:8080/accounts/login`, {
+				.post(`http://125.241.173.9:8080/accounts/login`, {
 					user_id: this.user_id,
 					user_password: this.user_password,
 				})

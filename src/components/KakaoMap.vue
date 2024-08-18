@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="map" class="w-[90vh] h-96 mb-10"></div>
+		<div id="map" class="w-[90vh] h-[50vh] mb-10 sm:w-[50vh] md:w-[70vh]"></div>
 	</div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
 			/* global kakao */
 			script.onload = () => kakao.maps.load(this.initMap);
 			script.src =
-				'//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=915cffed372954b7b44804ed422b9cf0';
+				'//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=55e35ba521bf534633dce3114256d719';
 			document.head.appendChild(script);
 		}
 	},
@@ -41,7 +41,7 @@ export default {
 			};
 			this.map = new kakao.maps.Map(container, options);
 
-			// locations prop이 변경될 때마다 마커와 인포윈도우를 업데이트
+			// locations prop이 변경될 때마다 마커와 인포윈도우를 업뎃
 			watch(
 				() => this.locations,
 				(newLocations) => {

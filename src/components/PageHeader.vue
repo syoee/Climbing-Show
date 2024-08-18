@@ -1,29 +1,32 @@
 <template>
 	<div class="m-5 grid grid-cols-3">
 		<div class="flex justify-start">
-			<button @click="goHome" class="text-[#0077ff] text-3xl font-bold">
+			<button
+				@click="goHome"
+				class="text-[#0077ff] text-4xl sm:text-sm md:text-xl font-bold"
+			>
 				Climbing Show
 			</button>
 		</div>
-		<div class="flex justify-center">
+		<div class="flex justify-center sm:h-10 sm:text-xs sm:justify-between">
 			<input
 				@keyup.enter="goSearch"
 				v-model="searchQuery"
 				type="text"
 				placeholder="암장을 검색해보세요!"
-				class="w-2/3 pl-2 border-2 border-gray-400 rounded-lg"
+				class="w-2/3 pl-2 border-2 border-gray-400 rounded-lg sm:w-32"
 			/>
 			<button
 				@click="goSearch"
-				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
+				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:w-1/6"
 			>
 				검 색
 			</button>
 		</div>
-		<div class="flex justify-end">
+		<div class="flex justify-end sm:text-xs">
 			<button
 				@click="goLogin"
-				class="w-1/4 p-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
+				class="w-1/4 p-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:w-[3.3rem] sm:h-10"
 			>
 				로그인
 			</button>
@@ -36,7 +39,8 @@
 export default {
 	data() {
 		return {
-			searchQuery: '', // 검색어를 저장할 변수
+			// 검색어를 저장할 변수
+			searchQuery: '',
 		};
 	},
 
