@@ -11,7 +11,7 @@
 					class="mb-5 pb-4 flex justify-start border-b-2 border-stone-300"
 				>
 					<img
-						:src="center.logoUrl"
+						:src="center.logo_url"
 						:alt="center.name"
 						class="w-1/12 h-1/12 mr-3 object-contain"
 					/>
@@ -95,7 +95,7 @@ export default {
 			if (searchQuery) {
 				try {
 					const response = await axios.get(
-						'http://localhost:8080/climbing-info',
+						'http://125.241.173.9:8080/climbing-info',
 						{
 							params: {
 								searchKey: 'name',
