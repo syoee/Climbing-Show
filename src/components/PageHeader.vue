@@ -23,14 +23,6 @@
 				검 색
 			</button>
 		</div>
-		<div class="flex justify-end sm:text-xs">
-			<button
-				@click="goLogin"
-				class="w-1/4 p-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:w-[3.3rem] sm:h-10"
-			>
-				로그인
-			</button>
-		</div>
 	</div>
 	<hr class="mb-5" />
 </template>

@@ -15,15 +15,15 @@
 						:alt="center.name"
 						class="w-1/12 h-1/12 mr-3 object-contain"
 					/>
-					<div class="gird grid-cols-3">
+					<div class="grid-rows-3">
 						<div class="text-3xl font-semibold">
 							{{ center.name }}
 						</div>
-						<div class="text-xl font-medium">{{ center.addressRoad }}</div>
+						<div class="text-xl font-medium">{{ center.address_road }}</div>
 						<ul class="grid grid-cols-12">
 							<li
-								v-for="level in center.climbingLevelList"
-								:key="level.level"
+								v-for="logo in center.climbing_level_list"
+								:key="logo.level"
 								class="relative flex items-center justify-center"
 								:style="{ width: '70%' }"
 							>
@@ -32,11 +32,11 @@
 									class="w-full h-full object-cover"
 								/>
 								<div
-									:style="{ backgroundColor: level.color }"
+									:style="{ backgroundColor: logo.color }"
 									class="w-11/12 h-full absolute inset-1 opacity-50 rounded-full"
 								></div>
 								<span class="mb-1 mr-1 absolute text-black font-semibold">
-									{{ level.level }}
+									{{ logo.level }}
 								</span>
 							</li>
 						</ul>
