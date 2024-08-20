@@ -74,6 +74,7 @@ export default {
 		mapLocations() {
 			return this.results.map((center) => ({
 				name: center.name,
+				address_road: center.address_road,
 				position: [center.latitude, center.longitude],
 			}));
 		},
