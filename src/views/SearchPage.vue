@@ -96,7 +96,7 @@ export default {
 			if (searchQuery) {
 				try {
 					const response = await axios.get(
-						'http://125.241.173.9:8080/climbing-info',
+						`${process.env.VUE_APP_API_HOST}/climbing-info`,
 						{
 							params: {
 								searchKey: 'name',
