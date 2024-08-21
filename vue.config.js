@@ -10,7 +10,7 @@ module.exports = defineConfig({
 		},
 	},
 	devServer: {
-		port: 3000,
+		port: process.env.VUE_APP_PORT || 3000,
 	},
 	css: {
 		loaderOptions: {
