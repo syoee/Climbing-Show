@@ -17,7 +17,7 @@ export default {
 	data() {
 		return {
 			markers: [],
-			infowindows: [],
+			overlays: [],
 		};
 	},
 	mounted() {
@@ -27,8 +27,7 @@ export default {
 			const script = document.createElement('script');
 			/* global kakao */
 			script.onload = () => kakao.maps.load(this.initMap);
-			script.src =
-				'//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=55e35ba521bf534633dce3114256d719';
+			script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=4b4bbdc2911906be3ed2baeac649d46c`;
 			document.head.appendChild(script);
 		}
 	},
@@ -41,7 +40,7 @@ export default {
 			};
 			this.map = new kakao.maps.Map(container, options);
 
-			// locations prop이 변경될 때마다 마커와 인포윈도우를 업뎃
+			// locations prop이 변경될 때마다 마커와 커스텀 오버레이를 업데이트
 			watch(
 				() => this.locations,
 				(newLocations) => {
@@ -50,54 +49,87 @@ export default {
 				{ immediate: true }
 			);
 		},
+
 		updateMarkers(locations) {
+			// 기존 마커와 오버레이 제거
 			if (this.markers.length > 0) {
 				this.markers.forEach((marker) => marker.setMap(null));
-				this.infowindows.forEach((infowindow) => infowindow.close());
+				this.overlays.forEach((overlay) => overlay.setMap(null));
 			}
 			this.markers = [];
-			this.infowindows = [];
+			this.overlays = [];
 
 			const bounds = new kakao.maps.LatLngBounds();
 
-			// 새 위치 데이터에 따라 마커와 인포윈도우 생성
+			// 새 위치 데이터에 따라 마커와 커스텀 오버레이 생성
 			locations.forEach((location) => {
 				const position = new kakao.maps.LatLng(...location.position);
+
+				// 위치의 종류에 따라 다른 이미지 사용
+				let imageSrc;
+				if (location.type === 'current') {
+					imageSrc = require('@/assets/mymarker.png'); // 현재 위치용 이미지
+				} else {
+					imageSrc = require('@/assets/marker.png'); // 기본 마커 이미지
+				}
+
+				const imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기
+				const imageOption = { offset: new kakao.maps.Point(20, 35) }; // 마커 이미지 옵션
+
+				// 마커 이미지 생성
+				const markerImage = new kakao.maps.MarkerImage(
+					imageSrc,
+					imageSize,
+					imageOption
+				);
+
 				bounds.extend(position);
 
-				// marker와 infowindow 변수를 선언
+				// 마커 생성
 				const marker = new kakao.maps.Marker({
 					map: toRaw(this.map),
 					position,
+					image: markerImage,
 				});
 
-				// location.name의 길이에 따라 인포윈도우 스타일 설정
-				const nameLength = location.name.length;
-				const width = Math.max(100, Math.min(300, nameLength * 15)); // 최소 100px, 최대 300px로 설정
+				let overlayContent;
+				if (location.type === 'current') {
+					// 현재 위치는 주소 없이 이름만 표시
+					overlayContent = `
+						<div style="margin-bottom:10px; margin-right:15px; padding:10px; background:#000000; border-radius:5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); cursor:pointer;">
+							<div style="font-weight:bold; font-size:14px; color:white;">${location.name}</div>
+						</div>
+					`;
+				} else {
+					// 클라이밍 센터는 주소와 이름 모두 표시
+					overlayContent = `
+						<div style="padding:10px; background:#000000; border-radius:5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); cursor:pointer;">
+							<div style="font-weight:bold; font-size:14px; color:white;">${location.name}</div>
+							<div style="font-size:12px; color:white;">${location.address_road}</div>
+						</div>
+					`;
+				}
 
-				const content = `
-					<div style="padding:5px; width:${width}px; white-space: nowrap;">
-						${location.name}
-					</div>
-				`;
-
-				const infowindow = new kakao.maps.InfoWindow({
-					content,
-					removable: true,
+				// 커스텀 오버레이 생성
+				const overlay = new kakao.maps.CustomOverlay({
+					content: overlayContent,
+					position,
+					xAnchor: 0.5,
+					yAnchor: 1.65,
 				});
 
-				// 마커에 마우스 오버 시 인포윈도우 열기
+				// 마커에 마우스 오버 시 커스텀 오버레이 표시
 				kakao.maps.event.addListener(marker, 'mouseover', () => {
-					infowindow.open(toRaw(this.map), marker);
+					overlay.setMap(toRaw(this.map));
 				});
 
-				// 마커에 마우스 아웃 시 인포윈도우 닫기
+				// 마커에 마우스 아웃 시 커스텀 오버레이 숨기기
 				kakao.maps.event.addListener(marker, 'mouseout', () => {
-					infowindow.close();
+					overlay.setMap(null);
 				});
 
 				this.markers.push(marker);
-				this.infowindows.push(infowindow);
+				this.overlays.push(overlay);
 			});
 
 			// 지도를 새 위치에 맞게 조정
