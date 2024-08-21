@@ -5,7 +5,7 @@
 		>
 			지금 나의 주위에 있는 암장은?
 		</div>
-		<div>
+		<div class="w-[90vh] h-[50vh] mb-10 sm:w-[50vh] md:w-[70vh]">
 			<KakaoMap
 				v-if="mapLocations.length > 0"
 				:locations="mapLocations"
@@ -27,7 +27,7 @@ export default {
 	data() {
 		return {
 			currentLocation: null, // 사용자의 현재 위치를 저장
-			mapLocations: [], // 지도에 표시할 클라이밍 센터 위치 데이터
+			mapLocations: [], // 지도에 표시할 위치 데이터
 		};
 	},
 
@@ -54,6 +54,7 @@ export default {
 								this.currentLocation.latitude,
 								this.currentLocation.longitude,
 							],
+							type: 'current', // 현재 위치 구분
 						});
 
 						// 현재 위치를 기준으로 근처 클라이밍 센터 검색
@@ -86,6 +87,7 @@ export default {
 					const nearbyCenters = response.data.map((center) => ({
 						name: center.name,
 						position: [center.latitude, center.longitude],
+						type: 'center', // 클라이밍 센터 구분
 					}));
 
 					// 클라이밍 센터 위치 추가

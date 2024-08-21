@@ -27,8 +27,7 @@ export default {
 			const script = document.createElement('script');
 			/* global kakao */
 			script.onload = () => kakao.maps.load(this.initMap);
-			script.src =
-				'//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=4b4bbdc2911906be3ed2baeac649d46c';
+			script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=4b4bbdc2911906be3ed2baeac649d46c`;
 			document.head.appendChild(script);
 		}
 	},
@@ -66,12 +65,19 @@ export default {
 			locations.forEach((location) => {
 				const position = new kakao.maps.LatLng(...location.position);
 
-				var imageSrc = require('@/assets/marker.png'), // 마커 이미지의 주소
-					imageSize = new kakao.maps.Size(24, 35), // 마커 이미지의 크기
-					imageOption = { offset: new kakao.maps.Point(20, 35) }; // 마커 이미지 옵션
+				// 위치의 종류에 따라 다른 이미지 사용
+				let imageSrc;
+				if (location.type === 'current') {
+					imageSrc = require('@/assets/mymarker.png'); // 현재 위치용 이미지
+				} else {
+					imageSrc = require('@/assets/marker.png'); // 기본 마커 이미지
+				}
+
+				const imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기
+				const imageOption = { offset: new kakao.maps.Point(20, 35) }; // 마커 이미지 옵션
 
 				// 마커 이미지 생성
-				var markerImage = new kakao.maps.MarkerImage(
+				const markerImage = new kakao.maps.MarkerImage(
 					imageSrc,
 					imageSize,
 					imageOption
@@ -86,13 +92,23 @@ export default {
 					image: markerImage,
 				});
 
-				// 커스텀 오버레이 내용 생성
-				const overlayContent = `
-					<div style="padding:10px; background:#000000; border-radius:5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); cursor:pointer;">
-						<div style="font-weight:bold; font-size:14px; color:white;">${location.name}</div>
-						<div style="font-size:12px; color:white;">${location.address_road}</div>
-					</div>
-				`;
+				let overlayContent;
+				if (location.type === 'current') {
+					// 현재 위치는 주소 없이 이름만 표시
+					overlayContent = `
+						<div style="margin-bottom:10px; margin-right:15px; padding:10px; background:#000000; border-radius:5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); cursor:pointer;">
+							<div style="font-weight:bold; font-size:14px; color:white;">${location.name}</div>
+						</div>
+					`;
+				} else {
+					// 클라이밍 센터는 주소와 이름 모두 표시
+					overlayContent = `
+						<div style="padding:10px; background:#000000; border-radius:5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); cursor:pointer;">
+							<div style="font-weight:bold; font-size:14px; color:white;">${location.name}</div>
+							<div style="font-size:12px; color:white;">${location.address_road}</div>
+						</div>
+					`;
+				}
 
 				// 커스텀 오버레이 생성
 				const overlay = new kakao.maps.CustomOverlay({
