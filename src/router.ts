@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from './views/HomePage.vue';
 import ErrorPage from './views/ErrorPage.vue';
 import SearchPage from './views/SearchPage.vue';
+import DetailPage from './views/DetailPage.vue';
 
 const routes = [
 	{
@@ -15,6 +16,11 @@ const routes = [
 		component: SearchPage,
 	},
 	{
+		path: '/detail/:id',
+		name: 'DetailPage',
+		component: DetailPage,
+	},
+	{
 		path: '/:pathMatch(.*)*',
 		name: 'ErrorPage',
 		component: ErrorPage,
@@ -22,7 +28,7 @@ const routes = [
 ];
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
+	history: createWebHistory(),
 	routes,
 });
 
