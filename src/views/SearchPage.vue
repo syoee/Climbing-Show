@@ -101,7 +101,7 @@ export default {
 			if (searchQuery) {
 				try {
 					const response = await axios.get(
-						`${process.env.VUE_APP_API_HOST}/climbing-info`,
+						`${process.env.VUE_APP_API_HOST}climbing-info`,
 						{
 							params: {
 								searchKey: 'name',
