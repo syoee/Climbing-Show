@@ -108,7 +108,7 @@ export default {
 			if (this.currentLocation) {
 				try {
 					const response = await axios.get(
-						`${process.env.VUE_APP_API_HOST}climbing-info`,
+						`${process.env.VUE_APP_API_HOST}/climbing-info`,
 						{
 							params: {
 								latitude: this.currentLocation.latitude,
