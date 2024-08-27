@@ -8,7 +8,8 @@
 				<li
 					v-for="center in results"
 					:key="center.name"
-					class="mb-5 pb-4 flex justify-start border-b-2 border-stone-300"
+					@click="goToDetail(center.id)"
+					class="mb-5 pb-4 flex justify-start border-b-2 border-stone-300 hover:cursor-pointer"
 				>
 					<img
 						:src="center.logo_url"
@@ -90,6 +91,10 @@ export default {
 	},
 
 	methods: {
+		goToDetail(centerId) {
+			this.$router.push(`/detail/${centerId}`);
+		},
+
 		async search() {
 			// 현재 라우트의 쿼리 매개변수에서 검색 쿼리(q)를 가져옴
 			const searchQuery = this.$route.query.q || '';
