@@ -63,7 +63,7 @@ export default {
 		async fetchData() {
 			try {
 				const res = await axios.get(
-					`${process.env.VUE_APP_API_HOST}/climbing-info/${this.id}`
+					`${process.env.VUE_APP_API_HOST}/climbing-infos/${this.id}`
 				);
 				// API로부터 받은 데이터를 center 저장
 				this.center = res.data;
