@@ -1,57 +1,102 @@
 <template>
 	<div class="mx-5">
-		<div class="flex flex-row justify-around">
+		<div v-if="results.length > 0" class="flex flex-row justify-around">
 			<div class="w-1/4 mr-3">
 				<div class="w-full aspect-square bg-stone-300 rounded-lg">
-					사진들어갈 자리
+					<img
+						:src="center.logo_url"
+						alt="Center Image"
+						class="w-full h-full object-cover rounded-lg"
+					/>
 				</div>
 				<ul class="mt-5">
-					<li class="bg-emerald-300">
+					<li
+						v-for="center in results"
+						:key="center.name"
+						class="bg-emerald-300"
+					>
 						<div
 							class="w-full aspect-square border-2 border-neutral-400 rounded-lg"
 						>
-							해당 센터 주위 암장 로고
+							<img
+								:src="center.logo_url"
+								alt="Nearby Center Logo"
+								class="w-full h-full object-cover rounded-lg"
+							/>
 						</div>
 						<div class="border-2 border-neutral-400 text-xl font-semibold">
-							해당 센터 주위 암장 이름
+							{{ center.name }}
 						</div>
 						<div class="mt-1 border-2 border-neutral-400 text-lg font-normal">
-							해당 센터 주위 암장 주소
+							{{ center.address }}
 						</div>
-						<!-- <img
-							:src="center.logo_url"
-							:alt="center.name"
-							class="w-1/12 h-1/12 mr-3 object-contain"
-						/> -->
 					</li>
 				</ul>
 			</div>
-			<div class="w-3/4">
-				<div class="mb-3 h-1/2 bg-violet-300 rounded-lg">KakaoMap</div>
-				<div class="bg-blue-500 text-2xl font-bold">검색 센터 암장 이름</div>
-				<div class="bg-blue-500 text-lg font-medium">검색 센터 암장 주소</div>
+			<div class="w-[81%]">
+				<KakaoMap
+					:locations="searchLocations"
+					class="mr-5 mb-3 h-1/2 bg-violet-300 rounded-lg"
+				/>
+				<div class="bg-blue-500 text-2xl font-bold">
+					{{ center.name }}
+				</div>
+				<div class="bg-blue-500 text-lg font-medium">
+					{{ center.address }}
+				</div>
 			</div>
-			<!-- <KakaoMap /> -->
 		</div>
 	</div>
 </template>
 
 <script>
-// import KakaoMap from '@/components/KakaoMap.vue';
+import KakaoMap from '@/components/KakaoMap.vue';
+import axios from 'axios';
 
 export default {
-	// components: {
-	// 	KakaoMap,
-	// },
+	components: {
+		KakaoMap,
+	},
 
 	data() {
 		return {
 			id: null,
+			results: [],
 		};
+	},
+
+	computed: {
+		// KakaoMap에 전달할 위치 데이터를 계산
+		searchLocations() {
+			return this.results
+				? [
+						{
+							name: this.center.name,
+							address: this.center.address,
+							position: [this.center.latitude, this.center.longitude],
+						},
+				  ]
+				: [];
+		},
 	},
 
 	mounted() {
 		this.id = this.$route.params.id;
+		this.fetchData();
+	},
+
+	methods: {
+		async fetchData() {
+			try {
+				const res = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/climbing-info/${this.id}`
+				);
+				this.results = res.data;
+				console.log(res.data);
+			} catch (err) {
+				console.log('error', err);
+			}
+		},
 	},
 };
 </script>
