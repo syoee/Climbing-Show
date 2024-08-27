@@ -11,7 +11,7 @@
 				</div>
 			</div>
 			<div class="w-5/6">
-				<KakaoMap :locations="searchLocations" class="w-[30%]" />
+				<KakaoMap :locations="searchLocations" />
 				<div class="text-2xl font-bold">
 					{{ center.name }}
 				</div>
