@@ -145,7 +145,7 @@ export default {
 
 		// KakaoMap이 로드된 후 호출
 		onMapLoaded() {
-			this.isLoading = false; // 지도가 완전히 로드되면 로딩을 중지합니다.
+			this.isLoading = false; // 지도가 완전히 로드되면 로딩을 중지
 		},
 	},
 };
