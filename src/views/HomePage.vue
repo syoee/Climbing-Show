@@ -108,13 +108,7 @@ export default {
 			if (this.currentLocation) {
 				try {
 					const response = await axios.get(
-						`${process.env.VUE_APP_API_HOST}/climbing-infos`,
-						{
-							params: {
-								latitude: this.currentLocation.latitude,
-								longitude: this.currentLocation.longitude,
-							},
-						}
+						`${process.env.VUE_APP_API_HOST}/climbing-infos`
 					);
 
 					// 검색 결과를 지도에 표시할 수 있는 형식으로 변환 및 필터링
