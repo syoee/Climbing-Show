@@ -17,13 +17,13 @@
 			<div class="w-full pt-10 mb-10 flex justify-center gap-10">
 				<button
 					@click="loginButton"
-					class="px-5 py-3 bg-blue-600 text-white hover:bg-blue-800 rounded-lg text-xl font-bold"
+					class="px-5 py-3 bg-[#0077ff] text-white hover:bg-[#015ECC] rounded-lg text-xl font-bold"
 				>
 					로그인
 				</button>
 				<button
 					@click="goSignUp"
-					class="px-5 py-3 bg-blue-600 text-white hover:bg-blue-800 rounded-lg text-xl font-bold"
+					class="px-5 py-3 bg-[#0077ff] text-white hover:bg-[#015ECC] rounded-lg text-xl font-bold"
 				>
 					회원가입
 				</button>
