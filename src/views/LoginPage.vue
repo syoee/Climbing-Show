@@ -38,6 +38,9 @@ export default {
 		goHome() {
 			this.$router.push('/');
 		},
+		goSignUp() {
+			this.$router.push('/signup');
+		},
 	},
 };
 </script>
