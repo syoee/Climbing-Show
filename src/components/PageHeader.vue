@@ -54,6 +54,7 @@ export default {
 
 	methods: {
 		goHome() {
+			this.searchQuery = '';
 			this.$router.push('/');
 		},
 		goLogin() {
