@@ -98,6 +98,13 @@ export default {
 		async search() {
 			// 현재 라우트의 쿼리 매개변수에서 검색 쿼리(q)를 가져옴
 			const searchQuery = this.$route.query.q || '';
+
+			// 검색어가 2글자 이상인지 확인
+			if (searchQuery.length < 2) {
+				alert('2글자 이상 검색해주세요.');
+				return;
+			}
+
 			if (searchQuery) {
 				try {
 					const response = await axios.get(
