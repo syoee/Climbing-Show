@@ -60,7 +60,7 @@ export default {
 					Math.sin(dLon / 2) *
 					Math.sin(dLon / 2);
 			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-			const distance = R * c; // Distance in km
+			const distance = R * c; // km 계산
 			return distance;
 		},
 
