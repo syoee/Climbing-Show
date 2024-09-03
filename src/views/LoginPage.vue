@@ -25,7 +25,7 @@
 					@click="goSignUp"
 					class="px-5 py-3 bg-[#0077ff] text-white hover:bg-[#015ECC] rounded-lg text-xl font-bold"
 				>
-					회원가입
+					회원 가입
 				</button>
 			</div>
 		</div>
@@ -37,6 +37,9 @@ export default {
 	methods: {
 		goHome() {
 			this.$router.push('/');
+		},
+		goSignUp() {
+			this.$router.push('/signup');
 		},
 	},
 };
