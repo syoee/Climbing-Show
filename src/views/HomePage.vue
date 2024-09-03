@@ -19,10 +19,21 @@
 			<KakaoMap
 				v-if="mapLocations.length > 0"
 				:locations="mapLocations"
-				:mapLevel="5"
+				:mapLevel="mapLevel"
 				@mapLoaded="onMapLoaded"
+				@mapLevelChanged="onMapLevelChanged"
+				@mapMoved="onMapMoved"
 			/>
 		</div>
+
+		<!-- 재검색 버튼 -->
+		<button
+			v-if="showReSearchButton"
+			@click="reSearchNearbyClimbingCenters"
+			class="bg-blue-500 text-white px-4 py-2 rounded"
+		>
+			재검색
+		</button>
 	</div>
 </template>
 
@@ -39,7 +50,25 @@ export default {
 		return {
 			currentLocation: null, // 사용자의 현재 위치를 저장
 			mapLocations: [], // 지도에 표시할 위치 데이터
-			isLoading: true, // 로딩 상태 추가
+			isLoading: true, // 로딩 상태
+			mapLevel: 8, // 초기 지도 레벨
+			showReSearchButton: false, // 재검색 버튼 표시 여부
+			scaleToMapLevel: {
+				1: 0.02,
+				2: 0.03,
+				3: 0.05,
+				4: 0.1,
+				5: 0.25,
+				6: 0.5,
+				7: 1,
+				8: 2,
+				9: 4,
+				10: 8,
+				11: 16,
+				12: 32,
+				13: 64,
+				14: 128,
+			},
 		};
 	},
 
@@ -47,39 +76,25 @@ export default {
 		this.getCurrentLocation();
 	},
 
+	watch: {
+		mapLevel(newMapLevel) {
+			console.log(`Map level changed to: ${newMapLevel}`);
+			this.isLoading = true;
+			this.searchNearbyClimbingCenters(); // 변경된 mapLevel로 근처 클라이밍 센터 다시 검색
+		},
+	},
+
 	methods: {
-		// 두 지점 간의 거리를 계산하는 함수 (Haversine formula)
-		calculateDistance(lat1, lon1, lat2, lon2) {
-			const R = 6371; // 지구 반지름 (km)
-			const dLat = this.deg2rad(lat2 - lat1);
-			const dLon = this.deg2rad(lon2 - lon1);
-			const a =
-				Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-				Math.cos(this.deg2rad(lat1)) *
-					Math.cos(this.deg2rad(lat2)) *
-					Math.sin(dLon / 2) *
-					Math.sin(dLon / 2);
-			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-			const distance = R * c; // km 계산
-			return distance;
-		},
-
-		deg2rad(deg) {
-			return deg * (Math.PI / 180);
-		},
-
 		// 사용자의 현재 위치 가져오기
 		getCurrentLocation() {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 					(position) => {
-						// 사용자의 현재 위치 설정
 						this.currentLocation = {
 							latitude: position.coords.latitude,
 							longitude: position.coords.longitude,
 						};
 
-						// 현재 위치를 지도에 표시할 위치 목록에 추가
 						this.mapLocations.push({
 							name: '현재 위치',
 							position: [
@@ -89,52 +104,47 @@ export default {
 							type: 'current', // 현재 위치 구분
 						});
 
-						// 현재 위치를 기준으로 근처 클라이밍 센터 검색
 						this.searchNearbyClimbingCenters();
 					},
 					(error) => {
 						console.error('현재 위치를 가져오는 중 오류 발생:', error);
-						this.isLoading = false; // 오류가 발생한 경우 로딩을 중지합니다.
+						this.isLoading = false; // 오류가 발생한 경우 로딩 중지
 					}
 				);
 			} else {
 				console.error('Geolocation을 지원하지 않는 브라우저입니다.');
-				this.isLoading = false; // Geolocation을 지원하지 않는 경우 로딩을 중지합니다.
+				this.isLoading = false; // Geolocation을 지원하지 않는 경우 로딩 중지
 			}
 		},
 
-		// 현재 위치를 기준으로 근처의 클라이밍 센터 검색
+		// 근처 클라이밍 센터 검색
 		async searchNearbyClimbingCenters() {
 			if (this.currentLocation) {
 				try {
+					const scale = this.scaleToMapLevel[this.mapLevel];
+
 					const response = await axios.get(
 						`${process.env.VUE_APP_API_HOST}/climbing-infos`,
 						{
 							params: {
 								latitude: this.currentLocation.latitude,
 								longitude: this.currentLocation.longitude,
+								scale: scale, // 현재 scale 값 전송
 							},
 						}
 					);
 
-					// 검색 결과를 지도에 표시할 수 있는 형식으로 변환 및 필터링
-					const nearbyCenters = response.data
-						.map((center) => ({
-							name: center.name,
-							position: [center.latitude, center.longitude],
-							address_road: center.address_road, // 주소 추가
-							type: 'center', // 클라이밍 센터 구분
-							distance: this.calculateDistance(
-								this.currentLocation.latitude,
-								this.currentLocation.longitude,
-								center.latitude,
-								center.longitude
-							),
-						}))
-						.filter((center) => center.distance <= 5); // 5km 이내로 필터링
+					const nearbyCenters = response.data.map((center) => ({
+						name: center.name,
+						position: [center.latitude, center.longitude],
+						address_road: center.address_road,
+						type: 'center',
+					}));
 
-					// 클라이밍 센터 위치 추가
-					this.mapLocations.push(...nearbyCenters);
+					this.mapLocations = [
+						this.mapLocations[0], // 현재 위치 유지
+						...nearbyCenters,
+					];
 				} catch (error) {
 					console.error('근처 클라이밍 센터 검색 중 오류 발생:', error);
 				} finally {
@@ -145,7 +155,24 @@ export default {
 
 		// KakaoMap이 로드된 후 호출
 		onMapLoaded() {
-			this.isLoading = false; // 지도가 완전히 로드되면 로딩을 중지
+			this.isLoading = false; // 지도가 완전히 로드되면 로딩 중지
+		},
+
+		// Map level 변경
+		onMapLevelChanged(newMapLevel) {
+			this.mapLevel = newMapLevel;
+			this.showReSearchButton = true;
+		},
+
+		// Map 움직임 인식
+		onMapMoved() {
+			this.showReSearchButton = true;
+		},
+
+		// 근처 재검색
+		reSearchNearbyClimbingCenters() {
+			this.searchNearbyClimbingCenters();
+			this.showReSearchButton = false; // 재검색 후 버튼 숨기기
 		},
 	},
 };
