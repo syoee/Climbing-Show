@@ -51,7 +51,8 @@ export default {
 			currentLocation: null, // 사용자의 현재 위치를 저장
 			mapLocations: [], // 지도에 표시할 위치 데이터
 			isLoading: true, // 로딩 상태
-			mapLevel: 8, // 초기 지도 레벨
+			mapLevel: 5, // 초기 지도 레벨
+			initialMapLevel: 5, // 초기 mapLevel 값을 저장
 			showReSearchButton: false, // 재검색 버튼 표시 여부
 			scaleToMapLevel: {
 				1: 0.02,
@@ -78,9 +79,10 @@ export default {
 
 	watch: {
 		mapLevel(newMapLevel) {
-			console.log(`Map level changed to: ${newMapLevel}`);
-			this.isLoading = true;
-			this.searchNearbyClimbingCenters(); // 변경된 mapLevel로 근처 클라이밍 센터 다시 검색
+			// mapLevel이 변경될 때만 호출
+			if (newMapLevel !== this.initialMapLevel) {
+				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
+			}
 		},
 	},
 
@@ -95,14 +97,16 @@ export default {
 							longitude: position.coords.longitude,
 						};
 
-						this.mapLocations.push({
-							name: '현재 위치',
-							position: [
-								this.currentLocation.latitude,
-								this.currentLocation.longitude,
-							],
-							type: 'current', // 현재 위치 구분
-						});
+						this.mapLocations = [
+							{
+								name: '현재 위치',
+								position: [
+									this.currentLocation.latitude,
+									this.currentLocation.longitude,
+								],
+								type: 'current', // 현재 위치 구분
+							},
+						];
 
 						this.searchNearbyClimbingCenters();
 					},
@@ -158,19 +162,20 @@ export default {
 			this.isLoading = false; // 지도가 완전히 로드되면 로딩 중지
 		},
 
-		// Map level 변경
+		// Map level 변경 인식
 		onMapLevelChanged(newMapLevel) {
 			this.mapLevel = newMapLevel;
-			this.showReSearchButton = true;
+			this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 		},
 
 		// Map 움직임 인식
 		onMapMoved() {
-			this.showReSearchButton = true;
+			this.showReSearchButton = true; // 지도 이동 시 재검색 버튼 표시
 		},
 
 		// 근처 재검색
 		reSearchNearbyClimbingCenters() {
+			this.isLoading = true; // 재검색 시 로딩 상태로 변경
 			this.searchNearbyClimbingCenters();
 			this.showReSearchButton = false; // 재검색 후 버튼 숨기기
 		},

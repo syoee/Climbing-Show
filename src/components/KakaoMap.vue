@@ -60,6 +60,16 @@ export default {
 				},
 				{ immediate: true }
 			);
+
+			// mapLevel prop이 변경될 때마다 지도의 레벨을 업데이트
+			watch(
+				() => this.mapLevel,
+				(newMapLevel) => {
+					if (this.map) {
+						this.map.setLevel(newMapLevel);
+					}
+				}
+			);
 		},
 
 		updateMarkers(locations) {
