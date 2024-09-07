@@ -146,7 +146,7 @@ export default {
 					}));
 
 					this.mapLocations = [
-						this.mapLocations[0], // 현재위치 유지
+						this.mapLocations[0], // 현재 위치 유지
 						...nearbyCenters,
 					];
 				} catch (error) {
