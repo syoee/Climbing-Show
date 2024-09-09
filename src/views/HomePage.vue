@@ -54,6 +54,7 @@ export default {
 			mapLevel: 5, // 초기 지도 레벨
 			initialMapLevel: 5, // 초기 mapLevel 값을 저장
 			showReSearchButton: false, // 재검색 버튼 표시 여부
+			mapLevelChangedOnce: false, // 최초 mapLevel 변경 여부 체크
 			scaleToMapLevel: {
 				1: 0.02,
 				2: 0.03,
@@ -79,8 +80,9 @@ export default {
 
 	watch: {
 		mapLevel(newMapLevel) {
-			// mapLevel이 변경될 때만 호출
+			// mapLevel이 변경된 적이 있으면 버튼 표시
 			if (newMapLevel !== this.initialMapLevel) {
+				this.mapLevelChangedOnce = true; // mapLevel이 변경되었음을 표시
 				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 			}
 		},
@@ -131,9 +133,10 @@ export default {
 						`${process.env.VUE_APP_API_HOST}/climbing-infos`,
 						{
 							params: {
+								searchType: 'POSITION',
 								latitude: this.currentLocation.latitude,
 								longitude: this.currentLocation.longitude,
-								scale: scale, // 현재 scale 값 전송
+								distance: scale, // 현재 scale 값 전송
 							},
 						}
 					);
@@ -164,8 +167,10 @@ export default {
 
 		// Map level 변경 인식
 		onMapLevelChanged(newMapLevel) {
-			this.mapLevel = newMapLevel;
-			this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
+			if (this.mapLevelChangedOnce) {
+				this.mapLevel = newMapLevel;
+				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
+			}
 		},
 
 		// Map 움직임 인식
