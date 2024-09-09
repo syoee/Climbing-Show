@@ -51,10 +51,9 @@ export default {
 			currentLocation: null, // 사용자의 현재 위치를 저장
 			mapLocations: [], // 지도에 표시할 위치 데이터
 			isLoading: true, // 로딩 상태
-			mapLevel: 5, // 초기 지도 레벨
-			initialMapLevel: 5, // 초기 mapLevel 값을 저장
+			mapLevel: 2, // 초기 지도 레벨
+			initialMapLevel: 2, // 초기 mapLevel 값을 저장
 			showReSearchButton: false, // 재검색 버튼 표시 여부
-			mapLevelChangedOnce: false, // 최초 mapLevel 변경 여부 체크
 			scaleToMapLevel: {
 				1: 0.02,
 				2: 0.03,
@@ -82,7 +81,6 @@ export default {
 		mapLevel(newMapLevel) {
 			// mapLevel이 변경된 적이 있으면 버튼 표시
 			if (newMapLevel !== this.initialMapLevel) {
-				this.mapLevelChangedOnce = true; // mapLevel이 변경되었음을 표시
 				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 			}
 		},
@@ -167,10 +165,8 @@ export default {
 
 		// Map level 변경 인식
 		onMapLevelChanged(newMapLevel) {
-			if (this.mapLevelChangedOnce) {
-				this.mapLevel = newMapLevel;
-				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
-			}
+			this.mapLevel = newMapLevel;
+			this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 		},
 
 		// Map 움직임 인식
@@ -181,8 +177,9 @@ export default {
 		// 근처 재검색
 		reSearchNearbyClimbingCenters() {
 			this.isLoading = true; // 재검색 시 로딩 상태로 변경
-			this.searchNearbyClimbingCenters();
-			this.showReSearchButton = false; // 재검색 후 버튼 숨기기
+			this.searchNearbyClimbingCenters().then(() => {
+				this.showReSearchButton = false; // 재검색 후 버튼 숨기기
+			});
 		},
 	},
 };
