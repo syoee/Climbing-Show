@@ -188,7 +188,7 @@ export default {
 		reSearchNearbyClimbingCenters() {
 			this.isLoading = true; // 재검색 시 로딩 상태로 변경
 			this.searchNearbyClimbingCenters(this.mapCenterLocation).then(() => {
-				this.showReSearchButton = false; // 재검색 후 버튼 숨기기
+				this.showReSearchButton = false; // 재검색 후 버튼숨기기
 			});
 		},
 	},
