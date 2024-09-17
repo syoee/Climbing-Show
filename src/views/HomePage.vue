@@ -49,7 +49,6 @@ export default {
 	data() {
 		return {
 			currentLocation: null, // 사용자의 현재 위치를 저장
-			mapCenterLocation: null, // 지도의 중심 좌표를 저장
 			mapLocations: [], // 지도에 표시할 위치 데이터
 			isLoading: true, // 로딩 상태
 			mapLevel: 2, // 초기 지도 레벨
@@ -80,9 +79,9 @@ export default {
 
 	watch: {
 		mapLevel(newMapLevel) {
-			// mapLevel 변경 시 재검색 버튼 표시
+			// mapLevel이 변경된 적이 있으면 버튼 표시
 			if (newMapLevel !== this.initialMapLevel) {
-				this.showReSearchButton = true;
+				this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 			}
 		},
 	},
@@ -98,9 +97,6 @@ export default {
 							longitude: position.coords.longitude,
 						};
 
-						// 초기 지도 중심을 사용자의 현재 위치로 설정
-						this.mapCenterLocation = this.currentLocation;
-
 						this.mapLocations = [
 							{
 								name: '현재 위치',
@@ -112,12 +108,11 @@ export default {
 							},
 						];
 
-						// 현재 위치를 기준으로 클라이밍 센터 검색
 						this.searchNearbyClimbingCenters();
 					},
 					(error) => {
 						console.error('현재 위치를 가져오는 중 오류 발생:', error);
-						this.isLoading = false; // 오류 발생 시 로딩 중지
+						this.isLoading = false; // 오류가 발생한 경우 로딩 중지
 					}
 				);
 			} else {
@@ -128,7 +123,7 @@ export default {
 
 		// 근처 클라이밍 센터 검색
 		async searchNearbyClimbingCenters() {
-			if (this.mapCenterLocation) {
+			if (this.currentLocation) {
 				try {
 					const scale = this.scaleToMapLevel[this.mapLevel];
 
@@ -137,8 +132,8 @@ export default {
 						{
 							params: {
 								searchType: 'POSITION',
-								latitude: this.mapCenterLocation.latitude,
-								longitude: this.mapCenterLocation.longitude,
+								latitude: this.currentLocation.latitude,
+								longitude: this.currentLocation.longitude,
 								distance: scale, // 현재 scale 값 전송
 							},
 						}
@@ -151,7 +146,6 @@ export default {
 						type: 'center',
 					}));
 
-					// 현재 위치 유지 + 새로 검색된 클라이밍 센터 추가
 					this.mapLocations = [
 						this.mapLocations[0], // 현재 위치 유지
 						...nearbyCenters,
@@ -169,23 +163,22 @@ export default {
 			this.isLoading = false; // 지도가 완전히 로드되면 로딩 중지
 		},
 
-		// 지도 레벨 변경 처리
+		// Map level 변경 인식
 		onMapLevelChanged(newMapLevel) {
 			this.mapLevel = newMapLevel;
 			this.showReSearchButton = true; // mapLevel 변경 시 재검색 버튼 표시
 		},
 
-		// 지도 이동 처리
-		onMapMoved(newCenter) {
-			this.mapCenterLocation = newCenter; // 새로운 지도 중심 좌표 저장
+		// Map 움직임 인식
+		onMapMoved() {
 			this.showReSearchButton = true; // 지도 이동 시 재검색 버튼 표시
 		},
 
-		// 현재 화면 중심 기준으로 재검색
+		// 근처 재검색
 		reSearchNearbyClimbingCenters() {
 			this.isLoading = true; // 재검색 시 로딩 상태로 변경
 			this.searchNearbyClimbingCenters().then(() => {
-				this.showReSearchButton = false; // 재검색 후 버튼숨기기
+				this.showReSearchButton = false; // 재검색 후 버튼 숨기기
 			});
 		},
 	},
