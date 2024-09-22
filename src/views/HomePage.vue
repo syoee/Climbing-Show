@@ -23,7 +23,6 @@
 				@mapLoaded="onMapLoaded"
 				@mapLevelChanged="onMapLevelChanged"
 				@mapMoved="onMapMoved"
-				:currentCenter="currentCenter"
 			/>
 		</div>
 
@@ -50,7 +49,6 @@ export default {
 	data() {
 		return {
 			currentLocation: null, // 사용자의 현재 위치를 저장
-			currentCenter: null, // 현재 지도 중앙 위치
 			mapLocations: [], // 지도에 표시할 위치 데이터
 			isLoading: true, // 로딩 상태
 			mapLevel: 2, // 초기 지도 레벨
@@ -99,11 +97,6 @@ export default {
 							longitude: position.coords.longitude,
 						};
 
-						this.currentCenter = {
-							latitude: position.coords.latitude,
-							longitude: position.coords.longitude,
-						};
-
 						this.mapLocations = [
 							{
 								name: '현재 위치',
@@ -130,7 +123,7 @@ export default {
 
 		// 근처 클라이밍 센터 검색
 		async searchNearbyClimbingCenters() {
-			if (this.currentCenter) {
+			if (this.currentLocation) {
 				try {
 					const scale = this.scaleToMapLevel[this.mapLevel];
 
@@ -139,8 +132,8 @@ export default {
 						{
 							params: {
 								searchType: 'POSITION',
-								latitude: this.currentCenter.latitude,
-								longitude: this.currentCenter.longitude,
+								latitude: this.currentLocation.latitude,
+								longitude: this.currentLocation.longitude,
 								distance: scale, // 현재 scale 값 전송
 							},
 						}
@@ -177,8 +170,7 @@ export default {
 		},
 
 		// Map 움직임 인식
-		onMapMoved(newCenter) {
-			this.currentCenter = newCenter;
+		onMapMoved() {
 			this.showReSearchButton = true; // 지도 이동 시 재검색 버튼 표시
 		},
 
