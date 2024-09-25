@@ -13,6 +13,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		mapLevel: {
+			type: Number,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -27,7 +31,7 @@ export default {
 			const script = document.createElement('script');
 			/* global kakao */
 			script.onload = () => kakao.maps.load(this.initMap);
-			script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=25e92dcd2489b0835b90834d23d21e84`;
+			script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=78af9b82d5933bce119673559d97dd5d`;
 			document.head.appendChild(script);
 		}
 	},
@@ -36,9 +40,17 @@ export default {
 			const container = document.getElementById('map');
 			const options = {
 				center: new kakao.maps.LatLng(37.5665, 126.978), // 기본 지도 중심: 서울
-				level: 5,
+				level: this.mapLevel,
 			};
 			this.map = new kakao.maps.Map(container, options);
+
+			// 지도 레벨이 달라지거나 움직일 때 Emit event
+			kakao.maps.event.addListener(this.map, 'zoom_changed', () => {
+				this.$emit('mapLevelChanged', this.map.getLevel());
+			});
+			kakao.maps.event.addListener(this.map, 'dragend', () => {
+				this.$emit('mapMoved');
+			});
 
 			// locations prop이 변경될 때마다 마커와 커스텀 오버레이를 업데이트
 			watch(
@@ -47,6 +59,16 @@ export default {
 					this.updateMarkers(newLocations);
 				},
 				{ immediate: true }
+			);
+
+			// mapLevel prop이 변경될 때마다 지도의 레벨을 업데이트
+			watch(
+				() => this.mapLevel,
+				(newMapLevel) => {
+					if (this.map) {
+						this.map.setLevel(newMapLevel);
+					}
+				}
 			);
 		},
 

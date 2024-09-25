@@ -111,7 +111,7 @@ export default {
 						`${process.env.VUE_APP_API_HOST}/climbing-infos`,
 						{
 							params: {
-								searchKey: 'name',
+								searchType: 'NAME',
 								searchValue: searchQuery,
 							},
 						}
