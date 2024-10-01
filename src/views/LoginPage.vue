@@ -10,7 +10,8 @@
 export default {
 	methods: {
 		goKakaoLogin() {
-			this.$router.push('/');
+			const url = `${process.env.VUE_APP_API_HOST}/oauth2/authorization/kakao?redirect_uri=${process.env.VUE_APP_APP_DOMAIN}/token`;
+			window.open(url, '_self'); // "_self"를 사용하여 동일한 창에서 탐색
 		},
 	},
 };

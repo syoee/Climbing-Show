@@ -28,7 +28,7 @@
 				@click="goLogin"
 				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
 			>
-				{{ tokenButtonText }}
+				{{ tokenButton }}
 			</button>
 		</div>
 	</div>
@@ -47,7 +47,7 @@ export default {
 
 	computed: {
 		// token의 상태에 따라 버튼 텍스트를 결정하는 계산된 속성
-		tokenButtonText() {
+		tokenButton() {
 			return this.token === null ? '로그인' : '로그아웃';
 		},
 	},
