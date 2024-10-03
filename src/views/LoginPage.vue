@@ -10,8 +10,16 @@
 export default {
 	methods: {
 		goKakaoLogin() {
-			const url = `${process.env.VUE_APP_API_HOST}/oauth2/authorization/kakao?redirect_uri=${process.env.VUE_APP_APP_DOMAIN}/token`;
-			window.open(url, '_self'); // "_self"를 사용하여 동일한 창에서 탐색
+			window.open(
+				`${process.env.VUE_APP_API_HOST}/oauth2/authorization/kakao?redirect_uri=${process.env.VUE_APP_APP_DOMAIN}/token`
+			);
+			// 저장된 쿼리를 가져와서 원래 페이지로 리디렉션
+			const currentQuery = sessionStorage.getItem('currentQuery');
+			if (currentQuery) {
+				const parsedQuery = JSON.parse(currentQuery);
+				this.$router.push({ path: '/', query: parsedQuery });
+				localStorage.removeItem('currentQuery'); // 사용 후 쿼리 제거
+			}
 		},
 	},
 };

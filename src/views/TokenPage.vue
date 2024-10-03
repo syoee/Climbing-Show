@@ -13,7 +13,6 @@ export default {
 		};
 	},
 
-	// 컴포넌트가 생성될 때 URL에서 토큰을 가져와 저장
 	created() {
 		const token = this.$route.query.token; // URL 쿼리에서 토큰 생성
 
@@ -22,9 +21,10 @@ export default {
 			localStorage.setItem('token', token);
 			this.token = token;
 
-			this.$router.push('/');
+			window.close();
 		} else {
-			console.error('토큰을 받을 수 없습니다');
+			alert('로그인에 실패했습니다.');
+			window.close();
 		}
 	},
 };
