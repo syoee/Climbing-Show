@@ -77,7 +77,7 @@ export default {
 				const query = this.$route.query;
 				console.log(path);
 				console.log(query);
-				// 현재 쿼리를 로컬 스토리지에 저장하고 로그인 페이지로 이동
+				// 현재 쿼리를 세션 스토리지에 저장하고 로그인 페이지로 이동
 				sessionStorage.setItem('currentQuery', JSON.stringify(path + query));
 				this.$router.push('/login');
 			} else {
