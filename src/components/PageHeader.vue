@@ -75,10 +75,16 @@ export default {
 			if (this.token === null) {
 				const path = this.$route.path;
 				const query = this.$route.query;
-				console.log(path);
-				console.log(query);
-				// 현재 쿼리를 세션 스토리지에 저장하고 로그인 페이지로 이동
-				sessionStorage.setItem('currentQuery', JSON.stringify(path + query));
+				// query 객체를 URLSearchParams로 변환
+				const queryString = query ? new URLSearchParams(query).toString() : '';
+
+				// 쿼리 문자열을 포함한 현재 경로를 로컬 스토리지에 저장
+				const fullPath = queryString
+					? `${path}?${decodeURIComponent(queryString)}`
+					: path;
+
+				localStorage.setItem('currentQuery', fullPath);
+
 				this.$router.push('/login');
 			} else {
 				this.token = null;

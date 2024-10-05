@@ -10,14 +10,15 @@
 export default {
 	methods: {
 		goKakaoLogin() {
+			// 카카오 로그인 창 열기
 			window.open(
 				`${process.env.VUE_APP_API_HOST}/oauth2/authorization/kakao?redirect_uri=${process.env.VUE_APP_APP_DOMAIN}/token`
 			);
+
 			// 저장된 쿼리를 가져와서 원래 페이지로 리디렉션
-			const currentQuery = sessionStorage.getItem('currentQuery');
+			const currentQuery = localStorage.getItem('currentQuery');
 			if (currentQuery) {
-				const parsedQuery = JSON.parse(currentQuery);
-				this.$router.push({ path: '/', query: parsedQuery });
+				this.$router.push(currentQuery); // currentQuery는 "/search?q=서울" 형태로 저장되어 있음
 				localStorage.removeItem('currentQuery'); // 사용 후 쿼리 제거
 			}
 		},
