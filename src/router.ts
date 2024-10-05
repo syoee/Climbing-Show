@@ -4,7 +4,7 @@ import ErrorPage from './views/ErrorPage.vue';
 import SearchPage from './views/SearchPage.vue';
 import DetailPage from './views/DetailPage.vue';
 import LoginPage from './views/LoginPage.vue';
-import SignUpPage from './views/SignUpPage.vue';
+import TokenPage from './views/TokenPage.vue';
 
 const routes = [
 	{
@@ -24,13 +24,13 @@ const routes = [
 	},
 	{
 		path: '/login',
-		name: 'LoginPage',
+		name: 'loginPage',
 		component: LoginPage,
 	},
 	{
-		path: '/signup',
-		name: 'SignUpPage',
-		component: SignUpPage,
+		path: '/token',
+		name: 'TokenPage',
+		component: TokenPage,
 	},
 	{
 		path: '/:pathMatch(.*)*',

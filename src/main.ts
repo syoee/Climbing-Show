@@ -8,3 +8,5 @@ const app = createApp(App);
 app.use(router);
 app.config.globalProperties.$axios = axios;
 app.mount('#app');
+
+window.Kakao.init(`${process.env.VUE_APP_KAKAO_REST_KEY}`);
