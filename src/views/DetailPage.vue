@@ -9,6 +9,18 @@
 						class="w-full h-full object-cover rounded-lg"
 					/>
 				</div>
+				<ul class="mt-7">
+					<li class="mb-3 text-xl text-[#0077ff] font-bold">
+						실내 클라이밍장 조회 순위
+					</li>
+					<li
+						class="font-semibold"
+						v-for="(sortedCenter, index) in sortedCenters"
+						:key="index"
+					>
+						{{ index + 1 }}. {{ sortedCenter.name }}: {{ sortedCenter.hit }}
+					</li>
+				</ul>
 			</div>
 			<div class="w-5/6">
 				<KakaoMap :locations="searchLocations" />
@@ -36,7 +48,16 @@ export default {
 		return {
 			id: null,
 			center: null,
+			token: null,
+			centers: [], // 여러 센터의 데이터를 저장
 		};
+	},
+
+	created() {
+		const userToken = localStorage.getItem('token');
+		if (userToken) {
+			this.token = userToken;
+		}
 	},
 
 	computed: {
@@ -52,21 +73,48 @@ export default {
 				  ]
 				: [];
 		},
+
+		// 조회수에 따라 센터 리스트를 정렬하는 computed 속성
+		sortedCenters() {
+			return this.centers.slice().sort((a, b) => b.hit - a.hit);
+		},
 	},
 
 	mounted() {
 		this.id = this.$route.params.id;
 		this.fetchData();
+		this.fetchCenters(); // 여러 센터 데이터를 가져오는 함수 호출
 	},
 
 	methods: {
 		async fetchData() {
 			try {
 				const res = await axios.get(
-					`${process.env.VUE_APP_API_HOST}/climbing-infos/${this.id}`
+					`${process.env.VUE_APP_API_HOST}/climbing-infos/${this.id}`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
 				);
 				// API로부터 받은 데이터를 center 저장
 				this.center = res.data;
+			} catch (err) {
+				console.log('error', err);
+			}
+		},
+		async fetchCenters() {
+			try {
+				const res = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/dashboards/top-rank`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+				// API로부터 받은 여러 센터 데이터를 centers에 저장
+				this.centers = res.data;
 			} catch (err) {
 				console.log('error', err);
 			}
