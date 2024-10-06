@@ -62,6 +62,18 @@ export default {
 								beginAtZero: true,
 							},
 						},
+						plugins: {
+							tooltip: {
+								callbacks: {
+									label: function () {
+										return ''; // 툴팁에서 라벨 제거
+									},
+								},
+							},
+							legend: {
+								display: false, // 범례 숨기기
+							},
+						},
 					},
 				});
 			} catch (error) {
