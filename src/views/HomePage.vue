@@ -35,7 +35,7 @@
 		>
 			재검색
 		</button>
-		<BarChart />
+		<BarChart class="w-[90vh] h-[50vh] sm:w-[50vh] md:w-[70vh]" />
 	</div>
 </template>
 

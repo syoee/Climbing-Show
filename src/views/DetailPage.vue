@@ -9,6 +9,14 @@
 						class="w-full h-full object-cover rounded-lg"
 					/>
 				</div>
+				<ul class="mt-5">
+					<li>실내 클라이밍장 조회 순위</li>
+					<li>{{ center.name }}: {{ center.hit }}</li>
+					<li>{{ center.name }}: {{ center.hit }}</li>
+					<li>{{ center.name }}: {{ center.hit }}</li>
+					<li>{{ center.name }}: {{ center.hit }}</li>
+					<li>{{ center.name }}: {{ center.hit }}</li>
+				</ul>
 			</div>
 			<div class="w-5/6">
 				<KakaoMap :locations="searchLocations" />
@@ -36,7 +44,15 @@ export default {
 		return {
 			id: null,
 			center: null,
+			token: null,
 		};
+	},
+
+	created() {
+		const userToken = localStorage.getItem('token');
+		if (userToken) {
+			this.token = userToken;
+		}
 	},
 
 	computed: {
@@ -63,7 +79,12 @@ export default {
 		async fetchData() {
 			try {
 				const res = await axios.get(
-					`${process.env.VUE_APP_API_HOST}/climbing-infos/${this.id}`
+					`${process.env.VUE_APP_API_HOST}/climbing-infos/${this.id}`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
 				);
 				// API로부터 받은 데이터를 center 저장
 				this.center = res.data;
