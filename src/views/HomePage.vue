@@ -35,16 +35,19 @@
 		>
 			재검색
 		</button>
+		<BarChart class="w-[90vh] h-[50vh] sm:w-[50vh] md:w-[70vh]" />
 	</div>
 </template>
 
 <script>
 import KakaoMap from '@/components/KakaoMap.vue';
+import BarChart from '@/components/charts/BarChart.vue';
 import axios from 'axios';
 
 export default {
 	components: {
 		KakaoMap,
+		BarChart,
 	},
 
 	data() {
