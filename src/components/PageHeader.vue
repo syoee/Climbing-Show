@@ -39,14 +39,10 @@
 export default {
 	data() {
 		return {
-			searchQuery: '',
-			token: null,
+			searchQuery: '', // 검색어 저장
+			token: localStorage.getItem('token') || null, // 토큰을 데이터에서 초기화하여 반응성 확보
 			currentQuery: null, // 현재 페이지의 쿼리를 저장할 변수
 		};
-	},
-
-	created() {
-		this.token = localStorage.getItem('token');
 	},
 
 	watch: {
@@ -62,6 +58,7 @@ export default {
 
 	computed: {
 		tokenButton() {
+			// 토큰 상태에 따라 버튼 텍스트 변경
 			return this.token === null ? '로그인' : '로그아웃';
 		},
 	},
@@ -73,6 +70,7 @@ export default {
 		},
 		goLogin() {
 			if (this.token === null) {
+				// 로그인하지 않은 경우
 				const path = this.$route.path;
 				const query = this.$route.query;
 				// query 객체를 URLSearchParams로 변환
@@ -83,10 +81,10 @@ export default {
 					? `${path}?${decodeURIComponent(queryString)}`
 					: path;
 
-				localStorage.setItem('currentQuery', fullPath);
-
-				this.$router.push('/login');
+				localStorage.setItem('currentQuery', fullPath); // 현재 경로를 저장
+				this.$router.push('/login'); // 로그인 페이지로 이동
 			} else {
+				// 로그아웃 처리
 				this.token = null;
 				localStorage.removeItem('token');
 				alert('로그아웃 되었습니다.');
@@ -94,6 +92,7 @@ export default {
 		},
 		goSearch() {
 			if (this.searchQuery.trim() !== '') {
+				// 검색어가 있을 경우 검색 페이지로 이동
 				this.$router.push({ path: '/search', query: { q: this.searchQuery } });
 			}
 		},
