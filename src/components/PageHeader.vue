@@ -40,24 +40,13 @@ export default {
 	data() {
 		return {
 			searchQuery: '',
-			token: null,
+			token: localStorage.getItem('token') || null, // 토큰을 데이터에서 초기화하여 반응성 확보
 			currentQuery: null, // 현재 페이지의 쿼리를 저장할 변수
 		};
 	},
 
 	created() {
 		this.token = localStorage.getItem('token');
-	},
-
-	watch: {
-		token(newValue) {
-			// token 값이 변할 때마다 localStorage에 저장
-			if (newValue === null) {
-				localStorage.removeItem('token');
-			} else {
-				localStorage.setItem('token', newValue);
-			}
-		},
 	},
 
 	computed: {
@@ -92,6 +81,7 @@ export default {
 				alert('로그아웃 되었습니다.');
 			}
 		},
+
 		goSearch() {
 			if (this.searchQuery.trim() !== '') {
 				this.$router.push({ path: '/search', query: { q: this.searchQuery } });
