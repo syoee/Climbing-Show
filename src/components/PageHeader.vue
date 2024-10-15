@@ -77,7 +77,7 @@ export default {
 			this.$router.push('/');
 		},
 
-		// 로그인 또는 로그아웃 메소드
+		// 로그인, 로그아웃 메소드
 		goLogin() {
 			if (this.token === null) {
 				// 현재 경로와 쿼리 저장
