@@ -40,39 +40,47 @@ export default {
 	data() {
 		return {
 			searchQuery: '',
-			token: null,
+			token: localStorage.getItem('token') || null, // 토큰을 데이터에서 초기화하여 반응성 확보
 			currentQuery: null, // 현재 페이지의 쿼리를 저장할 변수
 		};
 	},
 
 	created() {
+		// 컴포넌트가 생성될 때 로컬 스토리지에서 토큰을 가져와 설정
 		this.token = localStorage.getItem('token');
+		this.updateTokenButton(); // 토큰 값에 따라 버튼 텍스트 업데이트
 	},
 
 	watch: {
-		token(newValue) {
-			// token 값이 변할 때마다 localStorage에 저장
-			if (newValue === null) {
-				localStorage.removeItem('token');
-			} else {
-				localStorage.setItem('token', newValue);
-			}
+		// 토큰 값이 변경될 때마다 호출
+		token() {
+			this.updateTokenButton();
 		},
 	},
 
 	computed: {
+		// 토큰 값에 따라 버튼 텍스트를 동적으로 반환
 		tokenButton() {
 			return this.token === null ? '로그인' : '로그아웃';
 		},
 	},
 
 	methods: {
+		// 버튼 텍스트를 업데이트하는 메소드
+		updateTokenButton() {
+			this.tokenButton = this.token === null ? '로그인' : '로그아웃';
+		},
+
+		// 홈으로 이동하는 메소드
 		goHome() {
 			this.searchQuery = '';
 			this.$router.push('/');
 		},
+
+		// 로그인, 로그아웃 메소드
 		goLogin() {
 			if (this.token === null) {
+				// 현재 경로와 쿼리 저장
 				const path = this.$route.path;
 				const query = this.$route.query;
 				// query 객체를 URLSearchParams로 변환
@@ -85,13 +93,15 @@ export default {
 
 				localStorage.setItem('currentQuery', fullPath);
 
-				this.$router.push('/login');
+				this.$router.push('/login'); // 로그인 페이지로 이동
 			} else {
-				this.token = null;
-				localStorage.removeItem('token');
-				alert('로그아웃 되었습니다.');
+				this.token = null; // 토큰 값 제거
+				localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
+				alert('로그아웃 되었습니다.'); // 로그아웃 알림
 			}
 		},
+
+		// 검색 메소드
 		goSearch() {
 			if (this.searchQuery.trim() !== '') {
 				this.$router.push({ path: '/search', query: { q: this.searchQuery } });

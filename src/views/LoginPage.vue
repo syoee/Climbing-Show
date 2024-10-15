@@ -9,6 +9,7 @@
 <script>
 export default {
 	methods: {
+		// 카카오 로그인 메소드
 		goKakaoLogin() {
 			// 카카오 로그인 창 열기
 			window.open(
@@ -18,7 +19,7 @@ export default {
 			// 저장된 쿼리를 가져와서 원래 페이지로 리디렉션
 			const currentQuery = localStorage.getItem('currentQuery');
 			if (currentQuery) {
-				this.$router.push(currentQuery); // currentQuery는 "/search?q=서울" 형태로 저장되어 있음
+				this.$router.push(currentQuery); // 저장된 쿼리로 이동
 				localStorage.removeItem('currentQuery'); // 사용 후 쿼리 제거
 			}
 		},
