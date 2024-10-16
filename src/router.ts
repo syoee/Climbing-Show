@@ -5,6 +5,7 @@ import SearchPage from './views/SearchPage.vue';
 import DetailPage from './views/DetailPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import TokenPage from './views/TokenPage.vue';
+import CrewListPage from './views/CrewListPage.vue';
 
 const routes = [
 	{
@@ -21,6 +22,11 @@ const routes = [
 		path: '/detail/:id',
 		name: 'DetailPage',
 		component: DetailPage,
+	},
+	{
+		path: '/list',
+		name: 'CrewListPage',
+		component: CrewListPage,
 	},
 	{
 		path: '/login',
