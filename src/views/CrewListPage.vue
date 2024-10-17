@@ -31,7 +31,7 @@
 				@click="redirectToGoogleForm"
 				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
 			>
-				등록하기
+				크루 등록
 			</button>
 		</div>
 	</div>
