@@ -56,6 +56,7 @@ export default {
 				'스타벅스 크루',
 				'손상원 크루',
 				'오프더월 크루',
+				'마지막 크루',
 			],
 			itemsPerPage: 10, // 페이지당 아이템 수
 			currentPage: 1, // 현재 페이지
