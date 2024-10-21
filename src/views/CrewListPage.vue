@@ -5,7 +5,7 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
+				class="mx-5 pb-5 flex justify-start border-solid border-b-2 cursor-pointer"
 			>
 				{{ item.name }}
 			</li>
@@ -17,7 +17,7 @@
 				:key="page"
 				@click="currentPage = page"
 				:class="{
-					'bg-blue-500 text-white': currentPage === page,
+					'bg-[#015ECC] text-white': currentPage === page,
 					'bg-gray-200': currentPage !== page,
 				}"
 				class="px-3 py-2 rounded-lg"
@@ -50,6 +50,17 @@ export default {
 		};
 	},
 
+	// {
+	//           "id": 1,
+	//           "name": "암벽등반러",
+	//           "description": null,
+	//           "profile": null,
+	//           "limit_member": 30,
+	//           "created_at": null,
+	//           "crew_owner_member": null,
+	//           "crew_maintainer_member": null
+	//       },
+
 	computed: {
 		// 현재 페이지에 맞는 아이템 리스트 반환
 		paginatedItems() {
@@ -75,15 +86,30 @@ export default {
 		},
 
 		// 크루 페이지로 이동
-		goToCrewPage(boardId) {
-			this.$router.push({ path: `/boards/${boardId}` });
+		goToCrewPage(crewId) {
+			this.$router.push({ path: `/crew-infos/${crewId}` });
 		},
 
 		// API를 통해 데이터 가져오기
 		async getData() {
+			// 현재 라우트의 쿼리 매개변수에서 검색 쿼리(q)를 가져옴
+			const crewSearch = this.$route.query.q || '';
+
+			// 검색어가 2글자 이상인지 확인
+			if (crewSearch.length < 2) {
+				alert('2글자 이상 검색해주세요.');
+				return;
+			}
+
 			try {
 				const response = await axios.get(
-					`${process.env.VUE_APP_API_HOST}/boards`
+					`${process.env.VUE_APP_API_HOST}/crew-infos`,
+					{
+						params: {
+							searchType: 'NAME',
+							searchValue: crewSearch,
+						},
+					}
 				);
 				// API에서 데이터를 받아서 items에 저장
 				this.items = response.data;

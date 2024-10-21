@@ -24,7 +24,7 @@ const routes = [
 		component: DetailPage,
 	},
 	{
-		path: '/boards',
+		path: '/crew-infos',
 		name: 'CrewListPage',
 		component: CrewListPage,
 	},
