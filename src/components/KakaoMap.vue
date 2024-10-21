@@ -90,9 +90,9 @@ export default {
 				// 위치의 종류에 따라 다른 이미지 사용
 				let imageSrc;
 				if (location.type === 'current') {
-					imageSrc = require('@/assets/mymarker.png'); // 현재 위치용 이미지
+					imageSrc = require('@/assets/icons/mymarker.png'); // 현재 위치용 이미지
 				} else {
-					imageSrc = require('@/assets/marker.png'); // 기본 마커 이미지
+					imageSrc = require('@/assets/icons/marker.png'); // 기본 마커 이미지
 				}
 
 				const imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기

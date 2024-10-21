@@ -5,7 +5,7 @@
 		>
 			지금 나의 주위에 있는 암장은?
 		</div>
-		<!-- 로딩 스피너 -->
+		로딩 스피너
 		<div
 			v-if="isLoading"
 			class="w-[90vh] h-[50vh] mb-10 flex items-center justify-center"
@@ -14,7 +14,7 @@
 				class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"
 			></div>
 		</div>
-		<!-- 지도 -->
+		<!-- 지도
 		<div v-else class="w-[90vh] h-[50vh] mb-10 sm:w-[50vh] md:w-[70vh]">
 			<KakaoMap
 				v-if="mapLocations.length > 0"
@@ -25,7 +25,7 @@
 				@mapMoved="onMapMoved"
 				:currentCenter="currentCenter"
 			/>
-		</div>
+		</div> -->
 
 		<!-- 재검색 버튼 -->
 		<button
@@ -35,19 +35,19 @@
 		>
 			재검색
 		</button>
-		<BarChart class="w-[90vh] h-[50vh] sm:w-[50vh] md:w-[70vh]" />
+		<!-- <BarChart class="w-[90vh] h-[50vh] sm:w-[50vh] md:w-[70vh]" /> -->
 	</div>
 </template>
 
 <script>
-import KakaoMap from '@/components/KakaoMap.vue';
-import BarChart from '@/components/charts/BarChart.vue';
+// import KakaoMap from '@/components/KakaoMap.vue';
+// import BarChart from '@/components/charts/BarChart.vue';
 import axios from 'axios';
 
 export default {
 	components: {
-		KakaoMap,
-		BarChart,
+		// KakaoMap,
+		// BarChart,
 	},
 
 	data() {
