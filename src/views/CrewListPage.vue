@@ -2,12 +2,12 @@
 	<div>
 		<ul class="grid gap-4 text-xl">
 			<li
-				v-for="(item, index) in paginatedItems"
-				:key="index"
-				@click="goToCrewPage(index)"
-				class="mx-5 pb-5 border-solid border-b-2"
+				v-for="item in paginatedItems"
+				:key="item.id"
+				@click="goToCrewPage(item.id)"
+				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
 			>
-				{{ item }}
+				{{ item.name }}
 			</li>
 		</ul>
 
@@ -31,38 +31,25 @@
 				@click="redirectToGoogleForm"
 				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
 			>
-				크루 등록
+				등록하기
 			</button>
 		</div>
 	</div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
 	data() {
 		return {
-			// 전체 데이터 (크루 리스트)
-			items: [
-				'별더링 크루',
-				'뉴비 크루',
-				'산타 크루',
-				'나이키 크루',
-				'프로 크루',
-				'걸스온탑 크루',
-				'서울숲 크루',
-				'더클라임 크루',
-				'알레 크루',
-				'피커스 크루',
-				'스타벅스 크루',
-				'손상원 크루',
-				'오프더월 크루',
-				'마지막 크루',
-			],
+			items: [], // API에서 받아올 데이터를 저장할 배열
 			itemsPerPage: 10, // 페이지당 아이템 수
 			currentPage: 1, // 현재 페이지
 			googleFormUrl: 'https://docs.google.com/forms/d/구글폼아이디/viewform', // 구글 폼 URL
 		};
 	},
+
 	computed: {
 		// 현재 페이지에 맞는 아이템 리스트 반환
 		paginatedItems() {
@@ -75,14 +62,34 @@ export default {
 			return Math.ceil(this.items.length / this.itemsPerPage);
 		},
 	},
+
+	created() {
+		// 컴포넌트가 생성될 때 API 호출
+		this.getData();
+	},
+
 	methods: {
 		// 구글 폼으로 리디렉션
 		redirectToGoogleForm() {
 			window.location.href = this.googleFormUrl;
 		},
 
-		goToCrewPage(index) {
-			this.$router.push(`/crew/${index}`);
+		// 크루 페이지로 이동
+		goToCrewPage(boardId) {
+			this.$router.push({ path: `/boards/${boardId}` });
+		},
+
+		// API를 통해 데이터 가져오기
+		async getData() {
+			try {
+				const response = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/boards`
+				);
+				// API에서 데이터를 받아서 items에 저장
+				this.items = response.data;
+			} catch (error) {
+				console.error('데이터 가져오는 중 오류 발생:', error);
+			}
 		},
 	},
 };
