@@ -1,38 +1,23 @@
 <template>
-	<div class="m-5 grid grid-cols-3">
+	<div class="mx-5 my-3 grid grid-cols-2">
 		<div class="flex justify-start">
 			<button
 				@click="goHome"
 				class="text-[#0077ff] text-4xl sm:text-sm md:text-xl font-bold"
 			>
-				Climbing Show
+				클라이밍 Show
 			</button>
 		</div>
-		<div class="flex justify-center sm:h-10 sm:text-xs sm:justify-between">
-			<input
-				@keyup.enter="goSearch"
-				v-model="searchQuery"
-				type="text"
-				placeholder="암장을 검색해보세요!"
-				class="w-2/3 pl-2 border-2 border-gray-400 rounded-lg sm:w-32"
-			/>
-			<button
-				@click="goSearch"
-				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:w-1/6"
-			>
-				검 색
-			</button>
-		</div>
+
 		<div class="flex justify-end">
 			<button
 				@click="goLogin"
-				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
+				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:text-sm md:text-xl"
 			>
 				{{ tokenButton }}
 			</button>
 		</div>
 	</div>
-	<hr class="mb-5" />
 </template>
 
 <script>
@@ -98,13 +83,6 @@ export default {
 				this.token = null; // 토큰 값 제거
 				localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
 				alert('로그아웃 되었습니다.'); // 로그아웃 알림
-			}
-		},
-
-		// 검색 메소드
-		goSearch() {
-			if (this.searchQuery.trim() !== '') {
-				this.$router.push({ path: '/search', query: { q: this.searchQuery } });
 			}
 		},
 	},
