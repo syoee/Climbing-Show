@@ -1,5 +1,5 @@
 <template>
-	<div class="mx-5 my-3 grid grid-cols-2">
+	<div class="mx-5 mt-3 mb-5 grid grid-cols-2">
 		<div class="flex justify-start">
 			<button
 				@click="goHome"
