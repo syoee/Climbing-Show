@@ -6,6 +6,7 @@ import DetailPage from './views/DetailPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import TokenPage from './views/TokenPage.vue';
 import CrewListPage from './views/CrewListPage.vue';
+import CrewPage from './views/CrewPage.vue';
 
 const routes = [
 	{
@@ -27,6 +28,11 @@ const routes = [
 		path: '/crew-infos',
 		name: 'CrewListPage',
 		component: CrewListPage,
+	},
+	{
+		path: '/crew-infos/:id',
+		name: 'CrewPage',
+		component: CrewPage,
 	},
 	{
 		path: '/login',
