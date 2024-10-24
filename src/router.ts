@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from './views/HomePage.vue';
-import ErrorPage from './views/ErrorPage.vue';
-import SearchPage from './views/SearchPage.vue';
-import DetailPage from './views/DetailPage.vue';
-import LoginPage from './views/LoginPage.vue';
-import TokenPage from './views/TokenPage.vue';
+import GymListPage from './views/GymListPage.vue';
+import GymPage from './views/GymPage.vue';
 import CrewListPage from './views/CrewListPage.vue';
 import CrewPage from './views/CrewPage.vue';
+import LoginPage from './views/LoginPage.vue';
+import TokenPage from './views/TokenPage.vue';
+import ErrorPage from './views/ErrorPage.vue';
 
 const routes = [
 	{
@@ -15,14 +15,14 @@ const routes = [
 		component: HomePage,
 	},
 	{
-		path: '/search',
-		name: 'SearchPage',
-		component: SearchPage,
+		path: '/gymList',
+		name: 'GymListPage',
+		component: GymListPage,
 	},
 	{
-		path: '/detail/:id',
-		name: 'DetailPage',
-		component: DetailPage,
+		path: '/gym/:id',
+		name: 'GymPage',
+		component: GymPage,
 	},
 	{
 		path: '/crew-infos',

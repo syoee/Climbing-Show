@@ -78,8 +78,6 @@ export default {
 				case '/my-page':
 					this.selectedButton = 'myPage';
 					break;
-				default:
-					this.selectedButton = null;
 			}
 		},
 	},
