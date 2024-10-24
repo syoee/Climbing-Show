@@ -26,7 +26,7 @@
 			</button>
 		</div>
 
-		<div class="absolute bottom-5 right-5">
+		<div class="absolute bottom-20 right-5">
 			<button
 				@click="redirectToGoogleForm"
 				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"

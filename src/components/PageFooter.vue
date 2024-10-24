@@ -61,6 +61,27 @@ export default {
 			myPageClickedImage: require('@/assets/icons/mypageclick.png'),
 		};
 	},
+
+	watch: {
+		// 경로가 변경될 때마다 selectedButton 업데이트
+		'$route.path'(newPath) {
+			switch (newPath) {
+				case '/':
+					this.selectedButton = 'home';
+					break;
+				case '/crew-infos':
+					this.selectedButton = 'crewList';
+					break;
+				case '/search':
+					this.selectedButton = 'gym';
+					break;
+				case '/my-page':
+					this.selectedButton = 'myPage';
+					break;
+			}
+		},
+	},
+
 	methods: {
 		goTo(page) {
 			this.selectedButton = page; // 클릭된 버튼을 선택된 상태로 변경
