@@ -61,6 +61,7 @@ export default {
 			myPageClickedImage: require('@/assets/icons/mypageclick.png'),
 		};
 	},
+
 	methods: {
 		goTo(page) {
 			this.selectedButton = page; // 클릭된 버튼을 선택된 상태로 변경

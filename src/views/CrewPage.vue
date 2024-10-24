@@ -1,7 +1,18 @@
 <template>
 	<div>
 		<div v-if="crew">
-			{{ crew.name }}
+			<div>
+				{{ crew.profile }}
+			</div>
+			<div>
+				{{ crew.name }}
+			</div>
+			<div>
+				{{ crew.description }}
+			</div>
+			<div>최고 가능 인원: {{ crew.limit_member }}</div>
+			<div>크루 창설 날짜: {{ formattedDate }}</div>
+			<div>크루장: {{ crew.crew_owner_member.name }}</div>
 		</div>
 	</div>
 </template>
@@ -14,6 +25,7 @@ export default {
 			id: null,
 			token: null,
 			crew: null,
+			formattedDate: null,
 		};
 	},
 
@@ -42,6 +54,14 @@ export default {
 				);
 				// API로부터 받은 데이터를 center 저장
 				this.crew = res.data;
+
+				// crew 생성일 년월일 나오게 해주는 함수
+				if (this.crew.created_at) {
+					const date = new Date(this.crew.created_at);
+					this.formattedDate = `${date.getFullYear()}년 ${String(
+						date.getMonth() + 1
+					).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`;
+				}
 			} catch (err) {
 				console.log('error', err);
 			}
