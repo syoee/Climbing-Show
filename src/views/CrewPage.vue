@@ -13,6 +13,10 @@
 			<div>최고 가능 인원: {{ crew.limit_member }}</div>
 			<div>크루 창설 날짜: {{ formattedDate }}</div>
 			<div>크루장: {{ crew.crew_owner_member.name }}</div>
+			<button class="w-1/6 bg-blue-600 text-white rounded-xl">수정</button>
+			<p>
+				<button class="w-1/6 bg-blue-600 text-white rounded-xl">가입</button>
+			</p>
 		</div>
 	</div>
 </template>
