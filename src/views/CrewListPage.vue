@@ -5,9 +5,16 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-5 flex justify-start border-solid border-b-2 cursor-pointer"
+				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
 			>
-				{{ item.name }}
+				<div class="text-3xl">
+					{{ item.name }}
+					<div
+						class="flex flex-row justify-end items-end text-sm text-gray-400"
+					>
+						탭하여 자세한 정보 보기
+					</div>
+				</div>
 			</li>
 		</ul>
 
