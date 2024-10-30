@@ -1,57 +1,75 @@
 <template>
 	<div>
-		<div v-if="crew && crew.name">
-			<div>
-				<label for="name">크루 이름:</label>
+		<div class="mx-3" v-if="crew && crew.name">
+			<img
+				:src="crew.profile"
+				alt="profile"
+				class="w-1/4 mb-5 aspect-square object-cover rounded-full"
+			/>
+			<div class="mb-2">
 				<input
 					v-if="isEditing"
 					v-model="updatedCrew.name"
 					type="text"
 					id="name"
-					class="border rounded-md"
+					class="text-3xl font-bold border rounded-md"
 				/>
-				<span v-else>{{ crew.name }}</span>
+				<span v-else class="text-3xl font-bold">{{ crew.name }}</span>
 			</div>
-			<div>
-				<label for="description">크루 설명:</label>
+			<div class="mb-7">
 				<textarea
 					v-if="isEditing"
 					v-model="updatedCrew.description"
 					id="description"
-					class="border rounded-md"
+					class="w-full text-xl border rounded-md"
 				></textarea>
-				<span v-else>{{ crew.description }}</span>
+				<span v-else class="text-xl">{{ crew.description }}</span>
 			</div>
 
-			<div>최고 가능 인원: {{ crew.limit_member }}</div>
-			<div>크루 창설 날짜: {{ formattedDate }}</div>
-			<div>크루장: {{ crew.crew_owner_member.name }}</div>
+			<div class="text-lg">
+				크루장:
+				<span class="font-bold text-[#0077ff]">
+					{{ crew.crew_owner_member.name }}
+				</span>
+			</div>
 
-			<button
-				v-if="!isEditing"
-				class="w-1/6 bg-blue-600 text-white rounded-xl"
-				@click="startEditing"
-			>
-				수정
-			</button>
-			<button
-				v-if="isEditing"
-				class="w-1/6 bg-green-600 text-white rounded-xl"
-				@click="saveChanges"
-			>
-				저장
-			</button>
-			<button
-				v-if="isEditing"
-				class="w-1/6 bg-red-600 text-white rounded-xl ml-2"
-				@click="cancelEditing"
-			>
-				취소
-			</button>
+			<div>크루 창설일: {{ formattedDate }}</div>
 
-			<p>
-				<button class="w-1/6 bg-blue-600 text-white rounded-xl">가입</button>
-			</p>
+			<div
+				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
+			>
+				<button
+					v-if="!isEditing"
+					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+					@click="startEditing"
+				>
+					수 정
+				</button>
+				<button
+					v-if="!isEditing"
+					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+				>
+					가 입
+				</button>
+			</div>
+			<div
+				class="h-[4vh] grid grid-cols-2 justify-items-center button-container"
+			>
+				<button
+					v-if="isEditing"
+					class="w-1/2 bg-green-600 text-white rounded-3xl"
+					@click="saveChanges"
+				>
+					저 장
+				</button>
+				<button
+					v-if="isEditing"
+					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
+					@click="cancelEditing"
+				>
+					취 소
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -102,9 +120,9 @@ export default {
 				this.updatedCrew = { ...this.crew };
 				if (this.crew.created_at) {
 					const date = new Date(this.crew.created_at);
-					this.formattedDate = `${date.getFullYear()}년 ${String(
+					this.formattedDate = `${date.getFullYear()}. ${String(
 						date.getMonth() + 1
-					).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`;
+					).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}`;
 				}
 			} catch (err) {
 				console.error('API 호출 중 오류 발생:', err);
