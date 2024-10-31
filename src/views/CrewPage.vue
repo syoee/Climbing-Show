@@ -36,34 +36,28 @@
 			<div>크루 창설일: {{ formattedDate }}</div>
 
 			<div
+				v-if="!isEditing"
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
 			>
 				<button
-					v-if="!isEditing"
 					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
 					@click="startEditing"
 				>
 					수 정
 				</button>
-				<button
-					v-if="!isEditing"
-					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
-				>
-					가 입
-				</button>
+				<button class="w-1/2 bg-[#0077ff] text-white rounded-3xl">가 입</button>
 			</div>
 			<div
-				class="h-[4vh] grid grid-cols-2 justify-items-center button-container"
+				v-if="isEditing"
+				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
 			>
 				<button
-					v-if="isEditing"
 					class="w-1/2 bg-green-600 text-white rounded-3xl"
 					@click="saveChanges"
 				>
 					저 장
 				</button>
 				<button
-					v-if="isEditing"
 					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
 					@click="cancelEditing"
 				>
