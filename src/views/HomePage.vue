@@ -6,24 +6,6 @@
 			클라이밍
 		</div>
 		show
-		<!-- <div class="flex justify-center sm:h-10 sm:text-xs sm:justify-between">
-			<input
-				@keyup.enter="goSearch"
-				v-model="searchQuery"
-				type="text"
-				placeholder="크루 검색"
-				class="w-2/3 pl-2 border-2 border-gray-400 rounded-lg sm:w-32"
-			/>
-			<button
-				@click="goSearch"
-				class="w-1/12 h-1/6 rounded-full hover:bg-[#015ECC] sm:w-1/6"
-			>
-				<img
-					src="https://velog.velcdn.com/images/syo_ee/post/31625dd1-f3a2-4155-b8ba-c435b898a535/image.ico"
-					alt="logo"
-				/>
-			</button>
-		</div> -->
 	</div>
 </template>
 

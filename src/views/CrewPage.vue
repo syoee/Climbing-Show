@@ -40,26 +40,39 @@
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
 			>
 				<button
-					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
 					@click="startEditing"
+					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
 				>
 					수 정
 				</button>
-				<button class="w-1/2 bg-[#0077ff] text-white rounded-3xl">가 입</button>
+				<button
+					v-if="!isJoined"
+					@click="crewReception"
+					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+				>
+					가 입
+				</button>
+				<button
+					v-else
+					@click="cancelReception"
+					class="w-1/2 bg-red-600 text-white rounded-3xl"
+				>
+					취 소
+				</button>
 			</div>
 			<div
 				v-if="isEditing"
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
 			>
 				<button
-					class="w-1/2 bg-green-600 text-white rounded-3xl"
 					@click="saveChanges"
+					class="w-1/2 bg-green-600 text-white rounded-3xl"
 				>
 					저 장
 				</button>
 				<button
-					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
 					@click="cancelEditing"
+					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
 				>
 					취 소
 				</button>
@@ -78,6 +91,7 @@ export default {
 			crew: null, // 크루 정보
 			formattedDate: null, // 형식화된 날짜
 			isEditing: false, // 수정 모드 여부
+			isJoined: false, // 가입 여부
 			updatedCrew: {
 				// 수정된 크루 정보를 임시 저장
 				name: '',
@@ -99,6 +113,53 @@ export default {
 	},
 
 	methods: {
+		// 크루 가입 신청
+		async crewReception() {
+			try {
+				await axios.post(
+					`${process.env.VUE_APP_API_HOST}/crew/receptions/${this.id}`,
+					{},
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`, // 헤더에 토큰 설정
+						},
+					}
+				);
+
+				alert(
+					'신청이 완료되었습니다.\n크루장, 부크루장의 승인이 되면 크루 가입이 완료됩니다.'
+				);
+				this.isJoined = true; // 가입 상태 업데이트
+			} catch (err) {
+				if (err.response && err.response.status === 400) {
+					alert('이미 신청한 크루입니다.');
+					this.isJoined = true; // 이미 가입 상태로 업데이트
+				} else {
+					console.error('API 호출 중 오류 발생:', err);
+					alert('가입 신청 중 오류가 발생했습니다.');
+				}
+			}
+		},
+
+		// 가입 취소 요청
+		async cancelReception() {
+			try {
+				await axios.delete(
+					`${process.env.VUE_APP_API_HOST}/crew/receptions/${this.id}`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+				alert('가입이 취소되었습니다.');
+				this.isJoined = false; // 가입 상태 업데이트
+			} catch (err) {
+				console.error('가입 취소 중 오류 발생:', err);
+				alert('가입 취소 중 오류가 발생했습니다.');
+			}
+		},
+
 		// 크루 데이터 가져오기
 		async crewData() {
 			try {
@@ -135,6 +196,7 @@ export default {
 			this.updatedCrew = { ...this.crew }; // 원래 데이터로 복원
 		},
 
+		// 크루 정보 수정
 		async saveChanges() {
 			try {
 				await axios.put(
