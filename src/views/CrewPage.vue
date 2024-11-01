@@ -46,9 +46,15 @@
 					수 정
 				</button>
 				<button
-					v-if="!isJoined"
+					v-if="status !== 'APPLY' && !crew.crew_member"
 					@click="crewReception"
-					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+					:disabled="crewMember"
+					:class="[
+						'w-1/2 rounded-3xl text-white',
+						crewMember
+							? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+							: 'bg-[#0077ff]',
+					]"
 				>
 					가 입
 				</button>
@@ -91,7 +97,8 @@ export default {
 			crew: null, // 크루 정보
 			formattedDate: null, // 형식화된 날짜
 			isEditing: false, // 수정 모드 여부
-			isJoined: false, // 가입 여부
+			status: null, // 신청 상태
+			crewMember: false, // 크루 멤버 여부
 			updatedCrew: {
 				// 수정된 크루 정보를 임시 저장
 				name: '',
@@ -110,6 +117,7 @@ export default {
 	mounted() {
 		this.id = this.$route.params.id;
 		this.crewData();
+		this.receptionCheck();
 	},
 
 	methods: {
@@ -129,11 +137,11 @@ export default {
 				alert(
 					'신청이 완료되었습니다.\n크루장, 부크루장의 승인이 되면 크루 가입이 완료됩니다.'
 				);
-				this.isJoined = true; // 가입 상태 업데이트
+				this.status = 'APPLY';
 			} catch (err) {
 				if (err.response && err.response.status === 400) {
 					alert('이미 신청한 크루입니다.');
-					this.isJoined = true; // 이미 가입 상태로 업데이트
+					this.status = 'APPLY';
 				} else {
 					console.error('API 호출 중 오류 발생:', err);
 					alert('가입 신청 중 오류가 발생했습니다.');
@@ -141,7 +149,7 @@ export default {
 			}
 		},
 
-		// 가입 취소 요청
+		// 크루 가입 취소 요청
 		async cancelReception() {
 			try {
 				await axios.delete(
@@ -153,10 +161,28 @@ export default {
 					}
 				);
 				alert('가입이 취소되었습니다.');
-				this.isJoined = false; // 가입 상태 업데이트
+				this.status = null;
 			} catch (err) {
 				console.error('가입 취소 중 오류 발생:', err);
 				alert('가입 취소 중 오류가 발생했습니다.');
+			}
+		},
+
+		// 크루 가입 신청 유무
+		async receptionCheck() {
+			try {
+				const check = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/crew/receptions/${this.id}/check`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+				this.status = check.data.status;
+				this.crewMember = check.data.crew_member;
+			} catch (err) {
+				console.error('가입 확인 중 오류 발생:', err);
 			}
 		},
 
