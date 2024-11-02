@@ -4,6 +4,7 @@ import GymListPage from './views/GymListPage.vue';
 import GymPage from './views/GymPage.vue';
 import CrewListPage from './views/CrewListPage.vue';
 import CrewPage from './views/CrewPage.vue';
+import ApplyListPage from './views/ApplyListPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import TokenPage from './views/TokenPage.vue';
 import ErrorPage from './views/ErrorPage.vue';
@@ -33,6 +34,11 @@ const routes = [
 		path: '/crew-infos/:id',
 		name: 'CrewPage',
 		component: CrewPage,
+	},
+	{
+		path: '/crew/receptions/manages/:id',
+		name: 'ApplyListPage',
+		component: ApplyListPage,
 	},
 	{
 		path: '/login',
