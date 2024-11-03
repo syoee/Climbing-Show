@@ -197,8 +197,10 @@ export default {
 						},
 					}
 				);
+
 				this.crew = res.data;
 				this.updatedCrew = { ...this.crew };
+
 				if (this.crew.created_at) {
 					const date = new Date(this.crew.created_at);
 					this.formattedDate = `${date.getFullYear()}. ${String(
