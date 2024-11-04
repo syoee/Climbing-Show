@@ -14,11 +14,13 @@
 				</div>
 				<div class="pt-3 col-span-2 flex justify-evenly items-center">
 					<button
+						@click="applyBtn(item.id)"
 						class="w-1/3 bg-[#0077ff] text-white aspect-square object-cover rounded-xl"
 					>
 						O
 					</button>
 					<button
+						@click="refuseBtn(item.id)"
 						class="w-1/3 bg-red-500 text-white aspect-square object-cover rounded-xl"
 					>
 						X
@@ -63,6 +65,7 @@ export default {
 		}
 	},
 	methods: {
+		//신청 정보
 		async applyData() {
 			try {
 				const manage = await axios.get(
@@ -82,6 +85,40 @@ export default {
 				} else {
 					console.error('에러 발생', error);
 				}
+			}
+		},
+
+		// 승인 버튼
+		async applyBtn(itemId) {
+			try {
+				await axios.post(
+					`${process.env.VUE_APP_API_HOST}/crew/receptions/manages/${itemId}`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+
+				alert('승인 완료되었습니다.');
+			} catch (error) {
+				console.error('에러 발생', error);
+			}
+		},
+		// 거절 버튼
+		async refuseBtn(itemId) {
+			try {
+				await axios.delete(
+					`${process.env.VUE_APP_API_HOST}/crew/receptions/manages/${itemId}`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+				alert('거절 완료되었습니다.');
+			} catch (error) {
+				console.error('에러 발생', error);
 			}
 		},
 		formatItemDate(dateString) {
