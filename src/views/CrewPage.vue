@@ -40,30 +40,47 @@
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
 			>
 				<button
+					v-if="
+						leader.authorization === 'OWNER' ||
+						leader.authorization === 'MAINTAINER'
+					"
 					@click="startEditing"
 					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
 				>
 					수 정
 				</button>
+
 				<button
-					v-if="status !== 'APPLY' && !crew.crew_member"
-					@click="crewReception"
-					:disabled="crewMember"
-					:class="[
-						'w-1/2 rounded-3xl text-white',
-						crewMember
-							? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-							: 'bg-[#0077ff]',
-					]"
+					v-if="
+						leader.authorization === 'OWNER' ||
+						leader.authorization === 'MAINTAINER'
+					"
+					@click="goApplyList"
+					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
 				>
-					가 입
+					신청 현황
 				</button>
+
 				<button
-					v-else
+					v-if="status === 'APPLY' && !crewMember"
 					@click="cancelReception"
 					class="w-1/2 bg-red-600 text-white rounded-3xl"
 				>
 					취 소
+				</button>
+			</div>
+			<div>
+				<button
+					v-if="
+						status !== 'APPLY' &&
+						!crewMember &&
+						leader !== 'OWNER' &&
+						leader !== 'MAINTAINER'
+					"
+					@click="crewReception"
+					class="w-full h-[5vh] bg-[#0077ff] text-xl text-white rounded-3xl"
+				>
+					가 입
 				</button>
 			</div>
 			<div
@@ -99,6 +116,7 @@ export default {
 			isEditing: false, // 수정 모드 여부
 			status: null, // 신청 상태
 			crewMember: false, // 크루 멤버 여부
+			leader: null, // 크루장, 부크루장 여부
 			updatedCrew: {
 				// 수정된 크루 정보를 임시 저장
 				name: '',
@@ -118,6 +136,7 @@ export default {
 		this.id = this.$route.params.id;
 		this.crewData();
 		this.receptionCheck();
+		this.authorityCheck();
 	},
 
 	methods: {
@@ -129,7 +148,7 @@ export default {
 					{},
 					{
 						headers: {
-							Authorization: `Bearer ${this.token}`, // 헤더에 토큰 설정
+							Authorization: `Bearer ${this.token}`,
 						},
 					}
 				);
@@ -186,6 +205,24 @@ export default {
 			}
 		},
 
+		// 크루장, 부크루장 유무 체크
+		async authorityCheck() {
+			try {
+				const authority = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/check`,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					}
+				);
+
+				this.leader = authority.data;
+			} catch (error) {
+				console.error('error', error);
+			}
+		},
+
 		// 크루 데이터 가져오기
 		async crewData() {
 			try {
@@ -211,6 +248,10 @@ export default {
 				console.error('API 호출 중 오류 발생:', err);
 				this.crew = null; // 데이터 로드 실패 시 crew를 null로 설정
 			}
+		},
+
+		goApplyList() {
+			this.$router.push(`/crew/receptions/manages/${this.id}`);
 		},
 
 		// 수정 모드 시작
@@ -239,6 +280,7 @@ export default {
 						},
 					}
 				);
+
 				// 수동으로 crew 데이터를 업데이트
 				this.crew = {
 					...this.crew,
