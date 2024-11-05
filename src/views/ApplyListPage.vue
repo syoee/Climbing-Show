@@ -93,6 +93,7 @@ export default {
 			try {
 				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/crew/receptions/manages/${itemId}`,
+					{},
 					{
 						headers: {
 							Authorization: `Bearer ${this.token}`,
@@ -105,6 +106,7 @@ export default {
 				console.error('에러 발생', error);
 			}
 		},
+
 		// 거절 버튼
 		async refuseBtn(itemId) {
 			try {
