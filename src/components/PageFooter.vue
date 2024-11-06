@@ -5,7 +5,7 @@
 				:src="selectedButton === 'home' ? homeClickedImage : homeDefaultImage"
 				alt="home image"
 				@click="goTo('home')"
-				class="w-1/2"
+				class="w-1/3"
 			/>
 		</div>
 		<div class="flex justify-center">
@@ -17,7 +17,7 @@
 				"
 				alt="crew list image"
 				@click="goTo('crewList')"
-				class="w-1/2"
+				class="w-1/3"
 			/>
 		</div>
 		<div class="flex justify-center">
@@ -25,7 +25,7 @@
 				:src="selectedButton === 'gym' ? gymClickedImage : gymDefaultImage"
 				alt="gym image"
 				@click="goTo('gym')"
-				class="w-1/2"
+				class="w-1/3"
 			/>
 		</div>
 	</div>

@@ -103,7 +103,7 @@ export default {
 
 	methods: {
 		goToDetail(centerId) {
-			this.$router.push(`/detail/${centerId}`);
+			this.$router.push(`/gym/${centerId}`);
 		},
 
 		// 검색 함수
