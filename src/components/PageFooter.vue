@@ -1,5 +1,5 @@
 <template>
-	<div class="mx-5 my-3 grid grid-cols-4 fixed bottom-0 left-0">
+	<div class="mx-5 my-3 grid grid-cols-3 fixed bottom-0 left-0">
 		<div class="flex justify-center">
 			<img
 				:src="selectedButton === 'home' ? homeClickedImage : homeDefaultImage"
@@ -28,16 +28,6 @@
 				class="w-1/2"
 			/>
 		</div>
-		<div class="flex justify-center">
-			<img
-				:src="
-					selectedButton === 'myPage' ? myPageClickedImage : myPageDefaultImage
-				"
-				alt="my page image"
-				@click="goTo('myPage')"
-				class="w-1/2"
-			/>
-		</div>
 	</div>
 </template>
 
@@ -56,9 +46,6 @@ export default {
 
 			gymDefaultImage: require('@/assets/icons/gym.png'),
 			gymClickedImage: require('@/assets/icons/gymclick.png'),
-
-			myPageDefaultImage: require('@/assets/icons/mypage.png'),
-			myPageClickedImage: require('@/assets/icons/mypageclick.png'),
 		};
 	},
 
@@ -74,9 +61,6 @@ export default {
 					break;
 				case '/search':
 					this.selectedButton = 'gym';
-					break;
-				case '/my-page':
-					this.selectedButton = 'myPage';
 					break;
 			}
 		},
@@ -94,9 +78,6 @@ export default {
 					break;
 				case 'gym':
 					this.$router.push('/search');
-					break;
-				case 'myPage':
-					this.$router.push('/my-page');
 					break;
 			}
 		},

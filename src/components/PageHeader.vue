@@ -83,6 +83,7 @@ export default {
 				this.token = null; // 토큰 값 제거
 				localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
 				alert('로그아웃 되었습니다.'); // 로그아웃 알림
+				window.location.reload(); // 새로고침을 통해 상태 업데이트
 			}
 		},
 	},
