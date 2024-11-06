@@ -1,6 +1,21 @@
 <template>
 	<div>
-		<div class="flex justify-center">
+		<div class="flex justify-center mt-5">
+			<input
+				type="text"
+				v-model="searchQuery"
+				placeholder="검색어를 입력하세요"
+				class="border border-gray-300 rounded-lg p-2 w-1/2"
+			/>
+			<button
+				@click="performSearch"
+				class="ml-2 px-4 py-2 bg-[#015ECC] text-white rounded-lg"
+			>
+				검색
+			</button>
+		</div>
+
+		<div class="flex justify-center mt-5">
 			<KakaoMap v-if="results.length > 0" :locations="mapLocations" />
 		</div>
 		<div v-if="results.length > 0">
@@ -17,9 +32,7 @@
 						class="w-1/12 h-1/12 mr-3 object-contain"
 					/>
 					<div class="grid-rows-3">
-						<div class="text-3xl font-semibold">
-							{{ center.name }}
-						</div>
+						<div class="text-3xl font-semibold">{{ center.name }}</div>
 						<div class="text-xl font-medium">{{ center.address_road }}</div>
 						<ul class="grid grid-cols-12">
 							<li
@@ -65,8 +78,8 @@ export default {
 
 	data() {
 		return {
-			// 검색 결과를 담을 배열
 			results: [],
+			searchQuery: this.$route.query.q || '', // 쿼리 파라미터를 초기값으로 설정
 		};
 	},
 
@@ -105,23 +118,25 @@ export default {
 				return;
 			}
 
-			if (searchQuery) {
-				try {
-					const response = await axios.get(
-						`${process.env.VUE_APP_API_HOST}/climbing-infos`,
-						{
-							params: {
-								searchType: 'NAME',
-								searchValue: searchQuery,
-							},
-						}
-					);
-					// 요청이 성공적으로 완료되면, 응답 데이터(response.data)를 컴포넌트의 results 데이터 속성에 저장
-					this.results = response.data;
-				} catch (error) {
-					console.error('검색 중 오류 발생:', error);
-				}
+			try {
+				const response = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/climbing-infos`,
+					{
+						params: {
+							searchType: 'NAME',
+							searchValue: searchQuery,
+						},
+					}
+				);
+				this.results = response.data;
+			} catch (error) {
+				console.error('검색 중 오류 발생:', error);
 			}
+		},
+
+		performSearch() {
+			// URL 쿼리 업데이트하여 검색 트리거
+			this.$router.push({ query: { q: this.searchQuery } });
 		},
 	},
 };

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="map" class="w-[90vh] h-[50vh] mb-10 sm:w-[50vh] md:w-[70vh]"></div>
+		<div id="map" class="w-[40vh] h-[40vh] mb-10 sm:w-[40vh] md:w-[60vh]"></div>
 	</div>
 </template>
 
