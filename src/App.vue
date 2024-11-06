@@ -1,6 +1,6 @@
 <template>
 	<PageHeader />
-	<router-view />
+	<router-view class="pb-[10vh]" />
 	<PageFooter />
 </template>
 

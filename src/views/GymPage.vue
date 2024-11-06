@@ -1,36 +1,35 @@
 <template>
 	<div class="mx-5">
-		<div v-if="center" class="flex flex-row justify-around">
-			<div class="w-1/6 mr-3">
-				<div class="w-full aspect-square bg-stone-300 rounded-lg">
-					<img
-						:src="center.logo_url"
-						alt="Center Image"
-						class="w-full h-full object-cover rounded-lg"
-					/>
-				</div>
-				<ul class="mt-7">
-					<li class="mb-3 text-xl text-[#0077ff] font-bold">
-						실내 클라이밍장 조회 순위
-					</li>
-					<li
-						class="font-semibold"
-						v-for="(sortedCenter, index) in sortedCenters"
-						:key="index"
-					>
-						{{ index + 1 }}. {{ sortedCenter.name }}: {{ sortedCenter.hit }}
-					</li>
-				</ul>
+		<div class="w-[40vh]">
+			<KakaoMap :locations="searchLocations" />
+		</div>
+		<div v-if="center">
+			<div class="w-1/3">
+				<img
+					:src="center.logo_url"
+					alt="Center Image"
+					class="mb-2 rounded-lg"
+				/>
 			</div>
-			<div class="w-5/6">
-				<KakaoMap :locations="searchLocations" />
-				<div class="text-2xl font-bold">
-					{{ center.name }}
-				</div>
-				<div class="text-lg font-medium">
-					{{ center.address_road }}
-				</div>
+			<div class="text-2xl font-bold">
+				{{ center.name }}
 			</div>
+			<div class="mb-5 text-lg">
+				{{ center.address_road }}
+			</div>
+
+			<ul class="mt-7">
+				<li class="mb-3 text-xl text-[#0077ff] font-bold">
+					실내 클라이밍장 조회 순위
+				</li>
+				<li
+					class="font-semibold"
+					v-for="(sortedCenter, index) in sortedCenters"
+					:key="index"
+				>
+					{{ index + 1 }}. {{ sortedCenter.name }}: {{ sortedCenter.hit }}
+				</li>
+			</ul>
 		</div>
 	</div>
 </template>
