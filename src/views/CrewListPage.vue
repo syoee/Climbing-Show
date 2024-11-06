@@ -58,7 +58,8 @@ export default {
 				number: 0,
 			},
 			currentPage: 1, // 현재 페이지 (1부터 시작)
-			googleFormUrl: 'https://docs.google.com/forms/d/구글폼아이디/viewform',
+			googleFormUrl:
+				'https://docs.google.com/forms/d/e/1FAIpQLSfngNNiG1K-6cCTRDJwhC_EROtq-RlZ1euRXddUepd5xfo08Q/viewform?usp=sf_link',
 		};
 	},
 

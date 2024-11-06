@@ -142,6 +142,13 @@ export default {
 	methods: {
 		// 크루 가입 신청
 		async crewReception() {
+			// 로그인 여부 확인
+			if (!this.token) {
+				alert('로그인이 필요합니다.');
+				this.$router.push('/login');
+				return;
+			}
+
 			try {
 				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/crew/receptions/${this.id}`,
