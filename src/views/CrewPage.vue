@@ -64,7 +64,7 @@
 				<button
 					v-if="status === 'APPLY' && !crewMember"
 					@click="cancelReception"
-					class="w-1/2 bg-red-600 text-white rounded-3xl"
+					class="w-full h-[5vh] col-span-2 bg-red-600 text-xl text-white rounded-3xl"
 				>
 					취 소
 				</button>
@@ -116,7 +116,7 @@ export default {
 			isEditing: false, // 수정 모드 여부
 			status: null, // 신청 상태
 			crewMember: false, // 크루 멤버 여부
-			leader: null, // 크루장, 부크루장 여부
+			leader: {}, // 크루장, 부크루장 여부
 			updatedCrew: {
 				// 수정된 크루 정보를 임시 저장
 				name: '',
