@@ -79,12 +79,7 @@ export default {
 
 				this.list = manage.data;
 			} catch (error) {
-				if (error.response && error.response.status === 401) {
-					alert('인증 정보가 유효하지 않습니다. 다시 로그인하세요.');
-					this.$router.push('/login');
-				} else {
-					console.error('에러 발생', error);
-				}
+				console.error('에러 발생', error);
 			}
 		},
 
