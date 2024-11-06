@@ -1,5 +1,5 @@
 <template>
-	<div class="mx-5 my-3 grid grid-cols-3 fixed bottom-0 left-0">
+	<div class="py-3 w-full grid grid-cols-3 fixed bottom-0 left-0 bg-white">
 		<div class="flex justify-center">
 			<img
 				:src="selectedButton === 'home' ? homeClickedImage : homeDefaultImage"
@@ -77,7 +77,7 @@ export default {
 					this.$router.push('/crew-infos');
 					break;
 				case 'gym':
-					this.$router.push('/search');
+					this.$router.push('/gymList');
 					break;
 			}
 		},
