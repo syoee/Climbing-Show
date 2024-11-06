@@ -3,18 +3,18 @@
 		<div class="w-[40vh]">
 			<KakaoMap :locations="searchLocations" />
 		</div>
-		<div v-if="center" class="grid grid-rows-3">
-			<div class="w-1/3 aspect-square bg-stone-300 rounded-lg">
+		<div v-if="center">
+			<div class="w-1/3">
 				<img
 					:src="center.logo_url"
 					alt="Center Image"
-					class="w-full h-full object-cover rounded-lg"
+					class="mb-2 rounded-lg"
 				/>
 			</div>
 			<div class="text-2xl font-bold">
 				{{ center.name }}
 			</div>
-			<div class="text-lg font-medium">
+			<div class="mb-5 text-lg">
 				{{ center.address_road }}
 			</div>
 
