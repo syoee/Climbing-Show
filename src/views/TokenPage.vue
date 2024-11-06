@@ -21,6 +21,10 @@ export default {
 			localStorage.setItem('token', token);
 			this.token = token;
 
+			// 기존 페이지에 접근하여 새로고침
+			if (window.opener) {
+				window.opener.location.reload();
+			}
 			window.close();
 		} else {
 			alert('로그인에 실패했습니다.');
