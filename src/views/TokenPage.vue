@@ -17,7 +17,7 @@ export default {
 		const token = this.$route.query.token; // URL 쿼리에서 토큰 생성
 
 		if (token) {
-			// 토큰을 로컬 스토리지에 저장합니다.
+			// 토큰을 로컬 스토리지에 저장
 			localStorage.setItem('token', token);
 			this.token = token;
 
