@@ -29,32 +29,31 @@
 					v-for="center in results"
 					:key="center.name"
 					@click="goToDetail(center.id)"
-					class="mb-5 pb-4 flex justify-start border-b-2 border-stone-300 hover:cursor-pointer"
+					class="mb-5 pb-4 flex flex-col justify-start border-b-2 border-stone-300 hover:cursor-pointer"
 				>
 					<img
 						:src="center.logo_url"
 						:alt="center.name"
-						class="w-1/12 h-1/12 mr-3 object-contain"
+						class="w-1/6 aspect-square object-cover"
 					/>
-					<div class="grid-rows-3">
-						<div class="text-3xl font-semibold">{{ center.name }}</div>
-						<div class="text-xl font-medium">{{ center.address_road }}</div>
+					<div class="grid grid-rows-3">
+						<div class="text-lg font-semibold">{{ center.name }}</div>
+						<div class="text-sm font-medium">{{ center.address_road }}</div>
 						<ul class="grid grid-cols-12">
 							<li
 								v-for="logo in center.climbing_level_list"
 								:key="logo.level"
 								class="relative flex items-center justify-center"
-								:style="{ width: '70%' }"
 							>
 								<img
 									src="https://velog.velcdn.com/images/syo_ee/post/58892724-cf82-4d0b-ab7b-279874631845/image.png"
-									class="w-full h-full object-cover"
+									class="w-full aspect-square object-cover"
 								/>
 								<div
 									:style="{ backgroundColor: logo.color }"
-									class="w-11/12 h-full absolute inset-1 opacity-50 rounded-full"
+									class="w-11/12 h-full absolute opacity-50 rounded-full"
 								></div>
-								<span class="mb-1 mr-1 absolute text-black font-semibold">
+								<span class="absolute text-black font-semibold">
 									{{ logo.level }}
 								</span>
 							</li>
