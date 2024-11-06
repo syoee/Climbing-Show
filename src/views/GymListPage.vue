@@ -3,21 +3,26 @@
 		<div class="flex justify-center mt-5">
 			<input
 				type="text"
+				@keyup.enter="performSearch"
 				v-model="searchQuery"
-				placeholder="검색어를 입력하세요"
+				placeholder="검색어를 입력하세요."
 				class="border border-gray-300 rounded-lg p-2 w-1/2"
 			/>
 			<button
 				@click="performSearch"
-				class="ml-2 px-4 py-2 bg-[#015ECC] text-white rounded-lg"
+				class="ml-2 px-4 py-2 bg-[#0077ff] text-white rounded-lg"
 			>
 				검색
 			</button>
 		</div>
 
 		<div class="flex justify-center mt-5">
-			<KakaoMap v-if="results.length > 0" :locations="mapLocations" />
+			<KakaoMap
+				v-if="results.length > 0 && showResults"
+				:locations="mapLocations"
+			/>
 		</div>
+
 		<div v-if="results.length > 0">
 			<ul class="mx-5">
 				<li
@@ -58,9 +63,10 @@
 				</li>
 			</ul>
 		</div>
+
 		<div
-			v-else
-			class="mt-5 flex justify-center text-5xl text-[#015ECC] font-semibold"
+			v-if="showResults && results.length === 0 && searchQuery.length >= 2"
+			class="mt-5 flex justify-center text-4xl text-[#0077ff] font-semibold"
 		>
 			<p>검색 결과가 없습니다.</p>
 		</div>
@@ -79,12 +85,13 @@ export default {
 	data() {
 		return {
 			results: [],
-			searchQuery: this.$route.query.q || '', // 쿼리 파라미터를 초기값으로 설정
+			searchQuery: this.$route.query.q || '', // 쿼리 파라미터로 초기값 설정
+			showResults: false, // 검색 결과 상태 관리 변수
 		};
 	},
 
 	computed: {
-		// 검색 결과를 KakaoMap 컴포넌트에 전달할 데이터로 변환
+		// KakaoMap 컴포넌트에 전달할 위치 데이터
 		mapLocations() {
 			return this.results.map((center) => ({
 				name: center.name,
@@ -94,27 +101,15 @@ export default {
 		},
 	},
 
-	watch: {
-		'$route.query.q': {
-			immediate: true,
-			handler() {
-				this.search();
-			},
-		},
-	},
-
 	methods: {
 		goToDetail(centerId) {
 			this.$router.push(`/detail/${centerId}`);
 		},
 
+		// 검색 함수
 		async search() {
-			// 현재 라우트의 쿼리 매개변수에서 검색 쿼리(q)를 가져옴
-			const searchQuery = this.$route.query.q || '';
-
-			// 검색어가 2글자 이상인지 확인
-			if (searchQuery.length < 2) {
-				alert('2글자 이상 검색해주세요.');
+			// 검색어가 두 글자 미만일 경우 기존 결과 유지, 새 검색 수행하지 않음
+			if (this.searchQuery.length < 2) {
 				return;
 			}
 
@@ -124,19 +119,28 @@ export default {
 					{
 						params: {
 							searchType: 'NAME',
-							searchValue: searchQuery,
+							searchValue: this.searchQuery,
 						},
 					}
 				);
 				this.results = response.data;
+				this.showResults = true;
 			} catch (error) {
 				console.error('검색 중 오류 발생:', error);
+				this.showResults = false; // 오류 발생 시 결과를 숨김
 			}
 		},
 
+		// 검색 버튼 클릭 또는 Enter 키 입력 시 호출
 		performSearch() {
-			// URL 쿼리 업데이트하여 검색 트리거
+			if (this.searchQuery.length < 2) {
+				alert('2글자 이상 검색해주세요.');
+				return;
+			}
+
+			// URL의 쿼리 업데이트 후 검색 실행
 			this.$router.push({ query: { q: this.searchQuery } });
+			this.search();
 		},
 	},
 };
