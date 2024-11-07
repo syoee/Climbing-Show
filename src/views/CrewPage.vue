@@ -133,6 +133,13 @@ export default {
 	},
 
 	mounted() {
+		// 로그인 여부 확인
+		if (!this.token) {
+			alert('로그인이 필요합니다.');
+			this.$router.push('/login');
+			return;
+		}
+
 		this.id = this.$route.params.id;
 		this.crewData();
 		this.receptionCheck();
@@ -190,7 +197,6 @@ export default {
 				this.status = null;
 			} catch (err) {
 				console.error('가입 취소 중 오류 발생:', err);
-				alert('가입 취소 중 오류가 발생했습니다.');
 			}
 		},
 
