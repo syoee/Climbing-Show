@@ -63,6 +63,11 @@ export default {
 		};
 	},
 
+	created() {
+		// 컴포넌트가 생성될 때 API 호출
+		this.getData();
+	},
+
 	computed: {
 		// 현재 페이지에 맞는 아이템 리스트 반환
 		paginatedItems() {
@@ -75,11 +80,6 @@ export default {
 		totalPages() {
 			return this.pageInfo.total_pages;
 		},
-	},
-
-	created() {
-		// 컴포넌트가 생성될 때 API 호출
-		this.getData();
 	},
 
 	methods: {

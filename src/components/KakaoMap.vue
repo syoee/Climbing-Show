@@ -90,9 +90,13 @@ export default {
 				// 위치의 종류에 따라 다른 이미지 사용
 				let imageSrc;
 				if (location.type === 'current') {
-					imageSrc = require('@/assets/icons/mymarker.png'); // 현재 위치용 이미지
+					// 현재 위치용 이미지
+					imageSrc =
+						'https://velog.velcdn.com/images/syo_ee/post/77cceb59-c82c-4506-9f9c-636a1053f269/image.png';
 				} else {
-					imageSrc = require('@/assets/icons/marker.png'); // 기본 마커 이미지
+					// 기본 마커 이미지
+					imageSrc =
+						'https://velog.velcdn.com/images/syo_ee/post/dfa84db3-a0e7-4e49-bb3a-419050ee70be/image.png';
 				}
 
 				const imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기

@@ -56,13 +56,7 @@ export default {
 
 	mounted() {
 		this.id = this.$route.params.id;
-
-		if (!this.token) {
-			alert('로그인이 필요합니다.');
-			this.$router.push('/login');
-		} else {
-			this.applyData();
-		}
+		this.applyData();
 	},
 	methods: {
 		//신청 정보

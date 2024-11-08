@@ -1,11 +1,9 @@
 <template>
-	<div class="flex flex-col items-center justify-center">
-		<div
-			class="mb-8 text-[#0077ff] text-3xl font-semibold sm:text-xl md:text-2xl lg:text-6xl"
-		>
-			클라이밍
-		</div>
-		show
+	<div>
+		<img
+			src="https://velog.velcdn.com/images/syo_ee/post/5d775166-fdd0-4b37-a889-243751283386/image.jpg"
+			alt="homeImg"
+		/>
 	</div>
 </template>
 
