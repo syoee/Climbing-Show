@@ -1,18 +1,18 @@
 <template>
 	<div class="mx-5 mt-3 mb-5 grid grid-cols-2">
 		<div class="flex justify-start">
-			<button
+			<img
+				src="https://velog.velcdn.com/images/syo_ee/post/9ca1e775-7412-4abf-98e5-fd15bd082f17/image.jpg"
+				alt="logo"
 				@click="goHome"
-				class="text-[#0077ff] text-4xl sm:text-sm md:text-xl font-bold"
-			>
-				클라이밍 Show
-			</button>
+				class="w-1/2"
+			/>
 		</div>
 
 		<div class="flex justify-end">
 			<button
 				@click="goLogin"
-				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:text-sm md:text-xl"
+				class="h-[4vh] px-2 py-1 bg-black text-red-600 font-bold rounded-lg"
 			>
 				{{ tokenButton }}
 			</button>

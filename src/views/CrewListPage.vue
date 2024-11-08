@@ -5,7 +5,7 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
+				class="mx-5 pb-5 border-solid border-b-2 border-red-600 cursor-pointer"
 			>
 				<div class="text-3xl">
 					{{ item.name }}
@@ -24,7 +24,7 @@
 				:key="page"
 				@click="currentPage = page"
 				:class="{
-					'bg-[#015ECC] text-white': currentPage === page,
+					'bg-black text-red-600': currentPage === page,
 					'bg-gray-200': currentPage !== page,
 				}"
 				class="px-3 py-2 rounded-lg"
@@ -36,7 +36,7 @@
 		<div class="absolute bottom-20 right-5">
 			<button
 				@click="redirectToGoogleForm"
-				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
+				class="px-2 py-1 bg-black text-red-600 font-semibold rounded-lg"
 			>
 				등록하기
 			</button>

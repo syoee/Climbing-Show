@@ -6,11 +6,11 @@
 				@keyup.enter="performSearch"
 				v-model="searchQuery"
 				placeholder="검색어를 입력하세요."
-				class="border border-gray-300 rounded-lg p-2 w-1/2"
+				class="border border-red-600 rounded-lg p-2 w-1/2"
 			/>
 			<button
 				@click="performSearch"
-				class="ml-2 px-4 py-2 bg-[#0077ff] text-white rounded-lg"
+				class="ml-2 px-4 py-2 bg-black text-red-600 rounded-lg"
 			>
 				검색
 			</button>
@@ -29,7 +29,7 @@
 					v-for="center in results"
 					:key="center.name"
 					@click="goToDetail(center.id)"
-					class="mb-5 pb-4 flex flex-col justify-start border-b-2 border-stone-300 hover:cursor-pointer"
+					class="mb-5 pb-4 flex flex-col justify-start border-b-2 border-red-600 hover:cursor-pointer"
 				>
 					<img
 						:src="center.logo_url"
@@ -65,7 +65,7 @@
 
 		<div
 			v-if="showResults && results.length === 0 && searchQuery.length >= 2"
-			class="mt-5 flex justify-center text-4xl text-[#0077ff] font-semibold"
+			class="mt-5 flex justify-center text-4xl text-red-600 font-semibold"
 		>
 			<p>검색 결과가 없습니다.</p>
 		</div>

@@ -29,7 +29,7 @@
 			</li>
 		</ul>
 		<div v-else>
-			<div class="text-lg font-bold">데이터가 없습니다.</div>
+			<div class="text-red-600 text-lg font-bold">신청 인원이 없습니다.</div>
 		</div>
 	</div>
 </template>
