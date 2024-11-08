@@ -38,14 +38,20 @@ export default {
 			selectedButton: null,
 
 			// 이미지 경로
-			homeDefaultImage: require('@/assets/icons/home.png'),
-			homeClickedImage: require('@/assets/icons/homeclick.png'),
+			homeDefaultImage:
+				'https://velog.velcdn.com/images/syo_ee/post/5df04b0d-9677-44a8-b33c-391e814492ae/image.png',
+			homeClickedImage:
+				'https://velog.velcdn.com/images/syo_ee/post/01c10b6a-55c9-470b-8880-67350ae3fea1/image.png',
 
-			crewListDefaultImage: require('@/assets/icons/crew.png'),
-			crewListClickedImage: require('@/assets/icons/crewclick.png'),
+			crewListDefaultImage:
+				'https://velog.velcdn.com/images/syo_ee/post/e24749f5-c5a5-429d-9633-62a8977e1789/image.png',
+			crewListClickedImage:
+				'https://velog.velcdn.com/images/syo_ee/post/7f5af893-567e-424c-8170-5fa5e796f3e8/image.png',
 
-			gymDefaultImage: require('@/assets/icons/gym.png'),
-			gymClickedImage: require('@/assets/icons/gymclick.png'),
+			gymDefaultImage:
+				'https://velog.velcdn.com/images/syo_ee/post/a2e3d16e-37c4-49c3-afc6-739386bc33dd/image.png',
+			gymClickedImage:
+				'https://velog.velcdn.com/images/syo_ee/post/d69ef046-3fba-48ff-ac47-6baf3c7b0810/image.png',
 		};
 	},
 
