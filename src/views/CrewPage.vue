@@ -261,23 +261,14 @@ export default {
 			}
 		},
 
-		goApplyList(err) {
-			if (err.response && err.response.status === 401) {
-				alert('일정시간이 지나 로그인이 만료되었습니다. 다시 로그인해주세요.');
-				this.$router.push('/login');
-			} else {
-				this.$router.push(`/crew/receptions/manages/${this.id}`);
-			}
+		// 신청 접수 페이지로 이동
+		goApplyList() {
+			this.$router.push(`/crew/receptions/manages/${this.id}`);
 		},
 
 		// 수정 모드 시작
-		startEditing(err) {
-			if (err.response && err.response.status === 401) {
-				alert('일정시간이 지나 로그인이 만료되었습니다. 다시 로그인해주세요.');
-				this.$router.push('/login');
-			} else {
-				this.isEditing = true;
-			}
+		startEditing() {
+			this.isEditing = true;
 		},
 
 		// 수정 모드 취소
