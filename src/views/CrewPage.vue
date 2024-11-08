@@ -133,13 +133,6 @@ export default {
 	},
 
 	mounted() {
-		// 로그인 여부 확인
-		if (!this.token) {
-			alert('로그인이 필요합니다.');
-			this.$router.push('/login');
-			return;
-		}
-
 		this.id = this.$route.params.id;
 		this.crewData();
 		this.receptionCheck();
@@ -172,7 +165,12 @@ export default {
 				);
 				this.status = 'APPLY';
 			} catch (err) {
-				if (err.response && err.response.status === 400) {
+				if (err.response && err.response.status === 401) {
+					alert(
+						'일정시간이 지나 로그인이 만료되었습니다. 다시 로그인해주세요.'
+					);
+					this.$router.push('/login');
+				} else if (err.response && err.response.status === 400) {
 					alert('이미 신청한 크루입니다.');
 					this.status = 'APPLY';
 				} else {
