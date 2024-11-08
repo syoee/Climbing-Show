@@ -1,10 +1,10 @@
 <template>
-	<div>
+	<div class="mx-5">
 		<ul v-if="list && list.length" class="grid gap-4 text-xl">
 			<li
 				v-for="item in list"
 				:key="item.id"
-				class="grid grid-cols-5 mx-5 pb-5 border-solid border-b-2"
+				class="grid grid-cols-5 pb-5 border-solid border-b-2"
 			>
 				<div class="col-span-3">
 					<div class="text-2xl">{{ item.member.name }}</div>
@@ -29,7 +29,7 @@
 			</li>
 		</ul>
 		<div v-else>
-			<p>데이터가 없습니다.</p>
+			<div class="text-lg font-bold">데이터가 없습니다.</div>
 		</div>
 	</div>
 </template>

@@ -33,7 +33,29 @@
 				</span>
 			</div>
 
-			<div>크루 창설일: {{ formattedDate }}</div>
+			<div>크루 생성일: {{ formattedDate }}</div>
+
+			<div class="mt-5">
+				<button
+					v-if="status === 'APPLY' && !crewMember"
+					@click="cancelReception"
+					class="w-full h-[5vh] bg-red-600 text-xl text-white rounded-3xl"
+				>
+					취 소
+				</button>
+				<button
+					v-if="
+						status !== 'APPLY' &&
+						!crewMember &&
+						leader !== 'OWNER' &&
+						leader !== 'MAINTAINER'
+					"
+					@click="crewReception"
+					class="w-full h-[5vh] bg-[#0077ff] text-xl text-white rounded-3xl"
+				>
+					가 입
+				</button>
+			</div>
 
 			<div
 				v-if="!isEditing"
@@ -49,7 +71,6 @@
 				>
 					수 정
 				</button>
-
 				<button
 					v-if="
 						leader.authorization === 'OWNER' ||
@@ -60,29 +81,8 @@
 				>
 					신청 현황
 				</button>
+			</div>
 
-				<button
-					v-if="status === 'APPLY' && !crewMember"
-					@click="cancelReception"
-					class="w-full h-[5vh] col-span-2 bg-red-600 text-xl text-white rounded-3xl"
-				>
-					취 소
-				</button>
-			</div>
-			<div>
-				<button
-					v-if="
-						status !== 'APPLY' &&
-						!crewMember &&
-						leader !== 'OWNER' &&
-						leader !== 'MAINTAINER'
-					"
-					@click="crewReception"
-					class="w-full h-[5vh] bg-[#0077ff] text-xl text-white rounded-3xl"
-				>
-					가 입
-				</button>
-			</div>
 			<div
 				v-if="isEditing"
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
