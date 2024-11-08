@@ -261,13 +261,23 @@ export default {
 			}
 		},
 
-		goApplyList() {
-			this.$router.push(`/crew/receptions/manages/${this.id}`);
+		goApplyList(err) {
+			if (err.response && err.response.status === 401) {
+				alert('일정시간이 지나 로그인이 만료되었습니다. 다시 로그인해주세요.');
+				this.$router.push('/login');
+			} else {
+				this.$router.push(`/crew/receptions/manages/${this.id}`);
+			}
 		},
 
 		// 수정 모드 시작
-		startEditing() {
-			this.isEditing = true;
+		startEditing(err) {
+			if (err.response && err.response.status === 401) {
+				alert('일정시간이 지나 로그인이 만료되었습니다. 다시 로그인해주세요.');
+				this.$router.push('/login');
+			} else {
+				this.isEditing = true;
+			}
 		},
 
 		// 수정 모드 취소
