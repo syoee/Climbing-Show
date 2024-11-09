@@ -28,12 +28,34 @@
 
 			<div class="text-lg">
 				크루장:
-				<span class="font-bold text-[#0077ff]">
+				<span class="font-bold">
 					{{ crew.crew_owner_member.name }}
 				</span>
 			</div>
 
-			<div>크루 창설일: {{ formattedDate }}</div>
+			<div>크루 생성일: {{ formattedDate }}</div>
+
+			<div class="mt-5">
+				<button
+					v-if="status === 'APPLY' && !crewMember"
+					@click="cancelReception"
+					class="w-full h-[5vh] bg-red-600 text-xl text-white rounded-3xl"
+				>
+					취 소
+				</button>
+				<button
+					v-if="
+						status !== 'APPLY' &&
+						!crewMember &&
+						leader !== 'OWNER' &&
+						leader !== 'MAINTAINER'
+					"
+					@click="crewReception"
+					class="w-full h-[5vh] bg-black text-red-600 text-xl rounded-3xl"
+				>
+					가 입
+				</button>
+			</div>
 
 			<div
 				v-if="!isEditing"
@@ -45,44 +67,22 @@
 						leader.authorization === 'MAINTAINER'
 					"
 					@click="startEditing"
-					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+					class="w-1/2 bg-black text-red-600 rounded-3xl"
 				>
 					수 정
 				</button>
-
 				<button
 					v-if="
 						leader.authorization === 'OWNER' ||
 						leader.authorization === 'MAINTAINER'
 					"
 					@click="goApplyList"
-					class="w-1/2 bg-[#0077ff] text-white rounded-3xl"
+					class="w-1/2 bg-black text-red-600 rounded-3xl"
 				>
 					신청 현황
 				</button>
+			</div>
 
-				<button
-					v-if="status === 'APPLY' && !crewMember"
-					@click="cancelReception"
-					class="w-full h-[5vh] col-span-2 bg-red-600 text-xl text-white rounded-3xl"
-				>
-					취 소
-				</button>
-			</div>
-			<div>
-				<button
-					v-if="
-						status !== 'APPLY' &&
-						!crewMember &&
-						leader !== 'OWNER' &&
-						leader !== 'MAINTAINER'
-					"
-					@click="crewReception"
-					class="w-full h-[5vh] bg-[#0077ff] text-xl text-white rounded-3xl"
-				>
-					가 입
-				</button>
-			</div>
 			<div
 				v-if="isEditing"
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"

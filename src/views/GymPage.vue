@@ -19,7 +19,7 @@
 			</div>
 
 			<ul class="mt-7">
-				<li class="mb-3 text-xl text-[#0077ff] font-bold">
+				<li class="mb-3 text-xl text-red-600 font-bold">
 					실내 클라이밍장 조회 순위
 				</li>
 				<li
