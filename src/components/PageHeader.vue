@@ -12,7 +12,7 @@
 		<div class="flex justify-end">
 			<button
 				@click="goLogin"
-				class="h-[4vh] px-2 py-1 bg-black text-red-600 font-bold rounded-lg"
+				class="h-[4vh] px-2 py-1 bg-black text-red-600 font-semibold rounded-lg"
 			>
 				{{ tokenButton }}
 			</button>

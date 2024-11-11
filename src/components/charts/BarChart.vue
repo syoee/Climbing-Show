@@ -38,10 +38,6 @@ export default {
 				const arrLabels = dataArray.map((item) => item.name);
 				const arrData = dataArray.map((item) => item.hit);
 
-				// 디버깅용 콘솔 로그
-				console.log(arrLabels);
-				console.log(arrData);
-
 				new Chart(this.$refs.MyChart, {
 					type: 'bar',
 					data: {
@@ -76,8 +72,8 @@ export default {
 						},
 					},
 				});
-			} catch (error) {
-				console.log(error);
+			} catch (err) {
+				console.error('error', err);
 			}
 		},
 	},

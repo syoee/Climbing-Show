@@ -1,14 +1,15 @@
 <template>
-	<div>
+	<div class="flex justify-center items-center">
 		<img
 			src="https://velog.velcdn.com/images/syo_ee/post/393dddb6-15db-4ddd-b1b9-fb0fd178861e/image.jpg"
 			alt="goToHomePageIcon"
 			@click="goHome"
-			class="w-1/3 absolute top-2 left-3"
+			class="w-1/4 absolute top-2 left-3"
 		/>
 		<img
-			src="https://velog.velcdn.com/images/syo_ee/post/42aee114-d0e8-4190-8b27-bd7a940872df/image.jpg"
+			src="https://velog.velcdn.com/images/syo_ee/post/963ce5ab-aec2-4750-b69e-908789de39a2/image.png"
 			alt="homeImg"
+			class="w-[40vh] h-[80vh] object-contain"
 		/>
 	</div>
 </template>

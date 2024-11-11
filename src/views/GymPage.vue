@@ -99,7 +99,7 @@ export default {
 				// API로부터 받은 데이터를 center 저장
 				this.center = res.data;
 			} catch (err) {
-				console.log('error', err);
+				console.error('error', err);
 			}
 		},
 		async fetchCenters() {
@@ -115,7 +115,7 @@ export default {
 				// API로부터 받은 여러 센터 데이터를 centers에 저장
 				this.centers = res.data;
 			} catch (err) {
-				console.log('error', err);
+				console.error('error', err);
 			}
 		},
 	},
