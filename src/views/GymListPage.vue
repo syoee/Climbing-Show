@@ -10,7 +10,7 @@
 			/>
 			<button
 				@click="performSearch"
-				class="ml-2 px-4 py-2 bg-black text-red-600 rounded-lg"
+				class="ml-2 px-4 py-2 bg-black text-red-600 rounded-lg font-semibold"
 			>
 				검색
 			</button>

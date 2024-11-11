@@ -51,7 +51,7 @@
 						leader !== 'MAINTAINER'
 					"
 					@click="crewReception"
-					class="w-full h-[5vh] bg-black text-red-600 text-xl rounded-3xl"
+					class="w-full h-[5vh] bg-black text-red-600 text-xl font-semibold rounded-3xl"
 				>
 					가 입
 				</button>
