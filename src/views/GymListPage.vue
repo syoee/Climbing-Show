@@ -29,7 +29,7 @@
 					v-for="center in results"
 					:key="center.name"
 					@click="goToDetail(center.id)"
-					class="mb-5 pb-4 flex flex-col justify-start border-b-2 border-red-600 hover:cursor-pointer"
+					class="mb-5 pb-4 flex flex-col justify-start border-b-2 hover:cursor-pointer"
 				>
 					<img
 						:src="center.logo_url"

@@ -144,14 +144,41 @@ export default {
 					yAnchor: 1.65,
 				});
 
-				// 마커에 마우스 오버 시 커스텀 오버레이 표시
+				// 타이머 변수 선언
+				let hideOverlayTimeout;
+
+				// 마커에 마우스 오버 및 클릭 이벤트 추가
 				kakao.maps.event.addListener(marker, 'mouseover', () => {
 					overlay.setMap(toRaw(this.map));
 				});
-
-				// 마커에 마우스 아웃 시 커스텀 오버레이 숨기기
 				kakao.maps.event.addListener(marker, 'mouseout', () => {
 					overlay.setMap(null);
+				});
+
+				// 모바일 터치 이벤트 추가 (click으로 대체)
+				kakao.maps.event.addListener(marker, 'click', () => {
+					// 오버레이 표시
+					overlay.setMap(toRaw(this.map));
+
+					// 기존 타이머가 있다면 클리어
+					if (hideOverlayTimeout) {
+						clearTimeout(hideOverlayTimeout);
+					}
+
+					// 5초 후 오버레이 숨기기
+					hideOverlayTimeout = setTimeout(() => {
+						overlay.setMap(null);
+					}, 5000);
+				});
+
+				// 지도 클릭 시 오버레이 닫기
+				kakao.maps.event.addListener(this.map, 'click', () => {
+					overlay.setMap(null);
+
+					// 타이머 초기화
+					if (hideOverlayTimeout) {
+						clearTimeout(hideOverlayTimeout);
+					}
 				});
 
 				this.markers.push(marker);
