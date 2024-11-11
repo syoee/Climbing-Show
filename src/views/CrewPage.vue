@@ -39,7 +39,7 @@
 				<button
 					v-if="status === 'APPLY' && !crewMember"
 					@click="cancelReception"
-					class="w-full h-[5vh] bg-red-600 text-xl text-white rounded-3xl"
+					class="w-full h-[5vh] bg-red-600 text-xl text-black rounded-3xl"
 				>
 					취 소
 				</button>
