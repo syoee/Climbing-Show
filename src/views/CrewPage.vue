@@ -130,6 +130,9 @@ export default {
 		if (userToken) {
 			this.token = userToken;
 		}
+
+		// console.error  비활성화
+		console.error = function () {};
 	},
 
 	mounted() {
@@ -301,7 +304,7 @@ export default {
 				};
 				this.isEditing = false; // 수정 모드 해제
 			} catch (err) {
-				console.log('error', err);
+				console.error('error', err);
 			}
 		},
 	},
