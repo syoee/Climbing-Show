@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="map" class="w-[90vh] h-[50vh] mb-10 sm:w-[50vh] md:w-[70vh]"></div>
+		<div id="map" class="w-[40vh] h-[40vh] mb-10 sm:w-[40vh] md:w-[60vh]"></div>
 	</div>
 </template>
 
@@ -90,9 +90,13 @@ export default {
 				// 위치의 종류에 따라 다른 이미지 사용
 				let imageSrc;
 				if (location.type === 'current') {
-					imageSrc = require('@/assets/mymarker.png'); // 현재 위치용 이미지
+					// 현재 위치용 이미지
+					imageSrc =
+						'https://velog.velcdn.com/images/syo_ee/post/77cceb59-c82c-4506-9f9c-636a1053f269/image.png';
 				} else {
-					imageSrc = require('@/assets/marker.png'); // 기본 마커 이미지
+					// 기본 마커 이미지
+					imageSrc =
+						'https://velog.velcdn.com/images/syo_ee/post/dfa84db3-a0e7-4e49-bb3a-419050ee70be/image.png';
 				}
 
 				const imageSize = new kakao.maps.Size(24, 35); // 마커 이미지의 크기
@@ -140,14 +144,41 @@ export default {
 					yAnchor: 1.65,
 				});
 
-				// 마커에 마우스 오버 시 커스텀 오버레이 표시
+				// 타이머 변수 선언
+				let hideOverlayTimeout;
+
+				// 마커에 마우스 오버 및 클릭 이벤트 추가
 				kakao.maps.event.addListener(marker, 'mouseover', () => {
 					overlay.setMap(toRaw(this.map));
 				});
-
-				// 마커에 마우스 아웃 시 커스텀 오버레이 숨기기
 				kakao.maps.event.addListener(marker, 'mouseout', () => {
 					overlay.setMap(null);
+				});
+
+				// 모바일 터치 이벤트 추가 (click으로 대체)
+				kakao.maps.event.addListener(marker, 'click', () => {
+					// 오버레이 표시
+					overlay.setMap(toRaw(this.map));
+
+					// 기존 타이머가 있다면 클리어
+					if (hideOverlayTimeout) {
+						clearTimeout(hideOverlayTimeout);
+					}
+
+					// 5초 후 오버레이 숨기기
+					hideOverlayTimeout = setTimeout(() => {
+						overlay.setMap(null);
+					}, 5000);
+				});
+
+				// 지도 클릭 시 오버레이 닫기
+				kakao.maps.event.addListener(this.map, 'click', () => {
+					overlay.setMap(null);
+
+					// 타이머 초기화
+					if (hideOverlayTimeout) {
+						clearTimeout(hideOverlayTimeout);
+					}
 				});
 
 				this.markers.push(marker);

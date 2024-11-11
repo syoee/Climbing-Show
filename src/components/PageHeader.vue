@@ -1,38 +1,23 @@
 <template>
-	<div class="m-5 grid grid-cols-3">
+	<div class="mx-5 mt-3 mb-5 grid grid-cols-2">
 		<div class="flex justify-start">
-			<button
+			<img
+				src="https://velog.velcdn.com/images/syo_ee/post/9ca1e775-7412-4abf-98e5-fd15bd082f17/image.jpg"
+				alt="logo"
 				@click="goHome"
-				class="text-[#0077ff] text-4xl sm:text-sm md:text-xl font-bold"
-			>
-				Climbing Show
-			</button>
-		</div>
-		<div class="flex justify-center sm:h-10 sm:text-xs sm:justify-between">
-			<input
-				@keyup.enter="goSearch"
-				v-model="searchQuery"
-				type="text"
-				placeholder="암장을 검색해보세요!"
-				class="w-2/3 pl-2 border-2 border-gray-400 rounded-lg sm:w-32"
+				class="w-1/2"
 			/>
-			<button
-				@click="goSearch"
-				class="ml-3 px-3 py-2 flex justify-center items-center bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC] sm:w-1/6"
-			>
-				검 색
-			</button>
 		</div>
+
 		<div class="flex justify-end">
 			<button
 				@click="goLogin"
-				class="px-3 py-2 bg-[#0077ff] text-white rounded-lg hover:bg-[#015ECC]"
+				class="h-[4vh] px-2 py-1 bg-black text-red-600 font-semibold rounded-lg"
 			>
 				{{ tokenButton }}
 			</button>
 		</div>
 	</div>
-	<hr class="mb-5" />
 </template>
 
 <script>
@@ -40,39 +25,47 @@ export default {
 	data() {
 		return {
 			searchQuery: '',
-			token: null,
+			token: localStorage.getItem('token') || null, // 토큰을 데이터에서 초기화하여 반응성 확보
 			currentQuery: null, // 현재 페이지의 쿼리를 저장할 변수
 		};
 	},
 
 	created() {
+		// 컴포넌트가 생성될 때 로컬 스토리지에서 토큰을 가져와 설정
 		this.token = localStorage.getItem('token');
+		this.updateTokenButton(); // 토큰 값에 따라 버튼 텍스트 업데이트
 	},
 
 	watch: {
-		token(newValue) {
-			// token 값이 변할 때마다 localStorage에 저장
-			if (newValue === null) {
-				localStorage.removeItem('token');
-			} else {
-				localStorage.setItem('token', newValue);
-			}
+		// 토큰 값이 변경될 때마다 호출
+		token() {
+			this.updateTokenButton();
 		},
 	},
 
 	computed: {
+		// 토큰 값에 따라 버튼 텍스트를 동적으로 반환
 		tokenButton() {
 			return this.token === null ? '로그인' : '로그아웃';
 		},
 	},
 
 	methods: {
+		// 버튼 텍스트를 업데이트하는 메소드
+		updateTokenButton() {
+			this.tokenButton = this.token === null ? '로그인' : '로그아웃';
+		},
+
+		// 홈으로 이동하는 메소드
 		goHome() {
 			this.searchQuery = '';
 			this.$router.push('/');
 		},
+
+		// 로그인, 로그아웃 메소드
 		goLogin() {
 			if (this.token === null) {
+				// 현재 경로와 쿼리 저장
 				const path = this.$route.path;
 				const query = this.$route.query;
 				// query 객체를 URLSearchParams로 변환
@@ -85,16 +78,12 @@ export default {
 
 				localStorage.setItem('currentQuery', fullPath);
 
-				this.$router.push('/login');
+				this.$router.push('/login'); // 로그인 페이지로 이동
 			} else {
-				this.token = null;
-				localStorage.removeItem('token');
-				alert('로그아웃 되었습니다.');
-			}
-		},
-		goSearch() {
-			if (this.searchQuery.trim() !== '') {
-				this.$router.push({ path: '/search', query: { q: this.searchQuery } });
+				this.token = null; // 토큰 값 제거
+				localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
+				alert('로그아웃 되었습니다.'); // 로그아웃 알림
+				window.location.reload(); // 새로고침을 통해 상태 업데이트
 			}
 		},
 	},

@@ -17,10 +17,14 @@ export default {
 		const token = this.$route.query.token; // URL 쿼리에서 토큰 생성
 
 		if (token) {
-			// 토큰을 로컬 스토리지에 저장합니다.
+			// 토큰을 로컬 스토리지에 저장
 			localStorage.setItem('token', token);
 			this.token = token;
 
+			// 기존 페이지에 접근하여 새로고침
+			if (window.opener) {
+				window.opener.location.reload();
+			}
 			window.close();
 		} else {
 			alert('로그인에 실패했습니다.');
