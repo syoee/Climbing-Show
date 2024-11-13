@@ -7,11 +7,11 @@ const config: CapacitorConfig & {
 } = {
 	appId: 'com.climbingshow.app',
 	appName: 'Climbing-Show',
-	hostname: 'www.climbing-show.shop', // 실제 배포된 URL
+	hostname: 'www.climbing-show.com', // 실제 배포된 URL
 	androidScheme: 'https',
 	webDir: 'dist',
 	bundledWebRuntime: false,
-	allowNavigation: ['www.climbing-show.shop'],
+	allowNavigation: ['www.climbing-show.com'],
 };
 
 export default config;
