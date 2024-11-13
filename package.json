@@ -13,9 +13,14 @@
 		"serve:local": "vue-cli-service serve --mode local"
 	},
 	"dependencies": {
+		"@capacitor/android": "^6.1.2",
+		"@capacitor/cli": "^6.1.2",
+		"@capacitor/core": "^6.1.2",
+		"@capacitor/ios": "^6.1.2",
 		"autoprefixer": "^10.4.20",
 		"axios": "^1.7.3",
 		"chart.js": "^4.4.4",
+		"cocoapods": "^0.0.0",
 		"core-js": "^3.8.3",
 		"postcss": "^8.4.41",
 		"postcss-loader": "^8.1.1",
