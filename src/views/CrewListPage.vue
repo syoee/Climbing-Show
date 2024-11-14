@@ -85,7 +85,13 @@ export default {
 	methods: {
 		// 구글 폼으로 리디렉션
 		redirectToGoogleForm() {
-			window.location.href = this.googleFormUrl;
+			if (!this.token) {
+				alert('로그인이 필요합니다');
+				this.$router.push('/login');
+				return;
+			} else {
+				window.location.href = this.googleFormUrl;
+			}
 		},
 
 		// 크루 페이지로 이동
