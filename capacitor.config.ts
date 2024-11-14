@@ -8,7 +8,7 @@ const config: CapacitorConfig & {
 	appId: 'com.climbingshow.app',
 	appName: 'Climbing-Show',
 	hostname: 'www.climbing-show.com', // 실제 배포된 URL
-	androidScheme: 'https',
+	androidScheme: 'http',
 	webDir: 'dist',
 	bundledWebRuntime: false,
 	allowNavigation: ['www.climbing-show.com'],
