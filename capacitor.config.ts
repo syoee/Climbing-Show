@@ -11,7 +11,12 @@ const config: CapacitorConfig & {
 	androidScheme: 'http',
 	webDir: 'dist',
 	bundledWebRuntime: false,
-	allowNavigation: ['www.climbing-show.com'],
+	allowNavigation: [
+		'www.climbing-show.com',
+		'localhost',
+		'*.daum.net',
+		'*.kakao.com',
+	],
 };
 
 export default config;
