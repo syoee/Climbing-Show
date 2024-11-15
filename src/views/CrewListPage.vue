@@ -66,6 +66,10 @@ export default {
 	created() {
 		// 컴포넌트가 생성될 때 API 호출
 		this.getData();
+		const userToken = localStorage.getItem('token');
+		if (userToken) {
+			this.token = userToken;
+		}
 	},
 
 	computed: {
