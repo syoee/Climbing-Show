@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full grid grid-cols-2 fixed bottom-0 left-0 bg-white">
+	<div class="pt-3 w-full grid grid-cols-2 fixed bottom-0 left-0 bg-white">
 		<div class="grid grid-rows-2 justify-items-center items-center">
 			<img
 				:src="selectedButton === 'gym' ? gymClickedImage : gymDefaultImage"
