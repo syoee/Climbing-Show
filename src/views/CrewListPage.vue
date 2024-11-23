@@ -5,14 +5,19 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
+				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
 			>
-				<div class="text-xl font-bold">
-					{{ item.name }}
-					<div
-						class="flex flex-row justify-end items-end text-xs font-normal text-gray-400"
-					>
-						탭하여 자세한 정보 보기
+				<div class="grid grid-cols-5">
+					<img
+						:src="item.profile"
+						alt="profile img"
+						class="aspect-square object-cover rounded-full"
+					/>
+					<div class="pl-3 col-span-3">
+						<div class="text-xl font-bold">
+							{{ item.name }}
+						</div>
+						<div class="text-sm text-gray-400">{{ item.description }}</div>
 					</div>
 				</div>
 			</li>
