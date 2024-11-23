@@ -17,7 +17,7 @@
 						<div class="text-xl font-bold">
 							{{ item.name }}
 						</div>
-						<div class="text-sm text-gray-400 line-clamp-2">
+						<div class="mt-1 text-sm text-gray-400 line-clamp-2">
 							{{ item.description }}
 						</div>
 					</div>
