@@ -23,7 +23,7 @@
 					id="description"
 					class="w-full text-xl border rounded-md"
 				></textarea>
-				<span v-else class="text-xl">
+				<span v-else class="text-xl whitespace-pre-wrap">
 					{{ crew.description }}
 				</span>
 			</div>
