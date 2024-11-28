@@ -6,19 +6,19 @@
 				alt="profile"
 				class="w-1/4 mb-5 aspect-square object-cover rounded-full"
 			/>
-			<input
-				v-if="isEditing"
-				type="file"
-				@change="onFileSelected"
-				class="mb-3"
-			/>
+			<input v-if="!isEditing" type="file" @change="onFileSelected" />
 			<button
-				v-if="isEditing && selectedFile && leader.authorization === 'OWNER'"
+				v-if="
+					isEditing !== undefined &&
+					selectedFile !== undefined &&
+					leader.authorization !== undefined
+				"
 				@click="uploadProfileImage"
-				class="w-full bg-blue-600 text-white rounded-md"
+				class="ml-5 w-1/2 bg-black text-red-600 rounded-3xl"
 			>
 				프로필 이미지 수정
 			</button>
+
 			<div class="mb-2">
 				<input
 					v-if="isEditing"
@@ -147,8 +147,8 @@ export default {
 			this.token = userToken;
 		}
 
-		// console.error  비활성화
-		console.error = function () {};
+		// // console.error  비활성화
+		// console.error = function () {};
 	},
 
 	mounted() {
@@ -328,6 +328,7 @@ export default {
 		onFileSelected(event) {
 			const file = event.target.files[0];
 			this.selectedFile = file;
+			console.log('선택된 파일:', this.selectedFile);
 		},
 
 		// 프로필 이미지 업로드
@@ -337,11 +338,12 @@ export default {
 				return;
 			}
 
-			try {
-				const formData = new FormData();
-				formData.append('profile', this.selectedFile);
+			const formData = new FormData();
+			formData.append('profile', this.selectedFile);
+			console.log('업로드 중인 파일:', this.selectedFile);
 
-				await axios.post(
+			try {
+				const response = await axios.post(
 					`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
 					formData,
 					{
@@ -351,10 +353,10 @@ export default {
 						},
 					}
 				);
-
-				alert('프로필 이미지가 업로드되었습니다.');
-				this.selectedFile = null; // 선택된 파일 초기화
-				this.crewData(); // 새로고침
+				console.log('업로드 성공:', response);
+				alert('프로필 이미지가 변경되었습니다.');
+				this.selectedFile = null;
+				this.crewData();
 			} catch (err) {
 				console.error('이미지 업로드 중 오류 발생:', err);
 				alert('이미지 업로드 중 오류가 발생했습니다.');
