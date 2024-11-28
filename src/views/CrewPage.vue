@@ -6,6 +6,19 @@
 				alt="profile"
 				class="w-1/4 mb-5 aspect-square object-cover rounded-full"
 			/>
+			<input
+				v-if="isEditing"
+				type="file"
+				@change="onFileSelected"
+				class="mb-3"
+			/>
+			<button
+				v-if="isEditing && selectedFile && leader.authorization === 'OWNER'"
+				@click="uploadProfileImage"
+				class="w-full bg-blue-600 text-white rounded-md"
+			>
+				프로필 이미지 수정
+			</button>
 			<div class="mb-2">
 				<input
 					v-if="isEditing"
@@ -124,6 +137,7 @@ export default {
 				name: '',
 				description: '',
 			},
+			selectedFile: null, // 사용자가 선택한 파일
 		};
 	},
 
@@ -307,6 +321,43 @@ export default {
 				this.isEditing = false; // 수정 모드 해제
 			} catch (err) {
 				console.error('error', err);
+			}
+		},
+
+		// 프로필 이미지 선택
+		onFileSelected(event) {
+			const file = event.target.files[0];
+			this.selectedFile = file;
+		},
+
+		// 프로필 이미지 업로드
+		async uploadProfileImage() {
+			if (!this.selectedFile) {
+				alert('파일을 선택해주세요.');
+				return;
+			}
+
+			try {
+				const formData = new FormData();
+				formData.append('profile', this.selectedFile);
+
+				await axios.post(
+					`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
+					formData,
+					{
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+							'Content-Type': 'multipart/form-data',
+						},
+					}
+				);
+
+				alert('프로필 이미지가 업로드되었습니다.');
+				this.selectedFile = null; // 선택된 파일 초기화
+				this.crewData(); // 새로고침
+			} catch (err) {
+				console.error('이미지 업로드 중 오류 발생:', err);
+				alert('이미지 업로드 중 오류가 발생했습니다.');
 			}
 		},
 	},
