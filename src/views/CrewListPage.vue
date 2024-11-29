@@ -5,14 +5,21 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-5 border-solid border-b-2 cursor-pointer"
+				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
 			>
-				<div class="text-xl font-bold">
-					{{ item.name }}
-					<div
-						class="flex flex-row justify-end items-end text-xs font-normal text-gray-400"
-					>
-						탭하여 자세한 정보 보기
+				<div class="grid grid-cols-5">
+					<img
+						:src="item.profile"
+						alt="profile img"
+						class="aspect-square object-cover rounded-full"
+					/>
+					<div class="pl-3 col-span-3">
+						<div class="text-xl font-bold">
+							{{ item.name }}
+						</div>
+						<div class="mt-1 text-sm text-gray-400 line-clamp-2">
+							{{ item.description }}
+						</div>
 					</div>
 				</div>
 			</li>
@@ -66,6 +73,10 @@ export default {
 	created() {
 		// 컴포넌트가 생성될 때 API 호출
 		this.getData();
+		const userToken = localStorage.getItem('token');
+		if (userToken) {
+			this.token = userToken;
+		}
 	},
 
 	computed: {
@@ -85,7 +96,13 @@ export default {
 	methods: {
 		// 구글 폼으로 리디렉션
 		redirectToGoogleForm() {
-			window.location.href = this.googleFormUrl;
+			if (!this.token) {
+				alert('로그인이 필요합니다');
+				this.$router.push('/login');
+				return;
+			} else {
+				window.location.href = this.googleFormUrl;
+			}
 		},
 
 		// 크루 페이지로 이동
