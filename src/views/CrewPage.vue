@@ -257,6 +257,11 @@ export default {
 				this.crew = res.data;
 				this.updatedCrew = { ...this.crew };
 
+				// 캐시 방지 쿼리 추가
+				if (this.crew.profile) {
+					this.crew.profile += `?t=${Date.now()}`;
+				}
+
 				if (this.crew.created_at) {
 					const date = new Date(this.crew.created_at);
 					this.formattedDate = `${date.getFullYear()}. ${String(
@@ -290,7 +295,16 @@ export default {
 		// 프로필 이미지 선택
 		onFileSelected(event) {
 			const file = event.target.files[0];
-			this.selectedFile = file;
+			if (file) {
+				this.selectedFile = file;
+
+				// 선택된 이미지 미리보기 설정
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					this.crew.profile = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
 		},
 
 		// 저장 버튼 클릭 시 데이터 저장
@@ -325,12 +339,19 @@ export default {
 							},
 						}
 					);
+
+					// 프로필 이미지 URL 갱신
+					this.crew.profile = `${
+						this.crew.profile.split('?')[0]
+					}?t=${Date.now()}`;
 				}
 
 				// 변경된 데이터 반영
-				this.crew = { ...this.updatedCrew };
+				this.crew.name = this.updatedCrew.name;
+				this.crew.description = this.updatedCrew.description;
 				this.isEditing = false;
 				this.selectedFile = null; // 선택된 파일 초기화
+				alert('크루 정보가 성공적으로 수정되었습니다.');
 			} catch (err) {
 				console.error('수정 중 오류 발생:', err);
 				alert('수정 중 오류가 발생했습니다.');
