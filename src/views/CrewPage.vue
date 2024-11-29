@@ -1,11 +1,31 @@
 <template>
 	<div>
 		<div class="mx-3" v-if="crew && crew.name">
-			<img
-				:src="crew.profile"
-				alt="profile"
-				class="w-1/4 mb-5 aspect-square object-cover rounded-full"
-			/>
+			<div class="w-1/4 relative">
+				<!-- 프로필 이미지 -->
+				<img
+					:src="crew.profile"
+					alt="profile"
+					class="mb-5 aspect-square object-cover rounded-full"
+				/>
+
+				<!-- + 버튼 (파일 선택) -->
+				<label
+					v-if="isEditing"
+					for="file-input"
+					class="absolute left-16 bottom-1 w-1/4 h-1/4 flex items-center justify-center bg-black text-red-600 font-semibold rounded-full"
+				>
+					+
+				</label>
+				<input
+					id="file-input"
+					type="file"
+					@change="onFileSelected"
+					class="hidden"
+				/>
+			</div>
+
+			<!-- 크루 이름 -->
 			<div class="mb-2">
 				<input
 					v-if="isEditing"
@@ -16,6 +36,8 @@
 				/>
 				<span v-else class="text-3xl font-bold">{{ crew.name }}</span>
 			</div>
+
+			<!-- 크루 설명 -->
 			<div class="mb-7">
 				<textarea
 					v-if="isEditing"
@@ -37,28 +59,26 @@
 
 			<div>크루 생성일: {{ formattedDate }}</div>
 
-			<div class="mt-5">
+			<!-- 저장 및 취소 버튼 -->
+			<div
+				v-if="isEditing"
+				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
+			>
 				<button
-					v-if="status === 'APPLY' && !crewMember"
-					@click="cancelReception"
-					class="w-full h-[5vh] bg-red-600 text-xl text-black rounded-3xl"
+					@click="saveChanges"
+					class="w-1/2 bg-green-600 text-white rounded-3xl"
+				>
+					저 장
+				</button>
+				<button
+					@click="cancelEditing"
+					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
 				>
 					취 소
 				</button>
-				<button
-					v-if="
-						status !== 'APPLY' &&
-						!crewMember &&
-						leader !== 'OWNER' &&
-						leader !== 'MAINTAINER'
-					"
-					@click="crewReception"
-					class="w-full h-[5vh] bg-black text-red-600 text-xl font-semibold rounded-3xl"
-				>
-					가 입
-				</button>
 			</div>
 
+			<!-- 수정 및 신청 현황 버튼 -->
 			<div
 				v-if="!isEditing"
 				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
@@ -84,24 +104,6 @@
 					신청 현황
 				</button>
 			</div>
-
-			<div
-				v-if="isEditing"
-				class="mt-5 h-[4vh] grid grid-cols-2 justify-items-center button-container"
-			>
-				<button
-					@click="saveChanges"
-					class="w-1/2 bg-green-600 text-white rounded-3xl"
-				>
-					저 장
-				</button>
-				<button
-					@click="cancelEditing"
-					class="w-1/2 bg-red-600 text-white rounded-3xl ml-3"
-				>
-					취 소
-				</button>
-			</div>
 		</div>
 	</div>
 </template>
@@ -124,6 +126,7 @@ export default {
 				name: '',
 				description: '',
 			},
+			selectedFile: null, // 사용자가 선택한 파일
 		};
 	},
 
@@ -133,8 +136,8 @@ export default {
 			this.token = userToken;
 		}
 
-		// console.error  비활성화
-		console.error = function () {};
+		// // console.error  비활성화
+		// console.error = function () {};
 	},
 
 	mounted() {
@@ -254,6 +257,11 @@ export default {
 				this.crew = res.data;
 				this.updatedCrew = { ...this.crew };
 
+				// 캐시 방지 쿼리 추가
+				if (this.crew.profile) {
+					this.crew.profile += `?t=${Date.now()}`;
+				}
+
 				if (this.crew.created_at) {
 					const date = new Date(this.crew.created_at);
 					this.formattedDate = `${date.getFullYear()}. ${String(
@@ -274,17 +282,35 @@ export default {
 		// 수정 모드 시작
 		startEditing() {
 			this.isEditing = true;
+			this.selectedFile = null; // 파일 초기화
 		},
 
 		// 수정 모드 취소
 		cancelEditing() {
 			this.isEditing = false;
 			this.updatedCrew = { ...this.crew }; // 원래 데이터로 복원
+			this.selectedFile = null; // 파일 초기화
 		},
 
-		// 크루 정보 수정
+		// 프로필 이미지 선택
+		onFileSelected(event) {
+			const file = event.target.files[0];
+			if (file) {
+				this.selectedFile = file;
+
+				// 선택된 이미지 미리보기 설정
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					this.crew.profile = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+		},
+
+		// 저장 버튼 클릭 시 데이터 저장
 		async saveChanges() {
 			try {
+				// 크루 이름/설명 업데이트
 				await axios.put(
 					`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}`,
 					{
@@ -298,15 +324,37 @@ export default {
 					}
 				);
 
-				// 수동으로 crew 데이터를 업데이트
-				this.crew = {
-					...this.crew,
-					name: this.updatedCrew.name,
-					description: this.updatedCrew.description,
-				};
-				this.isEditing = false; // 수정 모드 해제
+				// 선택된 파일이 있을 경우 프로필 이미지 업데이트
+				if (this.selectedFile) {
+					const formData = new FormData();
+					formData.append('profile', this.selectedFile);
+
+					await axios.post(
+						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
+						formData,
+						{
+							headers: {
+								Authorization: `Bearer ${this.token}`,
+								'Content-Type': 'multipart/form-data',
+							},
+						}
+					);
+
+					// 프로필 이미지 URL 갱신
+					this.crew.profile = `${
+						this.crew.profile.split('?')[0]
+					}?t=${Date.now()}`;
+				}
+
+				// 변경된 데이터 반영
+				this.crew.name = this.updatedCrew.name;
+				this.crew.description = this.updatedCrew.description;
+				this.isEditing = false;
+				this.selectedFile = null; // 선택된 파일 초기화
+				alert('크루 정보가 성공적으로 수정되었습니다.');
 			} catch (err) {
-				console.error('error', err);
+				console.error('수정 중 오류 발생:', err);
+				alert('수정 중 오류가 발생했습니다.');
 			}
 		},
 	},
