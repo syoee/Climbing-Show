@@ -7,7 +7,7 @@
 				@click="goToCrewPage(item.id)"
 				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
 			>
-				<div class="flex flex-row">
+				<div class="flex flex-row items-center">
 					<img
 						:src="item.profile"
 						alt="profile img"
