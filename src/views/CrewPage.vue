@@ -348,7 +348,7 @@ export default {
 					const formData = new FormData();
 					formData.append('profile', this.selectedFile);
 
-					await axios.post(
+					const response = await axios.post(
 						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
 						formData,
 						{
@@ -358,6 +358,14 @@ export default {
 							},
 						}
 					);
+
+					// 서버에서 새 이미지 경로를 응답으로 받아온 경우
+					if (response.data.profile) {
+						// 캐싱 방지 쿼리 추가
+						this.crew.profile = `${response.data.profile}?t=${Date.now()}`;
+					}
+					this.previewProfile = null;
+					this.selectedFile = null;
 
 					this.previewProfile = null;
 					this.selectedFile = null;
