@@ -17,10 +17,25 @@
 		</div>
 
 		<div class="flex justify-center mt-5">
-			<KakaoMap
-				v-if="results.length > 0 && showResults"
-				:locations="mapLocations"
-			/>
+			<!-- 로딩 스피너 -->
+			<div
+				v-if="isLoading"
+				class="w-[90vh] h-[50vh] mb-10 flex items-center justify-center"
+			>
+				<div
+					class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"
+				></div>
+			</div>
+
+			<!-- 지도 -->
+			<div v-else>
+				<KakaoMap
+					:locations="mapLocations"
+					:mapLevel="mapLevel"
+					@mapLevelChanged="onMapLevelChanged"
+					@mapMoved="onMapMoved"
+				/>
+			</div>
 		</div>
 
 		<div v-if="results.length > 0">
@@ -83,35 +98,56 @@ export default {
 
 	data() {
 		return {
-			results: [],
-			searchQuery: this.$route.query.q || '', // 쿼리 파라미터로 초기값 설정
-			showResults: false, // 검색 결과 상태 관리 변수
+			searchQuery: '', // 검색어
+			results: [], // 검색 결과
+			mapLocations: [], // 지도에 표시할 위치
+			mapLevel: 4, // 초기 지도 레벨
+			currentLocation: null, // 현재 위치
+			isLoading: true, // 로딩 상태
 		};
 	},
 
-	computed: {
-		// KakaoMap 컴포넌트에 전달할 위치 데이터
-		mapLocations() {
-			return this.results.map((center) => ({
-				name: center.name,
-				address_road: center.address_road,
-				position: [center.latitude, center.longitude],
-			}));
-		},
+	mounted() {
+		this.getCurrentLocation();
 	},
 
 	methods: {
-		goToDetail(centerId) {
-			this.$router.push(`/gym/${centerId}`);
+		// 현재 위치 가져오기
+		getCurrentLocation() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						this.currentLocation = {
+							latitude: position.coords.latitude,
+							longitude: position.coords.longitude,
+						};
+						// 현재 위치 지도에 추가
+						this.mapLocations.push({
+							name: '현재 위치',
+							position: [
+								this.currentLocation.latitude,
+								this.currentLocation.longitude,
+							],
+							type: 'current',
+						});
+					},
+					(error) => {
+						console.error('현재 위치를 가져오는 중 오류 발생:', error);
+						this.isLoading = false; // 오류가 발생한 경우 로딩 중지
+					}
+				);
+			} else {
+				console.error('Geolocation을 지원하지 않는 브라우저입니다.');
+				this.isLoading = false; // Geolocation을 지원하지 않는 경우 로딩 중지
+			}
 		},
 
-		// 검색 함수
-		async search() {
-			// 검색어가 두 글자 미만일 경우 기존 결과 유지, 새 검색 수행하지 않음
+		// 검색 기능
+		async performSearch() {
 			if (this.searchQuery.length < 2) {
+				alert('2글자 이상 검색해주세요.');
 				return;
 			}
-
 			try {
 				const response = await axios.get(
 					`${process.env.VUE_APP_API_HOST}/climbing-infos`,
@@ -123,23 +159,21 @@ export default {
 					}
 				);
 				this.results = response.data;
-				this.showResults = true;
+				// 검색 결과를 지도에 반영
+				this.mapLocations = this.results.map((center) => ({
+					name: center.name,
+					position: [center.latitude, center.longitude],
+					address_road: center.address_road,
+					type: 'center',
+				}));
 			} catch (error) {
 				console.error('검색 중 오류 발생:', error);
-				this.showResults = false; // 오류 발생 시 결과를 숨김
 			}
 		},
 
-		// 검색 버튼 클릭 또는 Enter 키 입력 시 호출
-		performSearch() {
-			if (this.searchQuery.length < 2) {
-				alert('2글자 이상 검색해주세요.');
-				return;
-			}
-
-			// URL의 쿼리 업데이트 후 검색 실행
-			this.$router.push({ query: { q: this.searchQuery } });
-			this.search();
+		// 상세 페이지 이동
+		goToDetail(centerId) {
+			this.$router.push(`/gym/${centerId}`);
 		},
 	},
 };
