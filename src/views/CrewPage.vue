@@ -174,9 +174,7 @@ export default {
 	computed: {
 		profileImage() {
 			// 프리뷰 이미지 우선 표시, 없으면 서버 이미지
-			return (
-				this.previewProfile || this.crew?.profile || '/default-image-url.jpg'
-			);
+			return this.previewProfile || `${this.crew?.profile}?t=${Date.now()}`;
 		},
 	},
 
@@ -329,7 +327,14 @@ export default {
 		onFileSelected(event) {
 			const file = event.target.files[0];
 			if (file) {
-				this.selectedFile = file;
+				if (!file.type.startsWith('image/')) {
+					alert('이미지 파일만 업로드 가능합니다.');
+					return;
+				}
+				if (file.size > 2 * 1024 * 1024) {
+					alert('이미지 파일은 최대 2MB까지만 업로드 가능합니다.');
+					return;
+				}
 
 				// 선택된 이미지 미리보기 설정
 				const reader = new FileReader();
@@ -348,7 +353,7 @@ export default {
 					const formData = new FormData();
 					formData.append('profile', this.selectedFile);
 
-					const response = await axios.post(
+					await axios.post(
 						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
 						formData,
 						{
@@ -359,14 +364,8 @@ export default {
 						}
 					);
 
-					// 서버에서 새 이미지 경로를 응답으로 받아온 경우
-					if (response.data.profile) {
-						// 캐싱 방지 쿼리 추가
-						this.crew.profile = `${response.data.profile}?t=${Date.now()}`;
-					}
-					this.previewProfile = null;
-					this.selectedFile = null;
-
+					// 서버에서 반환된 이미지 URL이 없다면 캐시 방지 쿼리 추가
+					this.crew.profile = `${this.crew.profile}?t=${Date.now()}`;
 					this.previewProfile = null;
 					this.selectedFile = null;
 				}
@@ -388,6 +387,9 @@ export default {
 				// 수정 반영
 				this.crew.name = this.updatedCrew.name;
 				this.crew.description = this.updatedCrew.description;
+
+				// 캐시 방지 쿼리 추가
+				this.crew.profile = `${this.crew.profile}?t=${Date.now()}`;
 				this.isEditing = false;
 
 				alert('크루 정보가 성공적으로 수정되었습니다.');
