@@ -130,6 +130,7 @@ export default {
 							],
 							type: 'current',
 						});
+						this.isLoading = false; // 위치 정보를 가져온 후 로딩 중지
 					},
 					(error) => {
 						console.error('현재 위치를 가져오는 중 오류 발생:', error);
