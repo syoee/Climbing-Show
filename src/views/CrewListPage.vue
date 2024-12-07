@@ -7,17 +7,17 @@
 				@click="goToCrewPage(item.id)"
 				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
 			>
-				<div class="grid grid-cols-5">
+				<div class="flex flex-row items-center">
 					<img
 						:src="item.profile"
 						alt="profile img"
-						class="aspect-square object-cover rounded-full"
+						class="w-1/6 aspect-square object-cover rounded-full"
 					/>
-					<div class="pl-3 col-span-3">
-						<div class="text-xl font-bold">
+					<div class="pl-3">
+						<div class="text-base font-bold">
 							{{ item.name }}
 						</div>
-						<div class="mt-1 text-sm text-gray-400 line-clamp-2">
+						<div class="mt-1 text-xs text-gray-400 line-clamp-2">
 							{{ item.description }}
 						</div>
 					</div>
