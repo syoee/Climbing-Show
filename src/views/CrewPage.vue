@@ -160,8 +160,8 @@ export default {
 			this.token = userToken;
 		}
 
-		// // console.error  비활성화
-		// console.error = function () {};
+		// console.error  비활성화
+		console.error = function () {};
 	},
 
 	mounted() {
@@ -288,7 +288,7 @@ export default {
 				this.crew = res.data;
 				this.updatedCrew = { ...this.crew };
 
-				// 캐시 방지 쿼리 추가
+				// 프로필 URL에 항상 캐시 방지 쿼리 추가
 				if (this.crew.profile) {
 					this.crew.profile += `?t=${Date.now()}`;
 				}
@@ -327,24 +327,15 @@ export default {
 		onFileSelected(event) {
 			const file = event.target.files[0];
 			if (file) {
-				if (!file.type.startsWith('image/')) {
-					alert('이미지 파일만 업로드 가능합니다.');
-					return;
-				}
-				if (file.size > 2 * 1024 * 1024) {
-					alert('이미지 파일은 최대 2MB까지만 업로드 가능합니다.');
-					return;
-				}
-
 				// 선택된 이미지 미리보기 설정
 				const reader = new FileReader();
 				reader.onload = (e) => {
 					this.previewProfile = e.target.result; // 미리보기용 변수에 저장
+					this.crew.profile = e.target.result;
 				};
 				reader.readAsDataURL(file);
 			}
 		},
-
 		// 저장 버튼 클릭 시 데이터 저장
 		async saveChanges() {
 			try {
@@ -353,7 +344,9 @@ export default {
 					const formData = new FormData();
 					formData.append('profile', this.selectedFile);
 
-					await axios.post(
+					console.log('이미지 업로드 시작', formData); // 디버깅용 로그
+
+					const response = await axios.post(
 						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
 						formData,
 						{
@@ -364,8 +357,12 @@ export default {
 						}
 					);
 
+					console.log('이미지 업로드 성공:', response.data); // 성공 로그
+
 					// 서버에서 반환된 이미지 URL이 없다면 캐시 방지 쿼리 추가
-					this.crew.profile = `${this.crew.profile}?t=${Date.now()}`;
+					this.crew.profile = `${
+						this.crew.profile.split('?')[0]
+					}?t=${Date.now()}`;
 					this.previewProfile = null;
 					this.selectedFile = null;
 				}
