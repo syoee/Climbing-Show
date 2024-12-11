@@ -101,7 +101,7 @@ export default {
 			searchQuery: '', // 검색어
 			results: [], // 검색 결과
 			mapLocations: [], // 지도에 표시할 위치
-			mapLevel: 6, // 100m 단위로 표시될 초기 지도 레벨
+			mapLevel: 4, // 100m 단위로 표시될 초기 지도 레벨
 			currentLocation: null, // 현재 위치
 			isLoading: true, // 로딩 상태
 		};
