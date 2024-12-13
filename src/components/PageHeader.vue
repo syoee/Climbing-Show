@@ -1,5 +1,7 @@
 <template>
-	<div class="mx-5 mt-3 mb-5 grid grid-cols-2">
+	<div
+		class="px-5 pt-3 pb-5 grid grid-cols-2 fixed top-0 right-0 z-10 bg-white"
+	>
 		<div class="flex justify-start">
 			<img
 				src="https://velog.velcdn.com/images/syo_ee/post/9ca1e775-7412-4abf-98e5-fd15bd082f17/image.jpg"
