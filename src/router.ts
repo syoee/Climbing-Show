@@ -8,6 +8,7 @@ import ApplyListPage from './views/ApplyListPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import TokenPage from './views/TokenPage.vue';
 import ErrorPage from './views/ErrorPage.vue';
+import EventInfoPage from './views/EventInfoPage.vue';
 
 const routes = [
 	{
@@ -39,6 +40,11 @@ const routes = [
 		path: '/crew/receptions/manages/:id',
 		name: 'ApplyListPage',
 		component: ApplyListPage,
+	},
+	{
+		path: '/event-infos',
+		name: 'EventInfoPage',
+		component: EventInfoPage,
 	},
 	{
 		path: '/login',
