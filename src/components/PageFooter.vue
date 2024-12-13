@@ -1,5 +1,5 @@
 <template>
-	<div class="pt-3 w-full grid grid-cols-2 fixed bottom-0 left-0 bg-white">
+	<div class="pt-3 w-full grid grid-cols-3 fixed bottom-0 left-0 bg-white">
 		<div class="grid grid-rows-2 justify-items-center items-center">
 			<img
 				:src="selectedButton === 'gym' ? gymClickedImage : gymDefaultImage"
@@ -38,6 +38,25 @@
 				크루
 			</div>
 		</div>
+		<div class="grid grid-rows-2 justify-items-center items-center">
+			<img
+				:src="
+					selectedButton === 'eventInfo' ? eventClickedImage : eventDefaultImage
+				"
+				alt="crew list image"
+				@click="goTo('eventInfo')"
+				class="w-1/6"
+			/>
+			<div
+				:class="{
+					'text-black font-semibold': selectedButton === 'eventInfo',
+					'text-gray-400': selectedButton !== 'eventInfo',
+				}"
+				class="text-sm"
+			>
+				이벤트
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -57,6 +76,11 @@ export default {
 				'https://velog.velcdn.com/images/syo_ee/post/e24749f5-c5a5-429d-9633-62a8977e1789/image.png',
 			crewListClickedImage:
 				'https://velog.velcdn.com/images/syo_ee/post/7f5af893-567e-424c-8170-5fa5e796f3e8/image.png',
+
+			eventDefaultImage:
+				'https://velog.velcdn.com/images/syo_ee/post/47293437-58b0-451e-91eb-c0e94a0809f1/image.png',
+			eventClickedImage:
+				'https://velog.velcdn.com/images/syo_ee/post/a85a7bf6-6ffc-4bd3-8c67-79afb8886713/image.png',
 		};
 	},
 
@@ -69,6 +93,9 @@ export default {
 					break;
 				case '/crew-infos':
 					this.selectedButton = 'crewList';
+					break;
+				case '/event-infos':
+					this.selectedButton = 'eventInfo';
 					break;
 			}
 		},
@@ -83,6 +110,9 @@ export default {
 					break;
 				case 'crewList':
 					this.$router.push('/crew-infos');
+					break;
+				case 'eventInfo':
+					this.$router.push('/event-infos');
 					break;
 			}
 		},
