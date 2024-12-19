@@ -11,24 +11,52 @@
 
 		<!-- 크루 랭킹 -->
 		<div class="pt-16">
-			<div class="flex justify-between items-center px-4">
+			<div class="flex justify-center items-center px-4">
 				<div class="text-xl font-bold">크루 랭킹</div>
+			</div>
+
+			<!-- 팝업 버튼 -->
+			<div class="relative">
 				<button
-					@click="rankInfo"
-					class="w-[1rem] bg-gray-400 text-white text-xs opacity-50 rounded-full aspect-square"
+					@click="togglePopup"
+					class="w-6 h-6 bg-gray-400 text-white text-xs rounded-full absolute right-8"
 				>
 					?
 				</button>
+			</div>
+
+			<!-- 랭크 설명 -->
+			<div
+				v-if="showPopup"
+				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+			>
+				<div class="bg-white p-6 rounded-lg shadow-md">
+					<p class="text-lg font-bold mb-4">랭킹 정보</p>
+					<p class="text-gray-600">
+						크루 랭킹은 점수에 따라 결정됩니다. 상위 3위는 특별히 강조됩니다!
+					</p>
+					<div class="mt-4 flex justify-end">
+						<button
+							@click="togglePopup"
+							class="px-4 py-2 bg-blue-500 text-white rounded"
+						>
+							닫기
+						</button>
+					</div>
+				</div>
 			</div>
 
 			<!-- Top 3 -->
 			<div class="flex justify-center items-end gap-4 mt-6">
 				<!-- Rank 2 -->
 				<div class="flex flex-col items-center">
-					<div class="bg-gray-300 h-24 w-16 rounded-t-lg relative">
+					<p>{{ topRanks[1].score }}점</p>
+					<div
+						class="bg-gray-300 h-24 w-16 rounded-t-lg relative overflow-hidden"
+					>
 						<div
-							class="bg-gray-400 h-full w-full rounded-t-lg absolute bottom-0"
-							:style="{ height: `${topRanks[1].score}%` }"
+							class="bg-transparent w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							:style="{ animationDuration: `${topRanks[1].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
@@ -38,10 +66,13 @@
 
 				<!-- Rank 1 -->
 				<div class="flex flex-col items-center">
-					<div class="bg-yellow-300 h-32 w-20 rounded-t-lg relative">
+					<p>{{ topRanks[0].score }}점</p>
+					<div
+						class="bg-yellow-300 h-32 w-20 rounded-t-lg relative overflow-hidden"
+					>
 						<div
-							class="bg-yellow-400 h-full w-full rounded-t-lg absolute bottom-0"
-							:style="{ height: `${topRanks[0].score}%` }"
+							class="bg-transparent w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							:style="{ animationDuration: `${topRanks[0].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
@@ -51,10 +82,13 @@
 
 				<!-- Rank 3 -->
 				<div class="flex flex-col items-center">
-					<div class="bg-gray-300 h-20 w-16 rounded-t-lg relative">
+					<p>{{ topRanks[2].score }}점</p>
+					<div
+						class="bg-gray-300 h-20 w-16 rounded-t-lg relative overflow-hidden"
+					>
 						<div
-							class="bg-gray-500 h-full w-full rounded-t-lg absolute bottom-0"
-							:style="{ height: `${topRanks[2].score}%` }"
+							class="bg-transparent w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							:style="{ animationDuration: `${topRanks[2].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
@@ -90,26 +124,26 @@ export default {
 				{ name: '크루 E', score: 50 },
 				{ name: '크루 F', score: 40 },
 			],
+			showPopup: false, // 팝업 표시 상태
 		};
 	},
 	computed: {
 		sortedRanks() {
-			// 원본 배열 복사 및 정렬
 			return [...this.ranks].sort((a, b) => b.score - a.score);
 		},
 		topRanks() {
-			// 정렬된 배열에서 상위 3명 추출
-			return this.sortedRanks.slice(0, 3);
+			return this.sortedRanks.slice(0, 3).map((rank, index) => ({
+				...rank,
+				duration: 2 + index * 0.5,
+			}));
 		},
 		remainingRanks() {
-			// 정렬된 배열에서 나머지 추출
 			return this.sortedRanks.slice(3);
 		},
 	},
-
 	methods: {
-		rankInfo() {
-			alert('랭킹 정보에 대한 팁입니다!');
+		togglePopup() {
+			this.showPopup = !this.showPopup; // 팝업 열기/닫기
 		},
 	},
 };

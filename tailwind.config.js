@@ -3,12 +3,12 @@ module.exports = {
 	content: ['./public/index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 	theme: {
 		animation: {
-			'fill-bar': 'fillBar 3s linear forwards', // 3초 동안 채우는 애니메이션
+			'fill-height': 'fillHeight 2s ease-in-out forwards', // 높이 애니메이션
 		},
 		keyframes: {
-			fillBar: {
-				'0%': { width: '0%' },
-				'100%': { width: '100%' },
+			fillHeight: {
+				'0%': { height: '0%' },
+				'100%': { height: '100%' },
 			},
 		},
 		screens: {
