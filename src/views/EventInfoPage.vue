@@ -15,11 +15,11 @@
 				<div class="text-xl font-bold">크루 랭킹</div>
 			</div>
 
-			<!-- 팝업 버튼 -->
+			<!-- 오버레이 버튼 -->
 			<div class="relative">
 				<button
 					@click="toggleOverlay"
-					class="w-6 h-6 bg-gray-400 text-white text-xs rounded-full absolute right-8"
+					class="w-[1.2rem] bg-gray-400 text-white text-xs rounded-full absolute right-8 aspect-square"
 				>
 					?
 				</button>
@@ -32,8 +32,8 @@
 				class="fixed inset-0 z-50"
 			>
 				<div class="absolute" :style="overlayStyle">
-					<div class="p-1/12 bg-transparent rounded-lg shadow-sm">
-						<div class="font-medium text-base text-black">
+					<div class="p-1 rounded-lg border">
+						<div class="font-medium text-sm text-black">
 							{{ overlayContent.title }}
 						</div>
 						<div class="text-xs text-gray-500">
@@ -44,52 +44,52 @@
 			</div>
 
 			<!-- Top 3 -->
-			<div class="flex justify-center items-end gap-4 mt-6">
+			<div class="mt-16 flex justify-center items-end gap-3">
 				<!-- Rank 2 -->
 				<div class="flex flex-col items-center">
-					<p>{{ topRanks[1].score }}점</p>
+					<p>{{ topRanks[1].score }}</p>
 					<div
-						class="bg-gray-300 h-24 w-16 rounded-t-lg relative overflow-hidden"
+						class="relative h-24 w-12 overflow-hidden bg-transparent rounded-t-lg"
 					>
 						<div
-							class="bg-gray-400 w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							class="bg-[#DDDDDE] w-full rounded-t-lg absolute bottom-0 animate-fill-height"
 							:style="{ animationDuration: `${topRanks[1].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
-						{{ topRanks[1].name }}
+						🥈{{ topRanks[1].name }}
 					</p>
 				</div>
 
 				<!-- Rank 1 -->
 				<div class="flex flex-col items-center">
-					<p>{{ topRanks[0].score }}점</p>
+					<p>{{ topRanks[0].score }}</p>
 					<div
-						class="bg-yellow-300 h-32 w-20 rounded-t-lg relative overflow-hidden"
+						class="relative h-32 w-16 overflow-hidden bg-transparent rounded-t-lg"
 					>
 						<div
-							class="bg-yellow-400 w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							class="bg-[#FFD812] w-full rounded-t-lg absolute bottom-0 animate-fill-height"
 							:style="{ animationDuration: `${topRanks[0].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
-						{{ topRanks[0].name }}
+						🥇{{ topRanks[0].name }}
 					</p>
 				</div>
 
 				<!-- Rank 3 -->
 				<div class="flex flex-col items-center">
-					<p>{{ topRanks[2].score }}점</p>
+					<p>{{ topRanks[2].score }}</p>
 					<div
-						class="bg-gray-300 h-20 w-16 rounded-t-lg relative overflow-hidden"
+						class="relative h-20 w-12 overflow-hidden bg-transparent rounded-t-lg"
 					>
 						<div
-							class="bg-gray-500 w-full rounded-t-lg absolute bottom-0 animate-fill-height"
+							class="bg-[#CE7A28] w-full rounded-t-lg absolute bottom-0 animate-fill-height"
 							:style="{ animationDuration: `${topRanks[2].duration}s` }"
 						></div>
 					</div>
 					<p class="text-center mt-2 text-gray-700 font-bold">
-						{{ topRanks[2].name }}
+						🥉{{ topRanks[2].name }}
 					</p>
 				</div>
 			</div>
@@ -121,15 +121,15 @@ export default {
 				{ name: '크루 E', score: 50 },
 				{ name: '크루 F', score: 40 },
 			],
-			showPopup: false, // 팝업 표시 상태
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
 			overlayContent: {
 				title: '크루 랭킹 정보',
-				content: '점수는 난이도별로 측정됩니다.',
+				content: '점수는 난이도 순서로 측정됩니다.',
 			},
 		};
 	},
+
 	computed: {
 		// 점수 측정
 		sortedRanks() {
@@ -148,7 +148,6 @@ export default {
 		remainingRanks() {
 			return this.sortedRanks.slice(3);
 		},
-
 		overlayStyle() {
 			// 오버레이 위치에 맞는 스타일
 			return {
@@ -157,15 +156,30 @@ export default {
 			};
 		},
 	},
+
 	methods: {
 		toggleOverlay(event) {
 			// 클릭한 위치 기준으로 오버레이 표시
 			this.showOverlay = !this.showOverlay;
+
+			let hideOverlayTimeout = null; // 오버레이 숨김 타이머
+
 			if (this.showOverlay) {
+				// 오버레이 위치 설정
 				this.overlayPosition = {
-					x: event.clientX + 10, // 클릭 위치 오른쪽으로 약간 이동
-					y: event.clientY + 10, // 클릭 위치 아래로 약간 이동
+					x: event.clientX - 180,
+					y: event.clientY + 10,
 				};
+
+				// 기존 타이머 초기화
+				if (hideOverlayTimeout) {
+					clearTimeout(hideOverlayTimeout);
+				}
+
+				// 5초 뒤 오버레이 숨김
+				hideOverlayTimeout = setTimeout(() => {
+					this.closeOverlay();
+				}, 3000);
 			}
 		},
 		closeOverlay() {
