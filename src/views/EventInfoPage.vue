@@ -31,7 +31,13 @@
 				@click.self="closeOverlay"
 				class="fixed inset-0 z-50"
 			>
-				<div class="absolute" :style="overlayStyle">
+				<div
+					class="absolute"
+					:style="{
+						top: `${this.overlayPosition.y}px`,
+						left: `${this.overlayPosition.x}px`,
+					}"
+				>
 					<div class="p-1 rounded-lg border">
 						<div class="font-medium text-sm text-black">
 							{{ overlayContent.title }}
@@ -109,15 +115,15 @@
 			<!-- 랭크 리스트 -->
 			<ul class="mt-6 px-4">
 				<li
-					v-for="(rank, index) in remainingRanks"
+					v-for="rank in remainingRanks"
 					:key="rank.name"
-					class="bg-white rounded-lg p-4 flex justify-between items-center mb-2"
+					class="p-4 flex justify-between items-center mb-2 bg-white rounded-lg shadow-md"
 				>
-					<span>{{ index + 4 }}. {{ rank.name }}</span>
+					<span>{{ rank.rank }}. {{ rank.name }}</span>
 					<span class="font-bold text-gray-700">{{ rank.score }}점</span>
 				</li>
 			</ul>
-			<div class="absolute bottom-20 right-5">
+			<div class="fixed bottom-20 right-5">
 				<button
 					class="w-10 bg-black text-red-600 text-2xl font-bold rounded-full aspect-square"
 				>
@@ -142,6 +148,7 @@ export default {
 				{ name: '크루 G', score: 40 },
 				{ name: '크루 H', score: 40 },
 				{ name: '크루 I', score: 40 },
+				{ name: '크루 J', score: 30 },
 			],
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
@@ -167,24 +174,34 @@ export default {
 			return [...this.ranks].sort((a, b) => b.score - a.score);
 		},
 
-		// Top 3
+		// Top 3 랭킹
 		topRanks() {
-			return this.sortedRanks.slice(0, 3).map((rank, index) => ({
-				...rank,
-				duration: 2 + index * 0.5,
-			}));
+			let rank = 1; // 초기 등수
+			return this.sortedRanks.slice(0, 3).map((item, index, ranks) => {
+				// 동일 점수일 경우 이전 등수를 유지
+				if (index > 0 && item.score === ranks[index - 1].score) {
+					item.rank = ranks[index - 1].rank;
+				} else {
+					item.rank = rank;
+				}
+				rank++;
+				return { ...item, duration: 2 + index * 0.5 }; // 애니메이션 지속 시간
+			});
 		},
 
-		// Top 3 제외한 랭크
+		// Top 3 제외한 나머지 랭킹
 		remainingRanks() {
-			return this.sortedRanks.slice(3);
-		},
-		overlayStyle() {
-			// 오버레이 위치에 맞는 스타일
-			return {
-				top: `${this.overlayPosition.y}px`,
-				left: `${this.overlayPosition.x}px`,
-			};
+			let rank = 4; // 4위부터 시작
+			return this.sortedRanks.slice(3).map((item, index, ranks) => {
+				// 동일 점수일 경우 이전 등수를 유지
+				if (index > 0 && item.score === ranks[index - 1].score) {
+					item.rank = ranks[index - 1].rank;
+				} else {
+					item.rank = rank;
+				}
+				rank++;
+				return { ...item };
+			});
 		},
 	},
 
@@ -213,10 +230,13 @@ export default {
 				}, 3000);
 			}
 		},
+
 		closeOverlay() {
 			// 오버레이 닫기
 			this.showOverlay = false;
 		},
+
+		// score 애니메이션
 		animateScore(index, targetScore, duration) {
 			const stepTime = (duration * 1000) / targetScore;
 			let currentScore = 0;
