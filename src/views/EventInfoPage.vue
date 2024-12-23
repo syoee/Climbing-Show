@@ -123,12 +123,90 @@
 					<span class="font-bold text-gray-700">{{ rank.score }}점</span>
 				</li>
 			</ul>
+
+			<!-- 점수 기록 버튼 -->
 			<div class="fixed bottom-20 right-5">
 				<button
+					@click="togglePopup"
 					class="w-10 bg-black text-red-600 text-2xl font-bold rounded-full aspect-square"
 				>
 					+
 				</button>
+			</div>
+
+			<!-- 점수 기록 팝업 -->
+			<div
+				v-if="isPopupVisible"
+				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+			>
+				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
+					<h2 class="text-lg font-bold mb-4">점수 기록</h2>
+					<div class="mb-4">
+						<label class="block text-sm font-medium text-gray-700">이름</label>
+						<input
+							v-model="popupData.name"
+							type="text"
+							class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+					<div class="mb-4">
+						<label class="block text-sm font-medium text-gray-700">점수</label>
+						<div class="grid grid-cols-6 gap-2 items-center">
+							<!-- 색상 표시 -->
+							<div
+								v-for="grade in popupData.grades"
+								:key="grade.id"
+								class="w-6 h-6 rounded-full"
+								:style="{ backgroundColor: grade.color }"
+								@click="selectGrade(grade)"
+							></div>
+						</div>
+					</div>
+					<div class="mt-4">
+						<div class="flex items-center">
+							<!-- 점수 조절 -->
+							<button
+								class="bg-black text-white px-2 py-1 rounded-md"
+								@click="decreaseScore"
+								:disabled="popupData.score <= 0"
+							>
+								-
+							</button>
+							<input
+								v-model="popupData.score"
+								type="number"
+								class="mx-4 w-16 text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								min="0"
+								max="30"
+							/>
+							<button
+								class="bg-black text-white px-2 py-1 rounded-md"
+								@click="increaseScore"
+								:disabled="popupData.score >= 30"
+							>
+								+
+							</button>
+						</div>
+						<div class="mt-2">
+							<span class="text-gray-700 font-bold">총합 점수:</span>
+							<span class="text-red-500">{{ totalScore }}</span>
+						</div>
+					</div>
+					<div class="flex justify-end mt-4">
+						<button
+							@click="saveScore"
+							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+						>
+							저장
+						</button>
+						<button
+							@click="togglePopup"
+							class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+						>
+							취소
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -158,6 +236,24 @@ export default {
 			},
 			animatedScores: [0, 0, 0], // Top 3 애니메이션 점수 초기화
 			animatedHeights: [0, 0, 0], // 게이지 높이 퍼센트 초기화
+			isPopupVisible: false, // 팝업 표시 여부
+			popupData: {
+				name: '',
+				score: 0,
+				selectedGrades: [], // 선택된 등급 ID
+				grades: [
+					{ id: 1, color: '#F20530', score: 1 },
+					{ id: 2, color: '#DF922B', score: 2 },
+					{ id: 3, color: '#F2D129', score: 3 },
+					{ id: 4, color: '#59A13E', score: 4 },
+					{ id: 5, color: '#0583F2', score: 5 },
+					{ id: 6, color: '#24245E', score: 6 },
+					{ id: 7, color: '#933199', score: 7 },
+					{ id: 8, color: '#BFBFBD', score: 8 },
+					{ id: 9, color: '#FFFFFF', score: 9 },
+					{ id: 10, color: '#0D0D0D', score: 10 },
+				],
+			},
 		};
 	},
 
@@ -203,6 +299,14 @@ export default {
 				return { ...item };
 			});
 		},
+
+		// 선택된 등급 ID의 점수를 합산
+		totalScore() {
+			return this.popupData.selectedGrades.reduce((sum, gradeId) => {
+				const grade = this.popupData.grades.find((g) => g.id === gradeId);
+				return grade ? sum + grade.score : sum;
+			}, this.popupData.score);
+		},
 	},
 
 	methods: {
@@ -236,7 +340,7 @@ export default {
 			this.showOverlay = false;
 		},
 
-		// score 애니메이션
+		// 점수 애니메이션
 		animateScore(index, targetScore, duration) {
 			const stepTime = (duration * 1000) / targetScore;
 			let currentScore = 0;
@@ -252,6 +356,57 @@ export default {
 					this.animatedHeights[index] = (currentScore / targetScore) * 100;
 				}
 			}, stepTime);
+		},
+
+		// 팝업 표시/숨기기
+		togglePopup() {
+			this.isPopupVisible = !this.isPopupVisible;
+			if (!this.isPopupVisible) {
+				this.resetPopupData();
+			}
+		},
+
+		selectGrade(grade) {
+			if (this.popupData.selectedGrades.includes(grade.id)) {
+				// 이미 선택된 경우 제거
+				this.popupData.selectedGrades = this.popupData.selectedGrades.filter(
+					(id) => id !== grade.id
+				);
+			} else {
+				// 새로 선택된 경우 추가
+				this.popupData.selectedGrades.push(grade.id);
+			}
+		},
+
+		// 점수 증가 버튼
+		increaseScore() {
+			if (this.popupData.score < 30) {
+				this.popupData.score++;
+			}
+		},
+
+		// 점수 감소 버튼
+		decreaseScore() {
+			if (this.popupData.score > 0) {
+				this.popupData.score--;
+			}
+		},
+
+		// 팝업 데이터 초기화
+		resetPopupData() {
+			this.popupData.name = '';
+			this.popupData.score = 0;
+			this.popupData.selectedGrades = [];
+		},
+
+		// 점수 저장
+		saveScore() {
+			if (!this.popupData.name) {
+				alert('이름을 입력하세요.');
+				return;
+			}
+			alert(`이름: ${this.popupData.name}, 총점: ${this.totalScore}`);
+			this.togglePopup();
 		},
 	},
 };
