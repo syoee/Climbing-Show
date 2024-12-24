@@ -164,7 +164,7 @@
 					</div>
 					<div class="mt-4">
 						<div class="flex items-center">
-							<!-- 점수 조절 -->
+							<!-- 점수조절 -->
 							<button
 								class="bg-black text-white px-2 py-1 rounded-md"
 								@click="decreaseScore"
