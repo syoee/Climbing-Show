@@ -140,55 +140,61 @@
 				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
 			>
 				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
-					<h2 class="text-lg font-bold mb-4">점수 기록</h2>
-					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-700">이름</label>
-						<input
-							v-model="popupData.name"
-							type="text"
-							class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
+					<!--111-->
+					<div>
+						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
+						<div class="mb-4">
+							<label class="block text-sm font-medium text-gray-700"
+								>이름</label
+							>
+							<input
+								v-model="popupData.name"
+								type="text"
+								class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							/>
+						</div>
 					</div>
+
+					<!--222-->
 					<div class="mb-4">
 						<label class="block text-sm font-medium text-gray-700">점수</label>
-						<div class="grid grid-cols-6 gap-2 items-center">
+						<div class="grid grid-rows-8 gap-2 items-center">
 							<!-- 색상 표시 -->
 							<div
 								v-for="grade in popupData.grades"
 								:key="grade.id"
-								class="w-6 h-6 rounded-full"
+								class="w-6 h-6 rounded-full col-span-2"
 								:style="{ backgroundColor: grade.color }"
 								@click="selectGrade(grade)"
 							></div>
-						</div>
-					</div>
-					<div class="mt-4">
-						<div class="flex items-center">
+
 							<!-- 점수조절 -->
-							<button
-								class="bg-black text-white px-2 py-1 rounded-md"
-								@click="decreaseScore"
-								:disabled="popupData.score <= 0"
-							>
-								-
-							</button>
-							<input
-								v-model="popupData.score"
-								type="number"
-								class="mx-4 w-16 text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-								min="0"
-								max="30"
-							/>
-							<button
-								class="bg-black text-white px-2 py-1 rounded-md"
-								@click="increaseScore"
-								:disabled="popupData.score >= 30"
-							>
-								+
-							</button>
+							<div class="flex items-center col-span-3">
+								<button
+									class="bg-black text-white px-2 py-1 rounded-md"
+									@click="decreaseScore"
+									:disabled="popupData.score <= 0"
+								>
+									-
+								</button>
+								<div class="mx-4 w-16 text-center">
+									{{ popupData.score }}
+								</div>
+								<button
+									class="bg-black text-white px-2 py-1 rounded-md"
+									@click="increaseScore"
+									:disabled="popupData.score >= 30"
+								>
+									+
+								</button>
+							</div>
 						</div>
-						<div class="mt-2">
-							<span class="text-gray-700 font-bold">총합 점수:</span>
+
+						<!-- 총합 점수 -->
+						<div class="mt-2 col-span-3">
+							<span class="text-gray-700 font-bold col-span-2">
+								총합 점수:
+							</span>
 							<span class="text-red-500">{{ totalScore }}</span>
 						</div>
 					</div>
