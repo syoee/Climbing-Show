@@ -148,7 +148,7 @@
 						<input
 							v-model="popupData.name"
 							type="text"
-							class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+							class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 					</div>
 
@@ -157,34 +157,36 @@
 						<div
 							v-for="grade in popupData.grades"
 							:key="grade.id"
-							class="flex items-center justify-between mb-2"
+							class="mb-2 grid grid-cols-8 items-center gap-2"
 						>
 							<!-- 난이도 색상 표시 -->
 							<div
-								class="w-6 h-6 rounded-full"
+								class="aspect-square rounded-full"
 								:style="{ backgroundColor: grade.color }"
 							></div>
 
 							<!-- 개수 조정 -->
-							<div class="flex items-center">
+							<div class="flex justify-between items-center col-span-4">
 								<button
-									class="bg-black text-white px-2 py-1 rounded-md"
+									class="bg-black text-white px-2 py-1 rounded-lg"
 									@click="decreaseCount(grade.id)"
 								>
 									-
 								</button>
-								<span class="mx-2">{{ popupData.count }}</span>
+								<span class="mx-2 col-span-2">{{ grade.count }}</span>
 								<button
-									class="bg-black text-white px-2 py-1 rounded-md"
+									class="bg-black text-white px-2 py-1 rounded-lg"
 									@click="increaseCount(grade.id)"
-									:disabled="popupData.count >= 30"
+									:disabled="grade.count >= 30"
 								>
 									+
 								</button>
-							</div>
 
-							<!-- 난이도 총합 -->
-							<div>{{ popupData.count * grade.score }}점</div>
+								<!-- 난이도 총합 -->
+								<div class="flex items-center col-span-3">
+									{{ grade.count * grade.score }}점
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -242,18 +244,17 @@ export default {
 			isPopupVisible: false,
 			popupData: {
 				name: '',
-				count: 0,
 				grades: [
-					{ id: 1, color: '#F20530', score: 1 },
-					{ id: 2, color: '#DF922B', score: 2 },
-					{ id: 3, color: '#F2D129', score: 3 },
-					{ id: 4, color: '#59A13E', score: 4 },
-					{ id: 5, color: '#0583F2', score: 5 },
-					{ id: 6, color: '#24245E', score: 6 },
-					{ id: 7, color: '#933199', score: 7 },
-					{ id: 8, color: '#BFBFBD', score: 8 },
-					{ id: 9, color: '#FFFFFF', score: 9 },
-					{ id: 10, color: '#0D0D0D', score: 10 },
+					{ id: 1, color: '#F20530', score: 1, count: 0 },
+					{ id: 2, color: '#DF922B', score: 2, count: 0 },
+					{ id: 3, color: '#F2D129', score: 3, count: 0 },
+					{ id: 4, color: '#59A13E', score: 4, count: 0 },
+					{ id: 5, color: '#0583F2', score: 5, count: 0 },
+					{ id: 6, color: '#24245E', score: 6, count: 0 },
+					{ id: 7, color: '#933199', score: 7, count: 0 },
+					{ id: 8, color: '#BFBFBD', score: 8, count: 0 },
+					{ id: 9, color: '#FFFFFF', score: 9, count: 0 },
+					{ id: 10, color: '#0D0D0D', score: 10, count: 0 },
 				],
 			},
 		};
@@ -304,13 +305,13 @@ export default {
 
 		// 각 난이도 점수 합산
 		gradeTotalScore() {
-			return this.popupData.grades.score * this.popupData.count;
+			return this.popupData.grades.score * this.grade.count;
 		},
 
 		// 전체 점수 합산
 		totalUserScore() {
 			return this.popupData.grades.reduce(
-				(total, grade) => total + grade.score * this.popupData.count,
+				(total, grade) => total + grade.score * grade.count,
 				0
 			);
 		},
@@ -384,16 +385,16 @@ export default {
 		// 개수 증가 버튼
 		increaseCount(gradeId) {
 			const grade = this.popupData.grades.find((g) => g.id === gradeId);
-			if (grade && this.popupData.count < 30) {
-				this.popupData.count++;
+			if (grade && grade.count < 30) {
+				grade.count++;
 			}
 		},
 
 		// 개수 감소 버튼
 		decreaseCount(gradeId) {
 			const grade = this.popupData.grades.find((g) => g.id === gradeId);
-			if (grade && this.popupData.count >= 0) {
-				this.popupData.count--;
+			if (grade && grade.count > 0) {
+				grade.count--;
 			}
 		},
 
