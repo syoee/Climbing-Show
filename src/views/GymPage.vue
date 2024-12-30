@@ -68,6 +68,7 @@ export default {
 							name: this.center.name,
 							address: this.center.address_road,
 							position: [this.center.latitude, this.center.longitude],
+							address_road: this.center.address_road,
 						},
 				  ]
 				: [];
