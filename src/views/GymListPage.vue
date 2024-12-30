@@ -74,7 +74,12 @@
 		</div>
 
 		<div
-			v-if="!isLoading && results.length === 0 && searchQuery.length >= 2"
+			v-if="
+				!isLoading &&
+				results.length === 0 &&
+				lastSearchQuery &&
+				lastSearchQuery.length >= 2
+			"
 			class="mt-5 flex justify-center text-4xl text-red-600 font-semibold"
 		>
 			<p>검색 결과가 없습니다.</p>
@@ -93,7 +98,8 @@ export default {
 
 	data() {
 		return {
-			searchQuery: '', // 검색어
+			searchQuery: '', // 검색어 입력값
+			lastSearchQuery: '', // 마지막으로 검색된 값
 			results: [], // 검색 결과
 			mapLocations: [], // 지도에 표시할 위치
 			mapLevel: 4, // 100m 단위로 표시될 초기 지도 레벨
@@ -145,7 +151,9 @@ export default {
 				return;
 			}
 
-			this.mapLocations = []; // 기존 지도 데이터를 초기화
+			this.lastSearchQuery = this.searchQuery; // 마지막 검색어 저장
+			this.results = []; // 이전 결과 초기화
+			this.mapLocations = []; // 지도 데이터 초기화
 
 			try {
 				const response = await axios.get(
@@ -167,6 +175,8 @@ export default {
 				}));
 			} catch (error) {
 				console.error('검색 중 오류 발생:', error);
+			} finally {
+				this.isLoading = false; // 검색 완료 후 로딩 비활성화
 			}
 		},
 
