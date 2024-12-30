@@ -196,22 +196,22 @@
 							</div>
 
 							<!-- 난이도 총합 -->
-							<div class="flex justify-end mr-1 items-center col-span-2">
+							<div class="text-right mr-1 items-center col-span-2">
 								{{ grade.count * grade.score }}점
 							</div>
 						</div>
 					</div>
 
 					<!-- 총합 점수 -->
-					<div class="text-right">
-						<span class="text-gray-700 text-lg font-bold">총합 점수: </span>
-						<span class="text-red-500 text-lg font-black">
+					<div class="mt-8 mb-3 text-right text-lg">
+						<span class="text-gray-700 font-bold">총합 점수: </span>
+						<span class="text-red-500 font-black">
 							{{ totalUserScore }}점
 						</span>
 					</div>
 
 					<!-- 버튼 -->
-					<div class="flex justify-end mt-8">
+					<div class="flex justify-end">
 						<button
 							@click="saveScore"
 							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
