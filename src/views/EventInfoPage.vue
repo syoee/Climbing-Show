@@ -161,39 +161,41 @@
 						>
 							<!-- 난이도 색상 표시 -->
 							<div
-								class="aspect-square rounded-full"
+								class="w-1/2 flex justify-start aspect-square rounded-full border col-span-2"
 								:style="{ backgroundColor: grade.color }"
 							></div>
 
 							<!-- 개수 조정 -->
-							<div class="flex justify-between items-center col-span-4">
+							<div class="flex justify-between items-center col-span-3">
 								<button
-									class="bg-black text-white px-2 py-1 rounded-lg"
+									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
 									@click="decreaseCount(grade.id)"
 								>
 									-
 								</button>
-								<span class="mx-2 col-span-2">{{ grade.count }}</span>
+								<span class="mx-2">{{ grade.count }}</span>
 								<button
-									class="bg-black text-white px-2 py-1 rounded-lg"
+									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
 									@click="increaseCount(grade.id)"
 									:disabled="grade.count >= 30"
 								>
 									+
 								</button>
+							</div>
 
-								<!-- 난이도 총합 -->
-								<div class="flex items-center col-span-3">
-									{{ grade.count * grade.score }}점
-								</div>
+							<!-- 난이도 총합 -->
+							<div class="flex justify-end items-center col-span-3">
+								{{ grade.count * grade.score }}점
 							</div>
 						</div>
 					</div>
 
 					<!-- 총합 점수 -->
 					<div class="text-right">
-						<span class="text-gray-700 font-bold">총합 점수: </span>
-						<span class="text-red-500">{{ totalUserScore }}</span>
+						<span class="text-gray-700 text-xl font-bold">총합 점수: </span>
+						<span class="text-red-500 text-xl font-black">
+							{{ totalUserScore }}점
+						</span>
 					</div>
 
 					<!-- 버튼 -->
