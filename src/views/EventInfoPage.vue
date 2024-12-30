@@ -31,7 +31,13 @@
 				@click.self="closeOverlay"
 				class="fixed inset-0 z-50"
 			>
-				<div class="absolute" :style="overlayStyle">
+				<div
+					class="absolute"
+					:style="{
+						top: `${this.overlayPosition.y}px`,
+						left: `${this.overlayPosition.x}px`,
+					}"
+				>
 					<div class="p-1 rounded-lg border">
 						<div class="font-medium text-sm text-black">
 							{{ overlayContent.title }}
@@ -109,14 +115,118 @@
 			<!-- 랭크 리스트 -->
 			<ul class="mt-6 px-4">
 				<li
-					v-for="(rank, index) in remainingRanks"
+					v-for="rank in remainingRanks"
 					:key="rank.name"
-					class="bg-white shadow-md rounded-lg p-4 flex justify-between items-center mb-2"
+					class="p-4 flex justify-between items-center mb-2 bg-white rounded-lg shadow-md"
 				>
-					<span>{{ index + 4 }}. {{ rank.name }}</span>
+					<span>{{ rank.rank }}. {{ rank.name }}</span>
 					<span class="font-bold text-gray-700">{{ rank.score }}점</span>
 				</li>
 			</ul>
+
+			<!-- 점수 기록 버튼 -->
+			<div class="fixed bottom-20 right-5">
+				<button
+					@click="togglePopup"
+					class="w-10 bg-black text-red-600 text-2xl font-bold rounded-full aspect-square"
+				>
+					+
+				</button>
+			</div>
+
+			<!-- 점수 기록 팝업 -->
+			<div
+				v-if="isPopupVisible"
+				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+			>
+				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
+					<h2 class="text-lg font-bold mb-4">점수 기록</h2>
+
+					<!-- 이름 입력 -->
+					<div class="mb-4">
+						<label class="block mb-1 text-md font-medium text-gray-700"
+							>이름</label
+						>
+						<input
+							v-model="popupData.name"
+							type="text"
+							class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+
+					<!-- 난이도 점수 입력 -->
+					<div class="mb-4">
+						<!--Sort-->
+						<div>
+							<div
+								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+							>
+								<div class="flex justify-start">난이도</div>
+								<div>개수</div>
+								<div class="flex justify-end">점수</div>
+							</div>
+						</div>
+						<div
+							v-for="grade in popupData.grades"
+							:key="grade.id"
+							class="mb-2 grid grid-cols-8 items-center"
+						>
+							<!-- 난이도 색상 표시 -->
+							<div
+								class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
+								:style="{ backgroundColor: grade.color }"
+							></div>
+
+							<!-- 개수 조정 -->
+							<div class="flex justify-evenly items-center col-span-4">
+								<button
+									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+									@click="decreaseCount(grade.id)"
+								>
+									-
+								</button>
+								<span class="mx-2">{{ grade.count }}</span>
+								<button
+									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+									@click="increaseCount(grade.id)"
+									:disabled="grade.count >= 30"
+								>
+									+
+								</button>
+							</div>
+
+							<!-- 난이도 총합 -->
+							<div class="flex justify-end mr-1 items-center col-span-2">
+								{{ grade.count * grade.score }}점
+							</div>
+						</div>
+					</div>
+
+					<!-- 총합 점수 -->
+					<div class="text-right">
+						<span class="text-gray-700 text-lg font-bold">총합 점수: </span>
+						<span class="text-red-500 text-lg font-black">
+							{{ totalUserScore }}점
+						</span>
+					</div>
+
+					<!-- 버튼 -->
+					<div class="flex justify-end mt-8">
+						<button
+							@click="saveScore"
+							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+						>
+							저장
+						</button>
+						<button
+							@click="togglePopup"
+							class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+						>
+							취소
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -132,6 +242,10 @@ export default {
 				{ name: '크루 D', score: 60 },
 				{ name: '크루 E', score: 50 },
 				{ name: '크루 F', score: 40 },
+				{ name: '크루 G', score: 40 },
+				{ name: '크루 H', score: 40 },
+				{ name: '크루 I', score: 40 },
+				{ name: '크루 J', score: 30 },
 			],
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
@@ -141,6 +255,22 @@ export default {
 			},
 			animatedScores: [0, 0, 0], // Top 3 애니메이션 점수 초기화
 			animatedHeights: [0, 0, 0], // 게이지 높이 퍼센트 초기화
+			isPopupVisible: false,
+			popupData: {
+				name: '',
+				grades: [
+					{ id: 1, color: '#F20530', score: 1, count: 0 },
+					{ id: 2, color: '#DF922B', score: 2, count: 0 },
+					{ id: 3, color: '#F2D129', score: 3, count: 0 },
+					{ id: 4, color: '#59A13E', score: 4, count: 0 },
+					{ id: 5, color: '#0583F2', score: 5, count: 0 },
+					{ id: 6, color: '#24245E', score: 6, count: 0 },
+					{ id: 7, color: '#933199', score: 7, count: 0 },
+					{ id: 8, color: '#BFBFBD', score: 8, count: 0 },
+					{ id: 9, color: '#FFFFFF', score: 9, count: 0 },
+					{ id: 10, color: '#0D0D0D', score: 10, count: 0 },
+				],
+			},
 		};
 	},
 
@@ -157,24 +287,47 @@ export default {
 			return [...this.ranks].sort((a, b) => b.score - a.score);
 		},
 
-		// Top 3
+		// Top 3 랭킹
 		topRanks() {
-			return this.sortedRanks.slice(0, 3).map((rank, index) => ({
-				...rank,
-				duration: 2 + index * 0.5,
-			}));
+			let rank = 1; // 초기 등수
+			return this.sortedRanks.slice(0, 3).map((item, index, ranks) => {
+				// 동일 점수일 경우 이전 등수를 유지
+				if (index > 0 && item.score === ranks[index - 1].score) {
+					item.rank = ranks[index - 1].rank;
+				} else {
+					item.rank = rank;
+				}
+				rank++;
+				return { ...item, duration: 2 + index * 0.5 }; // 애니메이션 지속 시간
+			});
 		},
 
-		// Top 3 제외한 랭크
+		// Top 3 제외한 나머지 랭킹
 		remainingRanks() {
-			return this.sortedRanks.slice(3);
+			let rank = 4; // 4위부터 시작
+			return this.sortedRanks.slice(3).map((item, index, ranks) => {
+				// 동일 점수일 경우 이전 등수를 유지
+				if (index > 0 && item.score === ranks[index - 1].score) {
+					item.rank = ranks[index - 1].rank;
+				} else {
+					item.rank = rank;
+				}
+				rank++;
+				return { ...item };
+			});
 		},
-		overlayStyle() {
-			// 오버레이 위치에 맞는 스타일
-			return {
-				top: `${this.overlayPosition.y}px`,
-				left: `${this.overlayPosition.x}px`,
-			};
+
+		// 각 난이도 점수 합산
+		gradeTotalScore() {
+			return this.popupData.grades.score * this.grade.count;
+		},
+
+		// 전체 점수 합산
+		totalUserScore() {
+			return this.popupData.grades.reduce(
+				(total, grade) => total + grade.score * grade.count,
+				0
+			);
 		},
 	},
 
@@ -203,10 +356,13 @@ export default {
 				}, 3000);
 			}
 		},
+
 		closeOverlay() {
 			// 오버레이 닫기
 			this.showOverlay = false;
 		},
+
+		// 점수 애니메이션
 		animateScore(index, targetScore, duration) {
 			const stepTime = (duration * 1000) / targetScore;
 			let currentScore = 0;
@@ -222,6 +378,51 @@ export default {
 					this.animatedHeights[index] = (currentScore / targetScore) * 100;
 				}
 			}, stepTime);
+		},
+
+		// 팝업 표시/숨기기
+		togglePopup() {
+			this.isPopupVisible = !this.isPopupVisible;
+			if (!this.isPopupVisible) {
+				this.resetPopupData();
+			}
+		},
+
+		// 팝업 데이터 초기화
+		resetPopupData() {
+			this.popupData.name = '';
+			this.popupData.grades.forEach((grade) => {
+				grade.count = 0;
+			});
+		},
+
+		// 개수 증가 버튼
+		increaseCount(gradeId) {
+			const grade = this.popupData.grades.find((g) => g.id === gradeId);
+			if (grade && grade.count < 30) {
+				grade.count++;
+			}
+		},
+
+		// 개수 감소 버튼
+		decreaseCount(gradeId) {
+			const grade = this.popupData.grades.find((g) => g.id === gradeId);
+			if (grade && grade.count > 0) {
+				grade.count--;
+			}
+		},
+
+		// 점수 저장
+		saveScore() {
+			if (!this.popupData.name) {
+				alert('이름을 입력하세요.');
+				return;
+			}
+
+			const totalScore = this.totalUserScore;
+			alert(`이름: ${this.popupData.name}, 총합 점수: ${totalScore}`);
+			this.ranks.push({ name: this.popupData.name, score: totalScore });
+			this.togglePopup();
 		},
 	},
 };

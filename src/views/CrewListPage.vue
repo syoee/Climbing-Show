@@ -5,7 +5,7 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
+				class="mx-5 p-3 rounded-lg shadow-md"
 			>
 				<div class="flex flex-row items-center">
 					<img
@@ -40,7 +40,7 @@
 			</button>
 		</div>
 
-		<div class="absolute bottom-20 right-5">
+		<div class="fixed bottom-20 right-5">
 			<button
 				@click="redirectToGoogleForm"
 				class="px-2 py-1 bg-black text-red-600 font-semibold rounded-lg"
