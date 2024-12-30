@@ -144,7 +144,9 @@
 
 					<!-- 이름 입력 -->
 					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-700">이름</label>
+						<label class="block mb-1 text-md font-medium text-gray-700"
+							>이름</label
+						>
 						<input
 							v-model="popupData.name"
 							type="text"
@@ -154,19 +156,29 @@
 
 					<!-- 난이도 점수 입력 -->
 					<div class="mb-4">
+						<!--Sort-->
+						<div>
+							<div
+								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+							>
+								<div class="flex justify-start">난이도</div>
+								<div>개수</div>
+								<div class="flex justify-end">점수</div>
+							</div>
+						</div>
 						<div
 							v-for="grade in popupData.grades"
 							:key="grade.id"
-							class="mb-2 grid grid-cols-8 items-center gap-2"
+							class="mb-2 grid grid-cols-8 items-center"
 						>
 							<!-- 난이도 색상 표시 -->
 							<div
-								class="w-1/2 flex justify-start aspect-square rounded-full border col-span-2"
+								class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
 								:style="{ backgroundColor: grade.color }"
 							></div>
 
 							<!-- 개수 조정 -->
-							<div class="flex justify-between items-center col-span-3">
+							<div class="flex justify-evenly items-center col-span-4">
 								<button
 									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
 									@click="decreaseCount(grade.id)"
@@ -184,7 +196,7 @@
 							</div>
 
 							<!-- 난이도 총합 -->
-							<div class="flex justify-end items-center col-span-3">
+							<div class="flex justify-end mr-1 items-center col-span-2">
 								{{ grade.count * grade.score }}점
 							</div>
 						</div>
@@ -192,14 +204,14 @@
 
 					<!-- 총합 점수 -->
 					<div class="text-right">
-						<span class="text-gray-700 text-xl font-bold">총합 점수: </span>
-						<span class="text-red-500 text-xl font-black">
+						<span class="text-gray-700 text-lg font-bold">총합 점수: </span>
+						<span class="text-red-500 text-lg font-black">
 							{{ totalUserScore }}점
 						</span>
 					</div>
 
 					<!-- 버튼 -->
-					<div class="flex justify-end mt-4">
+					<div class="flex justify-end mt-8">
 						<button
 							@click="saveScore"
 							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
