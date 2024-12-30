@@ -28,13 +28,8 @@
 			</div>
 
 			<!-- 지도 -->
-			<div v-else>
-				<KakaoMap
-					:locations="mapLocations"
-					:mapLevel="mapLevel"
-					@mapLevelChanged="onMapLevelChanged"
-					@mapMoved="onMapMoved"
-				/>
+			<div v-if="mapLocations.length > 0">
+				<KakaoMap :locations="mapLocations" :mapLevel="mapLevel" />
 			</div>
 		</div>
 
@@ -79,7 +74,7 @@
 		</div>
 
 		<div
-			v-if="showResults && results.length === 0 && searchQuery.length >= 2"
+			v-if="!isLoading && results.length === 0 && searchQuery.length >= 2"
 			class="mt-5 flex justify-center text-4xl text-red-600 font-semibold"
 		>
 			<p>검색 결과가 없습니다.</p>
@@ -149,6 +144,9 @@ export default {
 				alert('2글자 이상 검색해주세요.');
 				return;
 			}
+
+			this.mapLocations = []; // 기존 지도 데이터를 초기화
+
 			try {
 				const response = await axios.get(
 					`${process.env.VUE_APP_API_HOST}/climbing-infos`,
