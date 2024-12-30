@@ -152,6 +152,7 @@ export default {
 			}
 
 			this.lastSearchQuery = this.searchQuery; // 마지막 검색어 저장
+			this.isLoading = true; // 로딩 상태 활성화
 			this.results = []; // 이전 결과 초기화
 			this.mapLocations = []; // 지도 데이터 초기화
 
