@@ -5,7 +5,7 @@ import axios from 'axios';
 import './assets/tailwind.css';
 
 console.warn = () => {}; // 모든 경고 출력 무시
-console.log = () => {}; // 모든 로그 출력 무시
+// console.log = () => {}; // 모든 로그 출력 무시
 
 const app = createApp(App);
 app.use(router);
