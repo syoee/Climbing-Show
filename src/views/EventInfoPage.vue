@@ -216,13 +216,13 @@
 							@click="saveScore"
 							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
 						>
-							저장
+							저 장
 						</button>
 						<button
 							@click="togglePopup"
 							class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
 						>
-							취소
+							취 소
 						</button>
 					</div>
 				</div>
