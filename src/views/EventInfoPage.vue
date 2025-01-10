@@ -1,7 +1,8 @@
 <template>
+	<!-- 이벤트 리스트가 있을 때만 렌더링 -->
 	<div v-if="climbingEvents && climbingEvents.length > 0">
 		<div v-for="gym in climbingEvents" :key="gym.id">
-			<!-- 미션 -->
+			<!-- 미션 섹션 -->
 			<div class="grid grid-rows-2 gap-1 justify-items-center">
 				<div class="text-xl font-bold">이번 주 mission</div>
 				<div class="text-3xl">
@@ -27,7 +28,7 @@
 					</button>
 				</div>
 
-				<!-- 랭크 설명 -->
+				<!-- 랭크 설명 오버레이 -->
 				<div
 					v-if="showOverlay"
 					@click.self="closeOverlay"
@@ -51,70 +52,42 @@
 					</div>
 				</div>
 
-				<!-- Top 3 -->
+				<!-- Top 3 랭킹 표시 -->
 				<div class="mt-24 flex justify-center items-end text-center gap-3">
-					<!-- Rank 2 -->
-					<div class="flex flex-col items-center">
-						<div class="relative h-24 w-12 bg-transparent rounded-t-lg">
-							<div
-								class="bg-[#DDDDDE] w-full rounded-t-lg absolute bottom-0"
-								:style="{
-									animationDuration: `${topRanks[1].duration}s`,
-									height: `${animatedHeights[1]}%`,
-								}"
-							></div>
-							<p
-								class="absolute w-full text-gray-700 font-bold"
-								:style="{ bottom: `${animatedHeights[1]}%` }"
-							>
-								{{ animatedScores[1] }}
-							</p>
-						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥈{{ topRanks[1].name }}</p>
-					</div>
-
-					<!-- Rank 1 -->
-					<div class="flex flex-col items-center">
-						<div class="relative h-32 w-16 bg-transparent rounded-t-lg">
+					<div
+						v-for="(rank, index) in topRanks"
+						:key="rank.name"
+						class="flex flex-col items-center"
+					>
+						<div
+							class="relative"
+							:class="{
+								'h-32 w-16': index === 0, // 1위
+								'h-24 w-12': index === 1, // 2위
+								'h-20 w-12': index === 2, // 3위
+							}"
+						>
 							<div
 								class="bg-[#FFD812] w-full rounded-t-lg absolute bottom-0"
 								:style="{
-									animationDuration: `${topRanks[0].duration}s`,
-									height: `${animatedHeights[0]}%`,
+									animationDuration: `${rank.duration}s`,
+									height: `${animatedHeights[index]}%`,
 								}"
 							></div>
 							<p
 								class="absolute w-full text-gray-700 font-bold"
-								:style="{ bottom: `${animatedHeights[0]}%` }"
+								:style="{ bottom: `${animatedHeights[index]}%` }"
 							>
-								{{ animatedScores[0] }}
+								{{ animatedScores[index] }}
 							</p>
 						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥇{{ topRanks[0].name }}</p>
-					</div>
-
-					<!-- Rank 3 -->
-					<div class="flex flex-col items-center">
-						<div class="relative h-20 w-12 bg-transparent rounded-t-lg">
-							<div
-								class="bg-[#CE7A28] w-full rounded-t-lg absolute bottom-0"
-								:style="{
-									animationDuration: `${topRanks[2].duration}s`,
-									height: `${animatedHeights[2]}%`,
-								}"
-							></div>
-							<p
-								class="absolute w-full text-gray-700 font-bold"
-								:style="{ bottom: `${animatedHeights[2]}%` }"
-							>
-								{{ animatedScores[2] }}
-							</p>
-						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥉{{ topRanks[2].name }}</p>
+						<p class="mt-2 text-gray-700 font-bold">
+							{{ ['🥇', '🥈', '🥉'][index] }}{{ rank.name }}
+						</p>
 					</div>
 				</div>
 
-				<!-- 랭크 리스트 -->
+				<!-- 4위 이후 리스트 -->
 				<ul class="mt-6 px-4">
 					<li
 						v-for="rank in remainingRanks"
@@ -141,97 +114,70 @@
 					v-if="isPopupVisible"
 					class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
 				>
-					<div v-for="event in gym.climbing_level_list" :key="event.id">
-						<div class="bg-white p-6 rounded-lg shadow-lg w-80">
-							<h2 class="text-lg font-bold mb-4">점수 기록</h2>
+					<div class="bg-white p-6 rounded-lg shadow-lg w-80">
+						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
-							<!-- 암장 체크  -->
-							<div class="mb-4">
-								<label class="block mb-1 text-md font-medium text-gray-700">
-									방문한 클라이밍장을 선택해주세요!
-								</label>
-								<div class="flex items-center">
-									<input
-										id="checkbox"
-										type="checkbox"
-										class="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-									/>
-									<label
-										for="checkbox"
-										class="ml-2 text-sm font-medium text-gray-900"
+						<!-- 난이도 점수 입력 -->
+						<div class="mb-4">
+							<div
+								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+							>
+								<div class="flex justify-start">난이도</div>
+								<div>개수</div>
+								<div class="flex justify-end">점수</div>
+							</div>
+							<div
+								v-for="level in climbingInfo.climbing_level_list"
+								:key="level.id"
+								class="mb-2 grid grid-cols-8 items-center"
+							>
+								<div
+									class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
+									:style="{ backgroundColor: level.color }"
+								></div>
+								<div class="flex justify-evenly items-center col-span-4">
+									<button
+										class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+										@click="decreaseCount(level.id)"
 									>
-										{{ event.name }}
-									</label>
-								</div>
-							</div>
-
-							<!-- 난이도 점수 입력 -->
-							<div class="mb-4">
-								<!--Sort-->
-								<div>
-									<div
-										class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+										-
+									</button>
+									<span class="mx-2">{{ level.count }}</span>
+									<button
+										class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+										@click="increaseCount(level.id)"
 									>
-										<div class="flex justify-start">난이도</div>
-										<div>개수</div>
-										<div class="flex justify-end">점수</div>
-									</div>
+										+
+									</button>
 								</div>
-								<div class="mb-2 grid grid-cols-8 items-center">
-									<!-- 난이도 색상 표시 -->
-									<div
-										class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
-										:style="{ backgroundColor: event.color }"
-									></div>
-
-									<!-- 개수 조정 -->
-									<div class="flex justify-evenly items-center col-span-4">
-										<button
-											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click="decreaseCount(event.id)"
-										>
-											-
-										</button>
-										<span class="mx-2">{{ event.count }}</span>
-										<button
-											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click="increaseCount(grade.id)"
-											:disabled="this.count >= 30"
-										>
-											+
-										</button>
-									</div>
-
-									<!-- 난이도 총합 -->
-									<div class="text-right mr-1 items-center col-span-2">
-										{{ this.count * event.level }}점
-									</div>
+								<div class="text-right mr-1 items-center col-span-2">
+									{{ level.count * level.score }}점
 								</div>
 							</div>
+						</div>
 
-							<!-- 총합 점수 -->
-							<div class="mt-8 mb-3 text-right text-lg">
-								<span class="text-gray-700 font-bold">총합 점수: </span>
-								<span class="text-red-500 font-black">
-									{{ totalUserScore }}점
-								</span>
-							</div>
+						<!-- 총합 점수 -->
+						<div class="mt-8 mb-3 text-right text-lg">
+							<span class="text-gray-700 font-bold">총합 점수: </span>
+							<span class="text-red-500 font-black">
+								{{ totalUserScore }}점
+							</span>
+						</div>
 
-							<!-- 버튼 -->
-							<div class="flex justify-end">
-								<button
-									@click="saveScore"
-									class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-								>
-									저 장
-								</button>
-								<button
-									@click="togglePopup"
-									class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-								>
-									취 소
-								</button>
-							</div>
+						<!-- 저장 버튼 -->
+						<div class="flex justify-end">
+							<button
+								@click="saveScore"
+								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+							>
+								저장
+							</button>
+							<button
+								@click="togglePopup"
+								class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+							>
+								취소
+							</button>
 						</div>
 					</div>
 				</div>
