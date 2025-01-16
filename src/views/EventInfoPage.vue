@@ -1,11 +1,11 @@
 <template>
 	<div v-if="climbingEvents && climbingEvents.length > 0">
-		<div v-for="gym in climbingEvents" :key="gym.id">
+		<div v-for="event in climbingEvents" :key="event.id">
 			<!-- 미션 -->
 			<div class="grid grid-rows-2 gap-1 justify-items-center">
 				<div class="text-xl font-bold">이번 주 mission</div>
 				<div class="text-3xl">
-					'<span class="text-red-500 font-semibold">{{ gym.title }}</span
+					'<span class="text-red-500 font-semibold">{{ event.title }}</span
 					>'
 					<span>를 잡아라!</span>
 				</div>
@@ -145,7 +145,7 @@
 						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
 						<!-- 암장 체크  -->
-						<div v-for="event in gym.climbing_info_list" :key="event.id">
+						<div v-for="gym in event.climbing_info_list" :key="gym.id">
 							<label class="block mb-1 text-md font-medium text-gray-700">
 								방문한 클라이밍장을 선택해주세요!
 							</label>
@@ -153,11 +153,11 @@
 								<input
 									type="checkbox"
 									v-model="selectedGyms"
-									:value="event.id"
+									:value="gym.id"
 									class="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
 								/>
 								<label class="ml-2 text-sm font-medium text-gray-900">
-									{{ event.name }}
+									{{ gym.name }}
 								</label>
 							</div>
 						</div>
@@ -165,70 +165,72 @@
 						<!-- 난이도 점수 입력 -->
 						<div class="mb-4">
 							<!--Sort-->
-							<div v-for="event in gym.climbing_info_list" :key="event.id">
-								<div
-									class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+							<div v-for="info in event.climbing_info_list" :key="info.id">
+								<div v-for="grade in info.climbing_level_list" :key="grade.id">
+									<div
+										class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+									>
+										<div class="flex justify-start">난이도</div>
+										<div>개수</div>
+										<div class="flex justify-end">점수</div>
+									</div>
+								</div>
+								<div class="mb-2 grid grid-cols-8 items-center">
+									<!-- 난이도 색상 표시 -->
+									<div
+										class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
+										:style="{ backgroundColor: grade?.color }"
+									></div>
+
+									<!-- 개수 조정 -->
+									<div class="flex justify-evenly items-center col-span-4">
+										<button
+											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											@click="decreaseCount(grade?.level)"
+											:disabled="solvedCounts[grade?.level] === 0"
+										>
+											-
+										</button>
+										<span class="mx-2">{{ solvedCounts[grade?.level] }}</span>
+										<button
+											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											@click="increaseCount(grade?.level)"
+											:disabled="solvedCounts[grade?.level] >= 30"
+										>
+											+
+										</button>
+									</div>
+
+									<!-- 난이도 총합 -->
+									<div class="text-right mr-1 items-center col-span-2">
+										{{ solvedCounts[grade?.level] * grade?.level }}점
+									</div>
+								</div>
+							</div>
+
+							<!-- 총합 점수 -->
+							<div class="mt-8 mb-3 text-right text-lg">
+								<span class="text-gray-700 font-bold">총합 점수: </span>
+								<span class="text-red-500 font-black">
+									{{ totalUserScore }}점
+								</span>
+							</div>
+
+							<!-- 저장 버튼 -->
+							<div class="flex justify-end">
+								<button
+									@click="saveScore"
+									class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
 								>
-									<div class="flex justify-start">난이도</div>
-									<div>개수</div>
-									<div class="flex justify-end">점수</div>
-								</div>
+									저장
+								</button>
+								<button
+									@click="togglePopup"
+									class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+								>
+									취소
+								</button>
 							</div>
-							<div class="mb-2 grid grid-cols-8 items-center">
-								<!-- 난이도 색상 표시 -->
-								<div
-									class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
-									:style="{ backgroundColor: event.color }"
-								></div>
-
-								<!-- 개수 조정 -->
-								<div class="flex justify-evenly items-center col-span-4">
-									<button
-										class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-										@click="decreaseCount(event.level)"
-										:disabled="solvedCounts[event.level] === 0"
-									>
-										-
-									</button>
-									<span class="mx-2">{{ solvedCounts[event.level] }}</span>
-									<button
-										class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-										@click="increaseCount(event.level)"
-										:disabled="solvedCounts[event.level] >= 30"
-									>
-										+
-									</button>
-								</div>
-
-								<!-- 난이도 총합 -->
-								<div class="text-right mr-1 items-center col-span-2">
-									{{ solvedCounts[event.level] * event.level }}점
-								</div>
-							</div>
-						</div>
-
-						<!-- 총합 점수 -->
-						<div class="mt-8 mb-3 text-right text-lg">
-							<span class="text-gray-700 font-bold">총합 점수: </span>
-							<span class="text-red-500 font-black">
-								{{ totalUserScore }}점
-							</span>
-						</div>
-
-						<!-- 저장 버튼 -->
-						<div class="flex justify-end">
-							<button
-								@click="saveScore"
-								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-							>
-								저 장
-							</button>
-							<button
-								@click="togglePopup"
-								class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-							>
-								취 소
-							</button>
 						</div>
 					</div>
 				</div>
@@ -398,9 +400,6 @@ export default {
 				this.resetPopupData();
 			}
 		},
-
-		// 팝업 데이터 초기화
-		resetPopupData() {},
 
 		// 개수 증가 버튼
 		increaseCount(id) {
