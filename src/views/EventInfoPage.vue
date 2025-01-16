@@ -145,15 +145,20 @@
 						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
 						<!-- 암장 체크  -->
-						<div v-for="gym in event.climbing_info_list" :key="gym.id">
+						<div>
 							<label class="block mb-1 text-md font-medium text-gray-700">
 								방문한 클라이밍장을 선택해주세요!
 							</label>
-							<div class="flex items-center">
+							<div
+								v-for="gym in event.climbing_info_list"
+								:key="gym.id"
+								class="flex items-center"
+							>
 								<input
 									type="checkbox"
-									v-model="selectedGyms"
 									:value="gym.id"
+									:checked="selectedGyms === gym.id"
+									@click="selectSingleGym(gym.id)"
 									class="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
 								/>
 								<label class="ml-2 text-sm font-medium text-gray-900">
@@ -165,16 +170,19 @@
 						<!-- 난이도 점수 입력 -->
 						<div class="mb-4">
 							<!--Sort-->
-							<div v-for="info in event.climbing_info_list" :key="info.id">
-								<div v-for="grade in info.climbing_level_list" :key="grade.id">
-									<div
-										class="grid grid-cols-3 mb-3 font-medium text-md text-center"
-									>
-										<div class="flex justify-start">난이도</div>
-										<div>개수</div>
-										<div class="flex justify-end">점수</div>
-									</div>
-								</div>
+							<div
+								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+							>
+								<div class="flex justify-start">난이도</div>
+								<div>개수</div>
+								<div class="flex justify-end">점수</div>
+							</div>
+						</div>
+						<div
+							v-for="info in event.climbing_info_list.slice(0, 1)"
+							:key="info.id"
+						>
+							<div v-for="grade in info.climbing_level_list" :key="grade.id">
 								<div class="mb-2 grid grid-cols-8 items-center">
 									<!-- 난이도 색상 표시 -->
 									<div
@@ -207,30 +215,30 @@
 									</div>
 								</div>
 							</div>
+						</div>
 
-							<!-- 총합 점수 -->
-							<div class="mt-8 mb-3 text-right text-lg">
-								<span class="text-gray-700 font-bold">총합 점수: </span>
-								<span class="text-red-500 font-black">
-									{{ totalUserScore }}점
-								</span>
-							</div>
+						<!-- 총합 점수 -->
+						<div class="mt-8 mb-3 text-right text-lg">
+							<span class="text-gray-700 font-bold">총합 점수: </span>
+							<span class="text-red-500 font-black">
+								{{ totalUserScore }}점
+							</span>
+						</div>
 
-							<!-- 저장 버튼 -->
-							<div class="flex justify-end">
-								<button
-									@click="saveScore"
-									class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-								>
-									저장
-								</button>
-								<button
-									@click="togglePopup"
-									class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-								>
-									취소
-								</button>
-							</div>
+						<!-- 저장 버튼 -->
+						<div class="flex justify-end">
+							<button
+								@click="saveScore"
+								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+							>
+								저장
+							</button>
+							<button
+								@click="togglePopup"
+								class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+							>
+								취소
+							</button>
 						</div>
 					</div>
 				</div>
@@ -246,7 +254,7 @@ export default {
 	data() {
 		return {
 			climbingEvents: [], // API에서 받은 데이터
-			selectedGyms: [], // 체크된 암장 ID 배열
+			selectedGyms: null, // 체크된 암장 ID 배열
 			solvedCounts: {}, // 암장별 난이도 개수
 			ranks: [
 				{ name: '크루 A', score: 95 },
@@ -401,33 +409,34 @@ export default {
 			}
 		},
 
+		resetPopupData() {},
+
 		// 개수 증가 버튼
 		increaseCount(id) {
-			this.$set(this.solvedCounts, id, (this.solvedCounts[id] || 0) + 1);
+			this.solvedCounts[id] = (this.solvedCounts[id] || 0) + 1;
 		},
 
 		// 개수 감소 버튼
 		decreaseCount(id) {
-			this.$set(
-				this.solvedCounts,
-				id,
-				Math.max((this.solvedCounts[id] || 0) - 1, 0)
-			);
+			this.solvedCounts[id] = Math.max((this.solvedCounts[id] || 0) - 1, 0);
 		},
 
 		// 점수 저장
 		async saveScore() {
 			try {
 				// 선택된 암장 데이터와 점수 구성
-				const selectedData = this.selectedGyms.map((gymId) => ({
-					id: gymId,
-					count: this.solvedCounts[gymId],
-				}));
+				const requestData = {
+					climbing_event_id: 1, // 이벤트 ID를 여기에 설정
+					climbing_level_list: this.climbingLevels.map((level) => ({
+						climbing_level_id: level.id, // 난이도 ID
+						solved_count: level.solved_count || 0, // 해결된 문제 수
+					})),
+				};
 
 				// 서버 요청
 				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
-					{ data: selectedData }, // 요청 본문 데이터
+					{ data: requestData }, // 요청 본문 데이터
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem('token')}`, // 토큰
@@ -441,6 +450,11 @@ export default {
 				console.error('점수 저장 실패', error);
 				alert('점수 저장에 실패했습니다.');
 			}
+		},
+
+		// 암장 하나만 선택
+		selectSingleGym(id) {
+			this.selectedGyms = id;
 		},
 	},
 };
