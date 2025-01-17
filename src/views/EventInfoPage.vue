@@ -324,17 +324,20 @@ export default {
 			});
 		},
 
-		// 각 난이도 점수 합산
-		gradeTotalScore() {
-			return this.climbingEvents.level * this.solvedCount;
-		},
-
+		// 난이도 별로 id가 높기 때문에 id 대신 level 사용
 		// 전체 점수 합산
 		totalUserScore() {
-			return this.climbingEvents.reduce(
-				(total, solvedCount) => total + this.climbingEvents.level * solvedCount,
-				0
-			);
+			// 클라이밍 이벤트를 순회하면서 점수 계산
+			let totalScore = 0;
+			this.climbingEvents.forEach((event) => {
+				event.climbing_info_list.forEach((gym) => {
+					gym.climbing_level_list.forEach((level) => {
+						const count = this.solvedCounts[level.level] || 0;
+						totalScore += count * level.level;
+					});
+				});
+			});
+			return totalScore;
 		},
 	},
 
@@ -348,6 +351,17 @@ export default {
 				);
 
 				this.climbingEvents = res.data;
+
+				// solvedCounts 초기화
+				this.climbingEvents.forEach((event) => {
+					event.climbing_info_list.forEach((info) => {
+						info.climbing_level_list.forEach((grade) => {
+							if (!this.solvedCounts[grade.level]) {
+								this.solvedCounts[grade.level] = 0;
+							}
+						});
+					});
+				});
 			} catch (error) {
 				console.error('요청 설정 오류', error.message);
 			}
@@ -409,16 +423,21 @@ export default {
 			}
 		},
 
+		// 취소 버튼
 		resetPopupData() {},
 
 		// 개수 증가 버튼
-		increaseCount(id) {
-			this.solvedCounts[id] = (this.solvedCounts[id] || 0) + 1;
+		increaseCount(level) {
+			// 해당 level의 카운트를 증가
+			this.solvedCounts[level]++;
 		},
 
 		// 개수 감소 버튼
-		decreaseCount(id) {
-			this.solvedCounts[id] = Math.max((this.solvedCounts[id] || 0) - 1, 0);
+		decreaseCount(level) {
+			// 카운트가 0 이하로 내려가지 않도록 확인
+			if (this.solvedCounts[level] > 0) {
+				this.solvedCounts[level]--;
+			}
 		},
 
 		// 점수 저장
