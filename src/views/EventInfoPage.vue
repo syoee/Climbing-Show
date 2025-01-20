@@ -424,7 +424,20 @@ export default {
 		},
 
 		// 취소 버튼
-		resetPopupData() {},
+		resetPopupData() {
+			this.selectedGyms = null;
+			this.solvedCounts = {};
+			// solvedCounts 초기화
+			this.climbingEvents.forEach((event) => {
+				event.climbing_info_list.forEach((info) => {
+					info.climbing_level_list.forEach((grade) => {
+						if (!this.solvedCounts[grade.level]) {
+							this.solvedCounts[grade.level] = 0;
+						}
+					});
+				});
+			});
+		},
 
 		// 개수 증가 버튼
 		increaseCount(level) {
@@ -445,17 +458,17 @@ export default {
 			try {
 				// 선택된 암장 데이터와 점수 구성
 				const requestData = {
-					climbing_event_id: 1, // 이벤트 ID를 여기에 설정
-					climbing_level_list: this.climbingLevels.map((level) => ({
-						climbing_level_id: level.id, // 난이도 ID
-						solved_count: level.solved_count || 0, // 해결된 문제 수
+					climbing_event_id: this.climbingEvents[0].id, // 이벤트 ID
+					climbing_level_list: Object.keys(this.solvedCounts).map((level) => ({
+						climbing_level_id: level,
+						solved_count: this.solvedCounts[level] || 0,
 					})),
 				};
 
 				// 서버 요청
 				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
-					{ data: requestData }, // 요청 본문 데이터
+					requestData,
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem('token')}`, // 토큰
@@ -466,8 +479,8 @@ export default {
 				alert('점수가 성공적으로 저장되었습니다!');
 				this.togglePopup(); // 팝업 닫기
 			} catch (error) {
-				console.error('점수 저장 실패', error);
-				alert('점수 저장에 실패했습니다.');
+				console.error('점수 저장 실패:', error);
+				alert(error.message || '점수 저장에 실패했습니다.');
 			}
 		},
 
