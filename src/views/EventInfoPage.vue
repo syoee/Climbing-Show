@@ -327,7 +327,7 @@ export default {
 		// 난이도 별로 id가 높기 때문에 id 대신 level 사용
 		// 전체 점수 합산
 		totalUserScore() {
-			// 클라이밍 이벤트를 순회하면서 점수 계산
+			// 클라이밍 이벤트를 순회하면서 점수계산
 			let totalScore = 0;
 			this.climbingEvents.forEach((event) => {
 				event.climbing_info_list.forEach((gym) => {
