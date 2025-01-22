@@ -477,7 +477,7 @@ export default {
 				);
 
 				alert('점수가 성공적으로 저장되었습니다!');
-				this.togglePopup(); // 팝업 닫기
+				this.togglePopup(); // 팝업닫기
 			} catch (error) {
 				console.error('점수 저장 실패:', error);
 				alert(error.message || '점수 저장에 실패했습니다.');
