@@ -453,20 +453,31 @@ export default {
 			}
 		},
 
-		// 점수 저장
 		async saveScore() {
 			try {
-				// 선택된 암장 데이터와 점수 구성
+				// climbing_event_id 추출
+				const climbingEventId =
+					this.climbingEvents[0]?.climbing_info_list?.climbing_level_list?.id ||
+					null;
+
+				if (!climbingEventId) {
+					throw new Error('유효한 climbing_event_id를 찾을 수 없습니다.');
+				}
+
+				// 점수 구성
 				const requestData = {
-					climbing_event_id: this.climbingEvents[0].id, // 이벤트 ID
+					climbing_event_id: climbingEventId,
 					climbing_level_list: Object.keys(this.solvedCounts).map((level) => ({
-						climbing_level_id: level,
-						solved_count: this.solvedCounts[level] || 0,
+						climbing_level_id: parseInt(level, 10), // climbing_level_id를 숫자로 변환
+						solved_count: this.solvedCounts[level] || 0, // 기본값 0
 					})),
 				};
 
+				// 디버깅 로그
+				console.log('Request Payload:', JSON.stringify(requestData, null, 2));
+
 				// 서버 요청
-				await axios.post(
+				const response = await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
 					requestData,
 					{
@@ -476,11 +487,16 @@ export default {
 					}
 				);
 
+				console.log('Response:', response.data);
 				alert('점수가 성공적으로 저장되었습니다!');
-				this.togglePopup(); // 팝업닫기
+				this.togglePopup(); // 팝업 닫기
 			} catch (error) {
-				console.error('점수 저장 실패:', error);
-				alert(error.message || '점수 저장에 실패했습니다.');
+				console.error('점수 저장 실패:', error.response?.data || error.message);
+				alert(
+					error.response?.data?.message ||
+						error.message ||
+						'점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.'
+				);
 			}
 		},
 
