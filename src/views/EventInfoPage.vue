@@ -423,6 +423,15 @@ export default {
 			}
 		},
 
+		// 추가: 서버 응답 데이터 처리
+		processEventHistory(history) {
+			this.solvedCounts = history.reduce((acc, item) => {
+				acc[item.climbing_level.id] = item.solved_count || 0;
+				return acc;
+			}, {});
+			console.log('업데이트된 solvedCounts:', this.solvedCounts);
+		},
+
 		// 취소 버튼
 		resetPopupData() {
 			this.selectedGyms = null;
@@ -453,31 +462,33 @@ export default {
 			}
 		},
 
+		// 점수 저장
 		async saveScore() {
+			const climbingEventId = this.climbingEvents[0]?.id; // 이벤트 ID
+			const climbingInfo = this.climbingEvents[0]?.climbing_info_list?.[0]; // 클라이밍 정보
+
+			if (!climbingEventId || !climbingInfo) {
+				alert('유효한 이벤트 ID 또는 클라이밍 정보를 찾을 수 없습니다.');
+				return;
+			}
+
 			try {
-				// climbing_event_id 추출
-				const climbingEventId =
-					this.climbingEvents[0]?.climbing_info_list?.climbing_level_list?.id ||
-					null;
-
-				if (!climbingEventId) {
-					throw new Error('유효한 climbing_event_id를 찾을 수 없습니다.');
-				}
-
-				// 점수 구성
+				// 요청 데이터 구성
 				const requestData = {
-					climbing_event_id: climbingEventId,
-					climbing_level_list: Object.keys(this.solvedCounts).map((level) => ({
-						climbing_level_id: parseInt(level, 10), // climbing_level_id를 숫자로 변환
-						solved_count: this.solvedCounts[level] || 0, // 기본값 0
-					})),
+					climbing_event_id: climbingEventId, // 이벤트 ID
+					climbing_level_list: climbingInfo.climbing_level_list.map(
+						(level) => ({
+							climbing_level_id: level.id, // 클라이밍 레벨 ID
+							solved_count: this.solvedCounts[level.id] || 0, // 해결한 문제 개수
+						})
+					),
 				};
 
-				// 디버깅 로그
+				// 디버깅: 요청 데이터 확인
 				console.log('Request Payload:', JSON.stringify(requestData, null, 2));
 
 				// 서버 요청
-				const response = await axios.post(
+				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
 					requestData,
 					{
@@ -487,14 +498,12 @@ export default {
 					}
 				);
 
-				console.log('Response:', response.data);
 				alert('점수가 성공적으로 저장되었습니다!');
 				this.togglePopup(); // 팝업 닫기
 			} catch (error) {
 				console.error('점수 저장 실패:', error.response?.data || error.message);
 				alert(
 					error.response?.data?.message ||
-						error.message ||
 						'점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.'
 				);
 			}
