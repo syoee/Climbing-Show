@@ -423,15 +423,6 @@ export default {
 			}
 		},
 
-		// 추가: 서버 응답 데이터 처리
-		processEventHistory(history) {
-			this.solvedCounts = history.reduce((acc, item) => {
-				acc[item.climbing_level.id] = item.solved_count || 0;
-				return acc;
-			}, {});
-			console.log('업데이트된 solvedCounts:', this.solvedCounts);
-		},
-
 		// 취소 버튼
 		resetPopupData() {
 			this.selectedGyms = null;
@@ -464,30 +455,38 @@ export default {
 
 		// 점수 저장
 		async saveScore() {
-			const climbingEventId = this.climbingEvents[0]?.id; // 이벤트 ID
-			const climbingInfo = this.climbingEvents[0]?.climbing_info_list?.[0]; // 클라이밍 정보
+			if (!this.climbingEvents.length) {
+				alert('유효한 클라이밍 이벤트가 없습니다.');
+				return;
+			}
 
-			if (!climbingEventId || !climbingInfo) {
-				alert('유효한 이벤트 ID 또는 클라이밍 정보를 찾을 수 없습니다.');
+			if (!this.selectedGyms) {
+				alert('암장을 선택해주세요.');
 				return;
 			}
 
 			try {
+				// 선택된 암장의 climbing_info_list에서 해당 레벨 데이터 추출
+				const climbing_level_list = this.climbingEvents
+					.flatMap((event) => event.climbing_info_list) // 모든 암장의 climbing_info_list 합치기
+					.filter((info) => info.id === this.selectedGyms) // 선택된 암장의 ID에 해당하는 데이터만 필터링
+					.flatMap((info) =>
+						info.climbing_level_list.map((level) => ({
+							climbing_level_id: level.id, // 레벨 ID
+							solved_count: this.solvedCounts[level.id] || 0, // 해결한 개수, 기본값 0
+						}))
+					);
+
 				// 요청 데이터 구성
 				const requestData = {
-					climbing_event_id: climbingEventId, // 이벤트 ID
-					climbing_level_list: climbingInfo.climbing_level_list.map(
-						(level) => ({
-							climbing_level_id: level.id, // 클라이밍 레벨 ID
-							solved_count: this.solvedCounts[level.id] || 0, // 해결한 문제 개수
-						})
-					),
+					climbing_event_id: this.climbingEvents[0]?.id, // 이벤트 ID
+					climbing_level_list, // 레벨 ID와 해결 개수 리스트
 				};
 
-				// 디버깅: 요청 데이터 확인
+				// 디버깅용 데이터 확인
 				console.log('Request Payload:', JSON.stringify(requestData, null, 2));
 
-				// 서버 요청
+				// POST 요청
 				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
 					requestData,
