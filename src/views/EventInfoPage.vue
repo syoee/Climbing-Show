@@ -470,12 +470,25 @@ export default {
 				const climbing_level_list = this.climbingEvents
 					.flatMap((event) => event.climbing_info_list) // 모든 암장의 climbing_info_list 합치기
 					.filter((info) => info.id === this.selectedGyms) // 선택된 암장의 ID에 해당하는 데이터만 필터링
-					.flatMap((info) =>
-						info.climbing_level_list.map((level) => ({
-							climbing_level_id: level.id, // 레벨 ID
-							solved_count: this.solvedCounts[level.id] || 0, // 해결한 개수, 기본값 0
-						}))
+					.flatMap(
+						(info) =>
+							info.climbing_level_list
+								.map((level) => {
+									const solved_count = this.solvedCounts?.[level.id] ?? null; // solved_count가 null인지 확인
+									return solved_count !== null
+										? {
+												climbing_level_id: level.id,
+												solved_count,
+										  }
+										: null;
+								})
+								.filter((item) => item !== null) // null 값 제거
 					);
+
+				if (climbing_level_list.length === 0) {
+					alert('저장할 점수가 없습니다.');
+					return;
+				}
 
 				// 요청 데이터 구성
 				const requestData = {
