@@ -141,7 +141,7 @@
 					v-if="isPopupVisible"
 					class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
 				>
-					<div @click.stop class="bg-white p-6 rounded-lg shadow-lg w-80">
+					<div class="bg-white p-6 rounded-lg shadow-lg w-80">
 						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
 						<!-- 암장 체크  -->
@@ -193,18 +193,16 @@
 									<!-- 개수 조정 -->
 									<div class="flex justify-evenly items-center col-span-4">
 										<button
-											type="button"
 											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click.stop="decreaseCount(grade?.level)"
+											@click="decreaseCount(grade?.level)"
 											:disabled="solvedCounts[grade?.level] === 0"
 										>
 											-
 										</button>
 										<span class="mx-2">{{ solvedCounts[grade?.level] }}</span>
 										<button
-											type="button"
 											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click.stop="increaseCount(grade?.level)"
+											@click="increaseCount(grade?.level)"
 											:disabled="solvedCounts[grade?.level] >= 30"
 										>
 											+
@@ -270,7 +268,6 @@ export default {
 				{ name: '크루 J', score: 30 },
 				{ name: '크루 I', score: 40 },
 			],
-			savedHistory: [], // 저장된 기록을 저장할 배열
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
 			overlayContent: {
@@ -419,78 +416,9 @@ export default {
 		},
 
 		// 팝업 표시/숨기기
-		async togglePopup() {
+		togglePopup() {
 			this.isPopupVisible = !this.isPopupVisible;
-
-			if (this.isPopupVisible && this.climbingEvents.length > 0) {
-				const currentEvent = this.climbingEvents[0];
-				const currentEventId = currentEvent.id;
-
-				try {
-					const response = await axios.get(
-						`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
-						{
-							params: {
-								climbing_event_id: currentEventId,
-							},
-							headers: {
-								Authorization: `Bearer ${localStorage.getItem('token')}`,
-							},
-						}
-					);
-
-					this.savedHistory = response.data;
-
-					if (this.savedHistory.length > 0) {
-						// solvedCounts 초기화
-						this.solvedCounts = {};
-
-						// 먼저 모든 레벨을 0으로 초기화
-						this.climbingEvents.forEach((event) => {
-							event.climbing_info_list.forEach((info) => {
-								info.climbing_level_list.forEach((grade) => {
-									this.solvedCounts[grade.level] = 0;
-								});
-							});
-						});
-
-						// 저장된 기록으로 업데이트
-						this.savedHistory.forEach((history) => {
-							if (history.climbing_level?.level !== undefined) {
-								this.solvedCounts[history.climbing_level.level] =
-									history.solved_count;
-							}
-						});
-
-						// 선택된 암장 ID 설정
-						if (this.savedHistory[0]?.climbing_level?.id) {
-							const firstLevelId = this.savedHistory[0].climbing_level.id;
-
-							// 해당 레벨이 속한 암장 찾기
-							for (const event of this.climbingEvents) {
-								for (const gym of event.climbing_info_list) {
-									const hasLevel = gym.climbing_level_list.some(
-										(level) => level.id === firstLevelId
-									);
-									if (hasLevel) {
-										this.selectedGyms = gym.id;
-										console.log('Selected Gym:', gym.id);
-										console.log('Saved History:', this.savedHistory);
-										console.log('Solved Counts:', this.solvedCounts);
-										break;
-									}
-								}
-								if (this.selectedGyms) break;
-							}
-						}
-					} else {
-						this.resetPopupData();
-					}
-				} catch (error) {
-					console.error('기록 조회 실패:', error);
-					this.resetPopupData();
-				}
-			} else {
+			if (!this.isPopupVisible) {
 				this.resetPopupData();
 			}
 		},
@@ -499,17 +427,16 @@ export default {
 		resetPopupData() {
 			this.selectedGyms = null;
 			this.solvedCounts = {};
-
 			// solvedCounts 초기화
-			if (this.climbingEvents.length > 0) {
-				this.climbingEvents.forEach((event) => {
-					event.climbing_info_list.forEach((info) => {
-						info.climbing_level_list.forEach((grade) => {
+			this.climbingEvents.forEach((event) => {
+				event.climbing_info_list.forEach((info) => {
+					info.climbing_level_list.forEach((grade) => {
+						if (!this.solvedCounts[grade.level]) {
 							this.solvedCounts[grade.level] = 0;
-						});
+						}
 					});
 				});
-			}
+			});
 		},
 
 		// 개수 증가 버튼
@@ -528,32 +455,35 @@ export default {
 
 		// 점수 저장
 		async saveScore() {
-			if (!this.climbingEvents.length || !this.selectedGyms) {
+			if (!this.climbingEvents.length) {
+				alert('유효한 클라이밍 이벤트가 없습니다.');
+				return;
+			}
+
+			if (!this.selectedGyms) {
 				alert('암장을 선택해주세요.');
 				return;
 			}
 
 			try {
-				const selectedGym = this.climbingEvents[0].climbing_info_list.find(
-					(info) => info.id === this.selectedGyms
-				);
-
-				if (!selectedGym) {
-					alert('선택된 암장 정보를 찾을 수 없습니다.');
-					return;
-				}
-
-				// climbing_level_list 구성 - solved_count가 0보다 큰 항목만 포함
-				const climbing_level_list = [];
-				selectedGym.climbing_level_list.forEach((level) => {
-					const solved_count = this.solvedCounts[level.level] || 0;
-					if (solved_count > 0) {
-						climbing_level_list.push({
-							climbing_level_id: level.id,
-							solved_count: solved_count,
-						});
-					}
-				});
+				// 선택된 암장의 climbing_info_list에서 해당 레벨 데이터 추출
+				const climbing_level_list = this.climbingEvents
+					.flatMap((event) => event.climbing_info_list) // 모든 암장의 climbing_info_list 합치기
+					.filter((info) => info.id === this.selectedGyms) // 선택된 암장의 ID에 해당하는 데이터만 필터링
+					.flatMap(
+						(info) =>
+							info.climbing_level_list
+								.map((level) => {
+									const solved_count = this.solvedCounts?.[level.id] ?? null; // solved_count가 null인지 확인
+									return solved_count !== null
+										? {
+												climbing_level_id: level.id,
+												solved_count,
+										  }
+										: null;
+								})
+								.filter((item) => item !== null) // null 값 제거
+					);
 
 				if (climbing_level_list.length === 0) {
 					alert('저장할 점수가 없습니다.');
@@ -562,35 +492,32 @@ export default {
 
 				// 요청 데이터 구성
 				const requestData = {
-					climbing_info_list_id: this.selectedGyms,
-					climbing_level_list,
+					climbing_event_id: this.climbingEvents[0]?.id, // 이벤트 ID
+					climbing_level_list, // 레벨 ID와 해결 개수 리스트
 				};
 
-				console.log('Request Data:', requestData);
-				console.log('Climbing Level List:', climbing_level_list);
+				// 디버깅용 데이터 확인
+				console.log('Request Payload:', JSON.stringify(requestData, null, 2));
 
-				const response = await axios.post(
+				// POST 요청
+				await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
 					requestData,
 					{
 						headers: {
-							Authorization: `Bearer ${localStorage.getItem('token')}`,
-							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem('token')}`, // 토큰
 						},
 					}
 				);
 
-				if (response.status === 200 || response.status === 201) {
-					alert('점수가 성공적으로 저장되었습니다!');
-					this.togglePopup();
-				}
+				alert('점수가 성공적으로 저장되었습니다!');
+				this.togglePopup(); // 팝업 닫기
 			} catch (error) {
-				console.error('점수 저장 실패:', error.response?.data || error);
-				if (error.response?.data?.message) {
-					alert(error.response.data.message);
-				} else {
-					alert('점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.');
-				}
+				console.error('점수 저장 실패:', error.response?.data || error.message);
+				alert(
+					error.response?.data?.message ||
+						'점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.'
+				);
 			}
 		},
 
