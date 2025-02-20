@@ -534,7 +534,8 @@ export default {
 			}
 
 			try {
-				const selectedGym = this.climbingEvents[0].climbing_info_list.find(
+				const currentEvent = this.climbingEvents[0];
+				const selectedGym = currentEvent.climbing_info_list.find(
 					(info) => info.id === this.selectedGyms
 				);
 
@@ -562,6 +563,7 @@ export default {
 
 				// 요청 데이터 구성
 				const requestData = {
+					climbing_event_id: currentEvent.id, // 이벤트 ID 추가
 					climbing_info_list_id: this.selectedGyms,
 					climbing_level_list,
 				};
