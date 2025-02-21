@@ -200,7 +200,9 @@
 										>
 											-
 										</button>
-										<span class="mx-2">{{ solvedCounts[grade?.level] }}</span>
+										<span class="mx-2">{{
+											solvedCounts[grade?.level] || 0
+										}}</span>
 										<button
 											type="button"
 											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
@@ -440,6 +442,7 @@ export default {
 					);
 
 					this.savedHistory = response.data;
+					console.log('Loaded History:', this.savedHistory); // 디버깅용 로그
 
 					if (this.savedHistory.length > 0) {
 						// solvedCounts 초기화
@@ -475,8 +478,7 @@ export default {
 									if (hasLevel) {
 										this.selectedGyms = gym.id;
 										console.log('Selected Gym:', gym.id);
-										console.log('Saved History:', this.savedHistory);
-										console.log('Solved Counts:', this.solvedCounts);
+										console.log('Updated solvedCounts:', this.solvedCounts);
 										break;
 									}
 								}
@@ -514,13 +516,16 @@ export default {
 
 		// 개수 증가 버튼
 		increaseCount(level) {
-			// 해당 level의 카운트를 증가
-			this.solvedCounts[level]++;
+			if (!this.solvedCounts[level]) {
+				this.solvedCounts[level] = 0;
+			}
+			if (this.solvedCounts[level] < 30) {
+				this.solvedCounts[level]++;
+			}
 		},
 
 		// 개수 감소 버튼
 		decreaseCount(level) {
-			// 카운트가 0 이하로 내려가지 않도록 확인
 			if (this.solvedCounts[level] > 0) {
 				this.solvedCounts[level]--;
 			}
