@@ -195,7 +195,8 @@
 										<button
 											type="button"
 											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click.stop="decreaseCount(grade?.level)"
+											@click.prevent="decreaseCount(grade?.level)"
+											style="touch-action: manipulation"
 											:disabled="solvedCounts[grade?.level] === 0"
 										>
 											-
@@ -206,7 +207,8 @@
 										<button
 											type="button"
 											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-											@click.stop="increaseCount(grade?.level)"
+											@click.prevent="increaseCount(grade?.level)"
+											style="touch-action: manipulation"
 											:disabled="solvedCounts[grade?.level] >= 30"
 										>
 											+
@@ -426,14 +428,13 @@ export default {
 
 			if (this.isPopupVisible && this.climbingEvents.length > 0) {
 				const currentEvent = this.climbingEvents[0];
-				const currentEventId = currentEvent.id;
 
 				try {
 					const response = await axios.get(
 						`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
 						{
 							params: {
-								climbing_event_id: currentEventId,
+								climbing_event_id: currentEvent.id,
 							},
 							headers: {
 								Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -442,51 +443,35 @@ export default {
 					);
 
 					this.savedHistory = response.data;
-					console.log('Loaded History:', this.savedHistory); // 디버깅용 로그
+					console.log(
+						'Raw History Data:',
+						JSON.stringify(this.savedHistory, null, 2)
+					);
 
 					if (this.savedHistory.length > 0) {
 						// solvedCounts 초기화
 						this.solvedCounts = {};
 
-						// 먼저 모든 레벨을 0으로 초기화
-						this.climbingEvents.forEach((event) => {
-							event.climbing_info_list.forEach((info) => {
-								info.climbing_level_list.forEach((grade) => {
-									this.solvedCounts[grade.level] = 0;
-								});
-							});
-						});
+						// 먼저 solved_count가 0보다 큰 첫 번째 기록을 찾아 암장 선택
+						const firstNonZeroRecord = this.savedHistory.find(
+							(record) => record.solved_count > 0
+						);
 
-						// 저장된 기록으로 업데이트
-						this.savedHistory.forEach((history) => {
-							if (history.climbing_level?.level !== undefined) {
-								this.solvedCounts[history.climbing_level.level] =
-									history.solved_count;
-							}
-						});
-
-						// 선택된 암장 ID 설정
-						if (this.savedHistory[0]?.climbing_level?.id) {
-							const firstLevelId = this.savedHistory[0].climbing_level.id;
-
+						if (firstNonZeroRecord) {
 							// 해당 레벨이 속한 암장 찾기
-							for (const event of this.climbingEvents) {
-								for (const gym of event.climbing_info_list) {
-									const hasLevel = gym.climbing_level_list.some(
-										(level) => level.id === firstLevelId
-									);
-									if (hasLevel) {
-										this.selectedGyms = gym.id;
-										console.log('Selected Gym:', gym.id);
-										console.log('Updated solvedCounts:', this.solvedCounts);
-										break;
-									}
+							for (const gym of currentEvent.climbing_info_list) {
+								const hasLevel = gym.climbing_level_list.some(
+									(level) => level.id === firstNonZeroRecord.climbing_level.id
+								);
+								if (hasLevel) {
+									this.selectedGyms = gym.id;
+									break;
 								}
-								if (this.selectedGyms) break;
 							}
 						}
-					} else {
-						this.resetPopupData();
+
+						// 선택된 암장의 레벨별 solved_count 매핑
+						this.updateSolvedCountsForGym(this.selectedGyms);
 					}
 				} catch (error) {
 					console.error('기록 조회 실패:', error);
@@ -495,6 +480,51 @@ export default {
 			} else {
 				this.resetPopupData();
 			}
+		},
+
+		// 암장 선택 메서드 수정
+		selectSingleGym(gymId) {
+			this.selectedGyms = gymId;
+			// 암장 변경 시 해당 암장의 레벨별 solved_count 업데이트
+			this.updateSolvedCountsForGym(gymId);
+		},
+
+		// 새로운 메서드 추가
+		updateSolvedCountsForGym(gymId) {
+			if (!this.climbingEvents.length) return;
+
+			const currentEvent = this.climbingEvents[0];
+			const selectedGym = currentEvent.climbing_info_list.find(
+				(gym) => gym.id === gymId
+			);
+
+			if (!selectedGym) return;
+
+			// solvedCounts 초기화
+			this.solvedCounts = {};
+
+			// 선택된 암장의 모든 레벨을 0으로 초기화
+			selectedGym.climbing_level_list.forEach((level) => {
+				this.solvedCounts[level.level] = 0;
+			});
+
+			// 저장된 기록에서 현재 선택된 암장의 레벨에 해당하는 solved_count 찾기
+			if (this.savedHistory) {
+				selectedGym.climbing_level_list.forEach((gymLevel) => {
+					const record = this.savedHistory.find(
+						(history) => history.climbing_level.id === gymLevel.id
+					);
+					if (record) {
+						this.solvedCounts[gymLevel.level] = record.solved_count;
+					}
+				});
+			}
+
+			console.log('Updated Gym:', gymId);
+			console.log(
+				'Updated solvedCounts:',
+				JSON.stringify(this.solvedCounts, null, 2)
+			);
 		},
 
 		// 취소 버튼
@@ -599,11 +629,6 @@ export default {
 					alert('점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.');
 				}
 			}
-		},
-
-		// 암장 하나만 선택
-		selectSingleGym(id) {
-			this.selectedGyms = id;
 		},
 	},
 };
