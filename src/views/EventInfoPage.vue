@@ -1,163 +1,175 @@
 <template>
-	<div>
-		<!-- 미션 -->
-		<div class="grid grid-rows-2 gap-1 justify-items-center">
-			<div class="text-xl font-bold">이번 주 mission</div>
-			<div class="text-3xl">
-				'<span class="text-red-500 font-semibold">피커스</span>'
-				<span>를 잡아라!</span>
-			</div>
-		</div>
-
-		<!-- 크루 랭킹 -->
-		<div class="pt-12">
-			<div class="flex justify-center items-center px-4">
-				<div class="text-xl font-bold">크루 랭킹</div>
+	<div v-if="climbingEvents && climbingEvents.length > 0">
+		<div v-for="event in climbingEvents" :key="event.id">
+			<!-- 미션 -->
+			<div class="grid grid-rows-2 gap-1 justify-items-center">
+				<div class="text-xl font-bold">이번 주 mission</div>
+				<div class="text-3xl">
+					'<span class="text-red-500 font-semibold">{{ event.title }}</span
+					>'
+					<span>를 잡아라!</span>
+				</div>
 			</div>
 
-			<!-- 오버레이 버튼 -->
-			<div class="relative">
-				<button
-					@click="toggleOverlay"
-					class="w-[1.2rem] bg-gray-400 text-white text-xs rounded-full absolute right-8 aspect-square"
-				>
-					?
-				</button>
-			</div>
+			<!-- 크루 랭킹 -->
+			<div class="pt-12">
+				<div class="flex justify-center items-center px-4">
+					<div class="text-xl font-bold">크루 랭킹</div>
+				</div>
 
-			<!-- 랭크 설명 -->
-			<div
-				v-if="showOverlay"
-				@click.self="closeOverlay"
-				class="fixed inset-0 z-50"
-			>
+				<!-- 오버레이 버튼 -->
+				<div class="relative">
+					<button
+						@click="toggleOverlay"
+						class="w-[1.2rem] bg-gray-400 text-white text-xs rounded-full absolute right-8 aspect-square"
+					>
+						?
+					</button>
+				</div>
+
+				<!-- 랭크 설명 -->
 				<div
-					class="absolute"
-					:style="{
-						top: `${this.overlayPosition.y}px`,
-						left: `${this.overlayPosition.x}px`,
-					}"
+					v-if="showOverlay"
+					@click.self="closeOverlay"
+					class="fixed inset-0 z-50"
 				>
-					<div class="p-1 rounded-lg border">
-						<div class="font-medium text-sm text-black">
-							{{ overlayContent.title }}
+					<div
+						class="absolute"
+						:style="{
+							top: `${this.overlayPosition.y}px`,
+							left: `${this.overlayPosition.x}px`,
+						}"
+					>
+						<div class="p-1 rounded-lg border">
+							<div class="font-medium text-sm text-black">
+								{{ overlayContent.title }}
+							</div>
+							<div class="text-xs text-gray-500">
+								{{ overlayContent.content }}
+							</div>
 						</div>
-						<div class="text-xs text-gray-500">
-							{{ overlayContent.content }}
+					</div>
+				</div>
+
+				<!-- Top 3 -->
+				<div class="mt-24 flex justify-center items-end text-center gap-3">
+					<!-- Rank 2 -->
+					<div class="flex flex-col items-center">
+						<div class="relative h-24 w-12 bg-transparent rounded-t-lg">
+							<div
+								class="bg-[#DDDDDE] w-full rounded-t-lg absolute bottom-0"
+								:style="{
+									animationDuration: `${topRanks[1].duration}s`,
+									height: `${animatedHeights[1]}%`,
+								}"
+							></div>
+							<p
+								class="absolute w-full text-gray-700 font-bold"
+								:style="{ bottom: `${animatedHeights[1]}%` }"
+							>
+								{{ animatedScores[1] }}
+							</p>
 						</div>
+						<p class="mt-2 text-gray-700 font-bold">🥈{{ topRanks[1].name }}</p>
+					</div>
+
+					<!-- Rank 1 -->
+					<div class="flex flex-col items-center">
+						<div class="relative h-32 w-16 bg-transparent rounded-t-lg">
+							<div
+								class="bg-[#FFD812] w-full rounded-t-lg absolute bottom-0"
+								:style="{
+									animationDuration: `${topRanks[0].duration}s`,
+									height: `${animatedHeights[0]}%`,
+								}"
+							></div>
+							<p
+								class="absolute w-full text-gray-700 font-bold"
+								:style="{ bottom: `${animatedHeights[0]}%` }"
+							>
+								{{ animatedScores[0] }}
+							</p>
+						</div>
+						<p class="mt-2 text-gray-700 font-bold">🥇{{ topRanks[0].name }}</p>
+					</div>
+
+					<!-- Rank 3 -->
+					<div class="flex flex-col items-center">
+						<div class="relative h-20 w-12 bg-transparent rounded-t-lg">
+							<div
+								class="bg-[#CE7A28] w-full rounded-t-lg absolute bottom-0"
+								:style="{
+									animationDuration: `${topRanks[2].duration}s`,
+									height: `${animatedHeights[2]}%`,
+								}"
+							></div>
+							<p
+								class="absolute w-full text-gray-700 font-bold"
+								:style="{ bottom: `${animatedHeights[2]}%` }"
+							>
+								{{ animatedScores[2] }}
+							</p>
+						</div>
+						<p class="mt-2 text-gray-700 font-bold">🥉{{ topRanks[2].name }}</p>
 					</div>
 				</div>
-			</div>
 
-			<!-- Top 3 -->
-			<div class="mt-24 flex justify-center items-end text-center gap-3">
-				<!-- Rank 2 -->
-				<div class="flex flex-col items-center">
-					<div class="relative h-24 w-12 bg-transparent rounded-t-lg">
-						<div
-							class="bg-[#DDDDDE] w-full rounded-t-lg absolute bottom-0"
-							:style="{
-								animationDuration: `${topRanks[1].duration}s`,
-								height: `${animatedHeights[1]}%`,
-							}"
-						></div>
-						<p
-							class="absolute w-full text-gray-700 font-bold"
-							:style="{ bottom: `${animatedHeights[1]}%` }"
-						>
-							{{ animatedScores[1] }}
-						</p>
-					</div>
-					<p class="mt-2 text-gray-700 font-bold">🥈{{ topRanks[1].name }}</p>
+				<!-- 랭크 리스트 -->
+				<ul class="mt-6 px-4">
+					<li
+						v-for="rank in remainingRanks"
+						:key="rank.name"
+						class="p-4 flex justify-between items-center mb-2 bg-white rounded-lg shadow-md"
+					>
+						<span>{{ rank.rank }}. {{ rank.name }}</span>
+						<span class="font-bold text-gray-700">{{ rank.score }}점</span>
+					</li>
+				</ul>
+
+				<!-- 점수 기록 버튼 -->
+				<div class="fixed bottom-20 right-5">
+					<button
+						@click="togglePopup"
+						class="w-10 bg-black text-red-600 text-2xl font-bold rounded-full aspect-square"
+					>
+						+
+					</button>
 				</div>
 
-				<!-- Rank 1 -->
-				<div class="flex flex-col items-center">
-					<div class="relative h-32 w-16 bg-transparent rounded-t-lg">
-						<div
-							class="bg-[#FFD812] w-full rounded-t-lg absolute bottom-0"
-							:style="{
-								animationDuration: `${topRanks[0].duration}s`,
-								height: `${animatedHeights[0]}%`,
-							}"
-						></div>
-						<p
-							class="absolute w-full text-gray-700 font-bold"
-							:style="{ bottom: `${animatedHeights[0]}%` }"
-						>
-							{{ animatedScores[0] }}
-						</p>
-					</div>
-					<p class="mt-2 text-gray-700 font-bold">🥇{{ topRanks[0].name }}</p>
-				</div>
-
-				<!-- Rank 3 -->
-				<div class="flex flex-col items-center">
-					<div class="relative h-20 w-12 bg-transparent rounded-t-lg">
-						<div
-							class="bg-[#CE7A28] w-full rounded-t-lg absolute bottom-0"
-							:style="{
-								animationDuration: `${topRanks[2].duration}s`,
-								height: `${animatedHeights[2]}%`,
-							}"
-						></div>
-						<p
-							class="absolute w-full text-gray-700 font-bold"
-							:style="{ bottom: `${animatedHeights[2]}%` }"
-						>
-							{{ animatedScores[2] }}
-						</p>
-					</div>
-					<p class="mt-2 text-gray-700 font-bold">🥉{{ topRanks[2].name }}</p>
-				</div>
-			</div>
-
-			<!-- 랭크 리스트 -->
-			<ul class="mt-6 px-4">
-				<li
-					v-for="rank in remainingRanks"
-					:key="rank.name"
-					class="p-4 flex justify-between items-center mb-2 bg-white rounded-lg shadow-md"
+				<!-- 점수 기록 팝업 -->
+				<div
+					v-if="isPopupVisible"
+					class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
 				>
-					<span>{{ rank.rank }}. {{ rank.name }}</span>
-					<span class="font-bold text-gray-700">{{ rank.score }}점</span>
-				</li>
-			</ul>
+					<div @click.stop class="bg-white p-6 rounded-lg shadow-lg w-80">
+						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
-			<!-- 점수 기록 버튼 -->
-			<div class="fixed bottom-20 right-5">
-				<button
-					@click="togglePopup"
-					class="w-10 bg-black text-red-600 text-2xl font-bold rounded-full aspect-square"
-				>
-					+
-				</button>
-			</div>
-
-			<!-- 점수 기록 팝업 -->
-			<div
-				v-if="isPopupVisible"
-				class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-			>
-				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
-					<h2 class="text-lg font-bold mb-4">점수 기록</h2>
-
-					<!-- 이름 입력 -->
-					<div class="mb-4">
-						<label class="block mb-1 text-md font-medium text-gray-700"
-							>이름</label
-						>
-						<input
-							v-model="popupData.name"
-							type="text"
-							class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
-
-					<!-- 난이도 점수 입력 -->
-					<div class="mb-4">
-						<!--Sort-->
+						<!-- 암장 체크  -->
 						<div>
+							<label class="block mb-1 text-md font-medium text-gray-700">
+								방문한 클라이밍장을 선택해주세요!
+							</label>
+							<div
+								v-for="gym in event.climbing_info_list"
+								:key="gym.id"
+								class="flex items-center"
+							>
+								<input
+									type="checkbox"
+									:value="gym.id"
+									:checked="selectedGyms === gym.id"
+									@click="selectSingleGym(gym.id)"
+									class="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+								/>
+								<label class="ml-2 text-sm font-medium text-gray-900">
+									{{ gym.name }}
+								</label>
+							</div>
+						</div>
+
+						<!-- 난이도 점수 입력 -->
+						<div class="mb-4">
+							<!--Sort-->
 							<div
 								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
 							>
@@ -167,63 +179,73 @@
 							</div>
 						</div>
 						<div
-							v-for="grade in popupData.grades"
-							:key="grade.id"
-							class="mb-2 grid grid-cols-8 items-center"
+							v-for="info in event.climbing_info_list.slice(0, 1)"
+							:key="info.id"
 						>
-							<!-- 난이도 색상 표시 -->
-							<div
-								class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
-								:style="{ backgroundColor: grade.color }"
-							></div>
+							<div v-for="grade in info.climbing_level_list" :key="grade.id">
+								<div class="mb-2 grid grid-cols-8 items-center">
+									<!-- 난이도 색상 표시 -->
+									<div
+										class="w-1/2 ml-1 flex aspect-square rounded-full border col-span-2"
+										:style="{ backgroundColor: grade?.color }"
+									></div>
 
-							<!-- 개수 조정 -->
-							<div class="flex justify-evenly items-center col-span-4">
-								<button
-									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-									@click="decreaseCount(grade.id)"
-								>
-									-
-								</button>
-								<span class="mx-2">{{ grade.count }}</span>
-								<button
-									class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
-									@click="increaseCount(grade.id)"
-									:disabled="grade.count >= 30"
-								>
-									+
-								</button>
-							</div>
+									<!-- 개수 조정 -->
+									<div class="flex justify-evenly items-center col-span-4">
+										<button
+											type="button"
+											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											@click.prevent="decreaseCount(grade?.level)"
+											style="touch-action: manipulation"
+											:disabled="solvedCounts[grade?.level] === 0"
+										>
+											-
+										</button>
+										<span class="mx-2">{{
+											solvedCounts[grade?.level] || 0
+										}}</span>
+										<button
+											type="button"
+											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											@click.prevent="increaseCount(grade?.level)"
+											style="touch-action: manipulation"
+											:disabled="solvedCounts[grade?.level] >= 30"
+										>
+											+
+										</button>
+									</div>
 
-							<!-- 난이도 총합 -->
-							<div class="text-right mr-1 items-center col-span-2">
-								{{ grade.count * grade.score }}점
+									<!-- 난이도 총합 -->
+									<div class="text-right mr-1 items-center col-span-2">
+										{{ solvedCounts[grade?.level] * grade?.level }}점
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<!-- 총합 점수 -->
-					<div class="mt-8 mb-3 text-right text-lg">
-						<span class="text-gray-700 font-bold">총합 점수: </span>
-						<span class="text-red-500 font-black">
-							{{ totalUserScore }}점
-						</span>
-					</div>
+						<!-- 총합 점수 -->
+						<div class="mt-8 mb-3 text-right text-lg">
+							<span class="text-gray-700 font-bold">총합 점수: </span>
+							<span class="text-red-500 font-black">
+								{{ totalUserScore }}점
+							</span>
+						</div>
 
-					<!-- 버튼 -->
-					<div class="flex justify-end">
-						<button
-							@click="saveScore"
-							class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-						>
-							저장
-						</button>
-						<button
-							@click="togglePopup"
-							class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
-						>
-							취소
-						</button>
+						<!-- 저장 버튼 -->
+						<div class="flex justify-end">
+							<button
+								@click="saveScore"
+								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+							>
+								저장
+							</button>
+							<button
+								@click="togglePopup"
+								class="ml-2 bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400"
+							>
+								취소
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -232,9 +254,14 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
 	data() {
 		return {
+			climbingEvents: [], // API에서 받은 데이터
+			selectedGyms: null, // 체크된 암장 ID 배열
+			solvedCounts: {}, // 암장별 난이도 개수
 			ranks: [
 				{ name: '크루 A', score: 95 },
 				{ name: '크루 B', score: 85 },
@@ -244,9 +271,10 @@ export default {
 				{ name: '크루 F', score: 40 },
 				{ name: '크루 G', score: 40 },
 				{ name: '크루 H', score: 40 },
-				{ name: '크루 I', score: 40 },
 				{ name: '크루 J', score: 30 },
+				{ name: '크루 I', score: 40 },
 			],
+			savedHistory: [], // 저장된 기록을 저장할 배열
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
 			overlayContent: {
@@ -256,21 +284,6 @@ export default {
 			animatedScores: [0, 0, 0], // Top 3 애니메이션 점수 초기화
 			animatedHeights: [0, 0, 0], // 게이지 높이 퍼센트 초기화
 			isPopupVisible: false,
-			popupData: {
-				name: '',
-				grades: [
-					{ id: 1, color: '#F20530', score: 1, count: 0 },
-					{ id: 2, color: '#DF922B', score: 2, count: 0 },
-					{ id: 3, color: '#F2D129', score: 3, count: 0 },
-					{ id: 4, color: '#59A13E', score: 4, count: 0 },
-					{ id: 5, color: '#0583F2', score: 5, count: 0 },
-					{ id: 6, color: '#24245E', score: 6, count: 0 },
-					{ id: 7, color: '#933199', score: 7, count: 0 },
-					{ id: 8, color: '#BFBFBD', score: 8, count: 0 },
-					{ id: 9, color: '#FFFFFF', score: 9, count: 0 },
-					{ id: 10, color: '#0D0D0D', score: 10, count: 0 },
-				],
-			},
 		};
 	},
 
@@ -279,6 +292,7 @@ export default {
 		this.topRanks.forEach((rank, index) => {
 			this.animateScore(index, rank.score, rank.duration);
 		});
+		this.eventData();
 	},
 
 	computed: {
@@ -317,21 +331,49 @@ export default {
 			});
 		},
 
-		// 각 난이도 점수 합산
-		gradeTotalScore() {
-			return this.popupData.grades.score * this.grade.count;
-		},
-
+		// 난이도 별로 id가 높기 때문에 id 대신 level 사용
 		// 전체 점수 합산
 		totalUserScore() {
-			return this.popupData.grades.reduce(
-				(total, grade) => total + grade.score * grade.count,
-				0
-			);
+			// 클라이밍 이벤트를 순회하면서 점수계산
+			let totalScore = 0;
+			this.climbingEvents.forEach((event) => {
+				event.climbing_info_list.forEach((gym) => {
+					gym.climbing_level_list.forEach((level) => {
+						const count = this.solvedCounts[level.level] || 0;
+						totalScore += count * level.level;
+					});
+				});
+			});
+			return totalScore;
 		},
 	},
 
 	methods: {
+		// 이벤트 암장 정보
+
+		async eventData() {
+			try {
+				const res = await axios.get(
+					`${process.env.VUE_APP_API_HOST}/climbing-events/during`
+				);
+
+				this.climbingEvents = res.data;
+
+				// solvedCounts 초기화
+				this.climbingEvents.forEach((event) => {
+					event.climbing_info_list.forEach((info) => {
+						info.climbing_level_list.forEach((grade) => {
+							if (!this.solvedCounts[grade.level]) {
+								this.solvedCounts[grade.level] = 0;
+							}
+						});
+					});
+				});
+			} catch (error) {
+				console.error('요청 설정 오류', error.message);
+			}
+		},
+
 		toggleOverlay(event) {
 			// 클릭한 위치 기준으로 오버레이 표시
 			this.showOverlay = !this.showOverlay;
@@ -381,48 +423,212 @@ export default {
 		},
 
 		// 팝업 표시/숨기기
-		togglePopup() {
+		async togglePopup() {
 			this.isPopupVisible = !this.isPopupVisible;
-			if (!this.isPopupVisible) {
+
+			if (this.isPopupVisible && this.climbingEvents.length > 0) {
+				const currentEvent = this.climbingEvents[0];
+
+				try {
+					const response = await axios.get(
+						`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
+						{
+							params: {
+								climbing_event_id: currentEvent.id,
+							},
+							headers: {
+								Authorization: `Bearer ${localStorage.getItem('token')}`,
+							},
+						}
+					);
+
+					this.savedHistory = response.data;
+					console.log(
+						'Raw History Data:',
+						JSON.stringify(this.savedHistory, null, 2)
+					);
+
+					if (this.savedHistory.length > 0) {
+						// solvedCounts 초기화
+						this.solvedCounts = {};
+
+						// 먼저 solved_count가 0보다 큰 첫 번째 기록을 찾아 암장 선택
+						const firstNonZeroRecord = this.savedHistory.find(
+							(record) => record.solved_count > 0
+						);
+
+						if (firstNonZeroRecord) {
+							// 해당 레벨이 속한 암장 찾기
+							for (const gym of currentEvent.climbing_info_list) {
+								const hasLevel = gym.climbing_level_list.some(
+									(level) => level.id === firstNonZeroRecord.climbing_level.id
+								);
+								if (hasLevel) {
+									this.selectedGyms = gym.id;
+									break;
+								}
+							}
+						}
+
+						// 선택된 암장의 레벨별 solved_count 매핑
+						this.updateSolvedCountsForGym(this.selectedGyms);
+					}
+				} catch (error) {
+					console.error('기록 조회 실패:', error);
+					this.resetPopupData();
+				}
+			} else {
 				this.resetPopupData();
 			}
 		},
 
-		// 팝업 데이터 초기화
-		resetPopupData() {
-			this.popupData.name = '';
-			this.popupData.grades.forEach((grade) => {
-				grade.count = 0;
+		// 암장 선택 메서드 수정
+		selectSingleGym(gymId) {
+			this.selectedGyms = gymId;
+			// 암장 변경 시 해당 암장의 레벨별 solved_count 업데이트
+			this.updateSolvedCountsForGym(gymId);
+		},
+
+		// 새로운 메서드 추가
+		updateSolvedCountsForGym(gymId) {
+			if (!this.climbingEvents.length) return;
+
+			const currentEvent = this.climbingEvents[0];
+			const selectedGym = currentEvent.climbing_info_list.find(
+				(gym) => gym.id === gymId
+			);
+
+			if (!selectedGym) return;
+
+			// solvedCounts 초기화
+			this.solvedCounts = {};
+
+			// 선택된 암장의 모든 레벨을 0으로 초기화
+			selectedGym.climbing_level_list.forEach((level) => {
+				this.solvedCounts[level.level] = 0;
 			});
+
+			// 저장된 기록에서 현재 선택된 암장의 레벨에 해당하는 solved_count 찾기
+			if (this.savedHistory) {
+				selectedGym.climbing_level_list.forEach((gymLevel) => {
+					const record = this.savedHistory.find(
+						(history) => history.climbing_level.id === gymLevel.id
+					);
+					if (record) {
+						this.solvedCounts[gymLevel.level] = record.solved_count;
+					}
+				});
+			}
+
+			console.log('Updated Gym:', gymId);
+			console.log(
+				'Updated solvedCounts:',
+				JSON.stringify(this.solvedCounts, null, 2)
+			);
+		},
+
+		// 취소 버튼
+		resetPopupData() {
+			this.selectedGyms = null;
+			this.solvedCounts = {};
+
+			// solvedCounts 초기화
+			if (this.climbingEvents.length > 0) {
+				this.climbingEvents.forEach((event) => {
+					event.climbing_info_list.forEach((info) => {
+						info.climbing_level_list.forEach((grade) => {
+							this.solvedCounts[grade.level] = 0;
+						});
+					});
+				});
+			}
 		},
 
 		// 개수 증가 버튼
-		increaseCount(gradeId) {
-			const grade = this.popupData.grades.find((g) => g.id === gradeId);
-			if (grade && grade.count < 30) {
-				grade.count++;
+		increaseCount(level) {
+			if (!this.solvedCounts[level]) {
+				this.solvedCounts[level] = 0;
+			}
+			if (this.solvedCounts[level] < 30) {
+				this.solvedCounts[level]++;
 			}
 		},
 
 		// 개수 감소 버튼
-		decreaseCount(gradeId) {
-			const grade = this.popupData.grades.find((g) => g.id === gradeId);
-			if (grade && grade.count > 0) {
-				grade.count--;
+		decreaseCount(level) {
+			if (this.solvedCounts[level] > 0) {
+				this.solvedCounts[level]--;
 			}
 		},
 
 		// 점수 저장
-		saveScore() {
-			if (!this.popupData.name) {
-				alert('이름을 입력하세요.');
+		async saveScore() {
+			if (!this.climbingEvents.length || !this.selectedGyms) {
+				alert('암장을 선택해주세요.');
 				return;
 			}
 
-			const totalScore = this.totalUserScore;
-			alert(`이름: ${this.popupData.name}, 총합 점수: ${totalScore}`);
-			this.ranks.push({ name: this.popupData.name, score: totalScore });
-			this.togglePopup();
+			try {
+				const currentEvent = this.climbingEvents[0];
+				const selectedGym = currentEvent.climbing_info_list.find(
+					(info) => info.id === this.selectedGyms
+				);
+
+				if (!selectedGym) {
+					alert('선택된 암장 정보를 찾을 수 없습니다.');
+					return;
+				}
+
+				// climbing_level_list 구성 - solved_count가 0보다 큰 항목만 포함
+				const climbing_level_list = [];
+				selectedGym.climbing_level_list.forEach((level) => {
+					const solved_count = this.solvedCounts[level.level] || 0;
+					if (solved_count > 0) {
+						climbing_level_list.push({
+							climbing_level_id: level.id,
+							solved_count: solved_count,
+						});
+					}
+				});
+
+				if (climbing_level_list.length === 0) {
+					alert('저장할 점수가 없습니다.');
+					return;
+				}
+
+				// 요청 데이터 구성
+				const requestData = {
+					climbing_event_id: currentEvent.id, // 이벤트 ID 추가
+					climbing_info_list_id: this.selectedGyms,
+					climbing_level_list,
+				};
+
+				console.log('Request Data:', requestData);
+				console.log('Climbing Level List:', climbing_level_list);
+
+				const response = await axios.post(
+					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
+					requestData,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
+							'Content-Type': 'application/json',
+						},
+					}
+				);
+
+				if (response.status === 200 || response.status === 201) {
+					alert('점수가 성공적으로 저장되었습니다!');
+					this.togglePopup();
+				}
+			} catch (error) {
+				console.error('점수 저장 실패:', error.response?.data || error);
+				if (error.response?.data?.message) {
+					alert(error.response.data.message);
+				} else {
+					alert('점수 저장에 실패했습니다. 입력 데이터를 확인해주세요.');
+				}
+			}
 		},
 	},
 };
