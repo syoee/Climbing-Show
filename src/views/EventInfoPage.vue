@@ -443,10 +443,6 @@ export default {
 					);
 
 					this.savedHistory = response.data;
-					console.log(
-						'Raw History Data:',
-						JSON.stringify(this.savedHistory, null, 2)
-					);
 
 					if (this.savedHistory.length > 0) {
 						// solvedCounts 초기화
@@ -519,12 +515,6 @@ export default {
 					}
 				});
 			}
-
-			console.log('Updated Gym:', gymId);
-			console.log(
-				'Updated solvedCounts:',
-				JSON.stringify(this.solvedCounts, null, 2)
-			);
 		},
 
 		// 취소 버튼
@@ -602,9 +592,6 @@ export default {
 					climbing_info_list_id: this.selectedGyms,
 					climbing_level_list,
 				};
-
-				console.log('Request Data:', requestData);
-				console.log('Climbing Level List:', climbing_level_list);
 
 				const response = await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
