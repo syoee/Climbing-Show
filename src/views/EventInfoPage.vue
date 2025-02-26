@@ -485,7 +485,7 @@ export default {
 			this.updateSolvedCountsForGym(gymId);
 		},
 
-		// 새로운 메서드 추가
+		// 새로운 메서드추가
 		updateSolvedCountsForGym(gymId) {
 			if (!this.climbingEvents.length) return;
 
