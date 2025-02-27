@@ -334,15 +334,12 @@ export default {
 		// 난이도 별로 id가 높기 때문에 id 대신 level 사용
 		// 전체 점수 합산
 		totalUserScore() {
-			// 클라이밍 이벤트를 순회하면서 점수계산
 			let totalScore = 0;
-			this.climbingEvents.forEach((event) => {
-				event.climbing_info_list.forEach((gym) => {
-					gym.climbing_level_list.forEach((level) => {
-						const count = this.solvedCounts[level.level] || 0;
-						totalScore += count * level.level;
-					});
-				});
+
+			// solvedCounts 객체의 각 난이도별로 점수 계산
+			Object.entries(this.solvedCounts).forEach(([level, count]) => {
+				const score = count * Number(level);
+				totalScore += score;
 			});
 			return totalScore;
 		},
@@ -478,14 +475,14 @@ export default {
 			}
 		},
 
-		// 암장 선택 메서드 수정
+		// 암장 선택
 		selectSingleGym(gymId) {
 			this.selectedGyms = gymId;
 			// 암장 변경 시 해당 암장의 레벨별 solved_count 업데이트
 			this.updateSolvedCountsForGym(gymId);
 		},
 
-		// 새로운 메서드추가
+		// 개수 업데이트
 		updateSolvedCountsForGym(gymId) {
 			if (!this.climbingEvents.length) return;
 
