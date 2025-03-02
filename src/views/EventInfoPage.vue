@@ -512,16 +512,14 @@ export default {
 			const interval = setInterval(() => {
 				if (currentScore >= targetScore) {
 					clearInterval(interval);
-					this.$set(this.animatedScores, index, targetScore);
-					this.$set(this.animatedHeights, index, 100);
+					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
+					this.animatedScores[index] = targetScore;
+					this.animatedHeights[index] = 100; // Assuming animatedHeights is also a reactive property
 				} else {
 					currentScore += 1;
-					this.$set(this.animatedScores, index, currentScore);
-					this.$set(
-						this.animatedHeights,
-						index,
-						(currentScore / targetScore) * 100
-					);
+					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
+					this.animatedScores[index] = currentScore;
+					this.animatedHeights[index] = (currentScore / targetScore) * 100;
 				}
 			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
