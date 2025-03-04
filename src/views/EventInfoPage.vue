@@ -143,7 +143,7 @@
 							<div>
 								<div class="font-bold">{{ crew.crew_info.name }}</div>
 								<div class="text-sm text-gray-500">
-									리더: {{ crew.crew_info.crew_owner_member.name }}
+									크루장: {{ crew.crew_info.crew_owner_member.name }}
 								</div>
 							</div>
 						</div>
