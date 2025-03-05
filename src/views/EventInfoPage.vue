@@ -411,7 +411,7 @@ export default {
 		// 랭킹 시스템
 		async fetchRemainingRanks() {
 			try {
-				const response = await axios.get(
+				const response = await this.$axios.get(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/rank`,
 					{
 						params: {
@@ -424,30 +424,32 @@ export default {
 
 				const { content, total_pages, total_elements } = response.data;
 
-				// 상위 3개의 데이터는 content에 저장
-				if (Array.isArray(content) && content.length > 0) {
-					this.content = content.slice(0, 3); // Top 3를 위한 데이터
-					this.remainingRanks = content.slice(3); // 4위 이후 데이터
+				// API 응답 데이터 검증
+				if (Array.isArray(content)) {
+					this.remainingRanks = content; // 4위 이후 데이터
 					this.totalPages = total_pages;
 					this.totalElements = total_elements;
+
+					// 애니메이션을 위한 데이터 초기화
+					this.animatedScores = [0, 0, 0]; // Top 3 애니메이션 점수 초기화
+					this.animatedHeights = [0, 0, 0]; // Top 3 애니메이션 높이 초기화
+
+					// Top 3 랭킹 애니메이션 실행
+					this.topRanks.forEach((rank, index) => {
+						this.animateScore(index, rank.score, rank.duration || 2);
+					});
 				} else {
 					console.error('Invalid API response format:', response.data);
-					// 빈 배열로 초기화해서 에러 방지
-					this.content = [];
-					this.remainingRanks = [];
 				}
 			} catch (error) {
 				console.error('랭킹 조회 실패:', error);
-				// 에러 시 빈 배열로 초기화
-				this.content = [];
-				this.remainingRanks = [];
 			}
 		},
 
 		async changePage(page) {
 			if (page < 0 || page >= this.totalPages) return;
 			this.currentPage = page;
-			await this.fetchRemainingRanks();
+			await this.fetchRemainingRanks(); // 페이지 변경 시 데이터 가져오기
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
 
