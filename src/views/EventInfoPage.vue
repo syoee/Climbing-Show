@@ -430,7 +430,7 @@ export default {
 					this.totalPages = total_pages;
 					this.totalElements = total_elements;
 
-					// 애니메이션을 위한 데이터 초기화
+					// Top 3 랭킹 데이터 업데이트
 					this.animatedScores = [0, 0, 0]; // Top 3 애니메이션 점수 초기화
 					this.animatedHeights = [0, 0, 0]; // Top 3 애니메이션 높이 초기화
 
@@ -451,6 +451,29 @@ export default {
 			this.currentPage = page;
 			await this.fetchRemainingRanks(); // 페이지 변경 시 데이터 가져오기
 			window.scrollTo({ top: 0, behavior: 'smooth' });
+		},
+
+		// 점수 애니메이션
+		animateScore(index, targetScore, duration) {
+			if (targetScore === undefined || targetScore === null) {
+				console.warn(`Target score is undefined for index ${index}`);
+				return;
+			}
+
+			const stepTime = (duration * 1000) / targetScore;
+			let currentScore = 0;
+
+			const interval = setInterval(() => {
+				if (currentScore >= targetScore) {
+					clearInterval(interval);
+					this.animatedScores[index] = targetScore; // 최종 점수 설정
+					this.animatedHeights[index] = 100; // 최종 높이 설정
+				} else {
+					currentScore += 1;
+					this.animatedScores[index] = currentScore; // 현재 점수 업데이트
+					this.animatedHeights[index] = (currentScore / targetScore) * 100; // 현재 높이 업데이트
+				}
+			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
 
 		// 이벤트 암장 정보
@@ -499,31 +522,6 @@ export default {
 		closeOverlay() {
 			// 오버레이 닫기
 			this.showOverlay = false;
-		},
-
-		// 점수 애니메이션
-		animateScore(index, targetScore, duration) {
-			if (targetScore === undefined || targetScore === null) {
-				console.warn(`Target score is undefined for index ${index}`);
-				return;
-			}
-
-			const stepTime = (duration * 1000) / targetScore;
-			let currentScore = 0;
-
-			const interval = setInterval(() => {
-				if (currentScore >= targetScore) {
-					clearInterval(interval);
-					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
-					this.animatedScores[index] = targetScore;
-					this.animatedHeights[index] = 100; // Assuming animatedHeights is also a reactive property
-				} else {
-					currentScore += 1;
-					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
-					this.animatedScores[index] = currentScore;
-					this.animatedHeights[index] = (currentScore / targetScore) * 100;
-				}
-			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
 
 		// 팝업 표시/숨기기
