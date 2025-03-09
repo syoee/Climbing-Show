@@ -411,7 +411,7 @@ export default {
 		// 랭킹 시스템
 		async fetchRemainingRanks() {
 			try {
-				const response = await this.$axios.get(
+				const response = await axios.get(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/rank`,
 					{
 						params: {
@@ -424,56 +424,31 @@ export default {
 
 				const { content, total_pages, total_elements } = response.data;
 
-				// API 응답 데이터 검증
-				if (Array.isArray(content)) {
-					this.remainingRanks = content; // 4위 이후 데이터
+				// 상위 3개의 데이터는 content에 저장
+				if (Array.isArray(content) && content.length > 0) {
+					this.content = content.slice(0, 3); // Top 3를 위한 데이터
+					this.remainingRanks = content.slice(3); // 4위 이후 데이터
 					this.totalPages = total_pages;
 					this.totalElements = total_elements;
-
-					// Top 3 랭킹 데이터 업데이트
-					this.animatedScores = [0, 0, 0]; // Top 3 애니메이션 점수 초기화
-					this.animatedHeights = [0, 0, 0]; // Top 3 애니메이션 높이 초기화
-
-					// Top 3 랭킹 애니메이션 실행
-					this.topRanks.forEach((rank, index) => {
-						this.animateScore(index, rank.score, rank.duration || 2);
-					});
 				} else {
 					console.error('Invalid API response format:', response.data);
+					// 빈 배열로 초기화해서 에러 방지
+					this.content = [];
+					this.remainingRanks = [];
 				}
 			} catch (error) {
 				console.error('랭킹 조회 실패:', error);
+				// 에러 시 빈 배열로 초기화
+				this.content = [];
+				this.remainingRanks = [];
 			}
 		},
 
 		async changePage(page) {
 			if (page < 0 || page >= this.totalPages) return;
 			this.currentPage = page;
-			await this.fetchRemainingRanks(); // 페이지 변경 시 데이터 가져오기
+			await this.fetchRemainingRanks();
 			window.scrollTo({ top: 0, behavior: 'smooth' });
-		},
-
-		// 점수 애니메이션
-		animateScore(index, targetScore, duration) {
-			if (targetScore === undefined || targetScore === null) {
-				console.warn(`Target score is undefined for index ${index}`);
-				return;
-			}
-
-			const stepTime = (duration * 1000) / targetScore;
-			let currentScore = 0;
-
-			const interval = setInterval(() => {
-				if (currentScore >= targetScore) {
-					clearInterval(interval);
-					this.animatedScores[index] = targetScore; // 최종 점수 설정
-					this.animatedHeights[index] = 100; // 최종 높이 설정
-				} else {
-					currentScore += 1;
-					this.animatedScores[index] = currentScore; // 현재 점수 업데이트
-					this.animatedHeights[index] = (currentScore / targetScore) * 100; // 현재 높이 업데이트
-				}
-			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
 
 		// 이벤트 암장 정보
@@ -522,6 +497,31 @@ export default {
 		closeOverlay() {
 			// 오버레이 닫기
 			this.showOverlay = false;
+		},
+
+		// 점수 애니메이션
+		animateScore(index, targetScore, duration) {
+			if (targetScore === undefined || targetScore === null) {
+				console.warn(`Target score is undefined for index ${index}`);
+				return;
+			}
+
+			const stepTime = (duration * 1000) / targetScore;
+			let currentScore = 0;
+
+			const interval = setInterval(() => {
+				if (currentScore >= targetScore) {
+					clearInterval(interval);
+					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
+					this.animatedScores[index] = targetScore;
+					this.animatedHeights[index] = 100; // Assuming animatedHeights is also a reactive property
+				} else {
+					currentScore += 1;
+					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
+					this.animatedScores[index] = currentScore;
+					this.animatedHeights[index] = (currentScore / targetScore) * 100;
+				}
+			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
 
 		// 팝업 표시/숨기기
