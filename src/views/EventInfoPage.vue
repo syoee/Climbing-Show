@@ -124,31 +124,27 @@
 				</div>
 
 				<!-- 랭크 리스트 -->
-				<div class="space-y-4">
-					<div
-						v-for="(crew, index) in paginatedRanks"
-						:key="crew.crew_info.id"
-						class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors"
-					>
-						<div class="flex items-center space-x-4">
-							<span class="text-lg font-semibold w-12">
+				<div class="space-y-7 px-5 pt-10">
+					<div v-for="(crew, index) in paginatedRanks" :key="crew.crew_info.id">
+						<div class="grid grid-cols-8">
+							<span
+								class="col-span-1 content-center text-lg font-semibold w-12"
+							>
 								{{ index + currentPage * pageSize + 4 }}위
 							</span>
 							<img
 								:src="crew.crew_info.profile"
 								:alt="crew.crew_info.name"
-								class="w-12 h-12 rounded-full object-cover"
-								loading="lazy"
+								class="w-16 col-span-2 content-center rounded-full object-cover"
 							/>
-							<div>
-								<div class="font-bold">{{ crew.crew_info.name }}</div>
-								<div class="text-sm text-gray-500">
-									크루장: {{ crew.crew_info.crew_owner_member.name }}
-								</div>
+							<div class="col-span-4 text-lg content-center font-bold">
+								{{ crew.crew_info.name }}
 							</div>
-						</div>
-						<div class="text-xl font-bold text-blue-600">
-							{{ crew.score }}점
+							<div
+								class="col-span-1 text-lg content-center font-bold text-red-600"
+							>
+								{{ crew.score }}점
+							</div>
 						</div>
 					</div>
 				</div>
@@ -171,7 +167,7 @@
 							:class="[
 								'px-4 py-2 rounded-lg',
 								currentPage === page - 1
-									? 'bg-blue-500 text-white'
+									? 'bg-red-500 text-white'
 									: 'bg-gray-100 hover:bg-gray-200',
 							]"
 						>
@@ -297,7 +293,7 @@
 						<div class="flex justify-end">
 							<button
 								@click="saveScore"
-								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+								class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
 							>
 								저장
 							</button>
@@ -326,7 +322,7 @@ export default {
 			solvedCounts: {}, // 암장별 난이도 개수
 			allRanks: [], // 전체 랭킹 데이터
 			currentPage: 0,
-			pageSize: 3,
+			pageSize: 2,
 			totalPages: 0,
 			savedHistory: [], // 저장된 기록을 저장할 배열
 			showOverlay: false, // 오버레이 표시 여부
