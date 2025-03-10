@@ -203,7 +203,7 @@
 						<h2 class="text-lg font-bold mb-4">점수 기록</h2>
 
 						<!-- 암장 체크  -->
-						<div>
+						<div class="space-y-1">
 							<label class="block mb-1 text-md font-medium text-gray-700">
 								방문한 클라이밍장을 선택해주세요!
 							</label>
@@ -217,9 +217,9 @@
 									:value="gym.id"
 									:checked="selectedGyms === gym.id"
 									@click="selectSingleGym(gym.id)"
-									class="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+									class="h-5 w-5 accent-red-600 bg-gray-100 border-gray-300 rounded focus:accent-red-500"
 								/>
-								<label class="ml-2 text-sm font-medium text-gray-900">
+								<label class="pl-2 text-sm font-medium text-gray-900">
 									{{ gym.name }}
 								</label>
 							</div>
@@ -229,7 +229,7 @@
 						<div class="mb-4">
 							<!--Sort-->
 							<div
-								class="grid grid-cols-3 mb-3 font-medium text-md text-center"
+								class="grid grid-cols-3 my-3 font-medium text-md text-center"
 							>
 								<div class="flex justify-start">난이도</div>
 								<div>개수</div>
@@ -252,7 +252,7 @@
 									<div class="flex justify-evenly items-center col-span-4">
 										<button
 											type="button"
-											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											class="w-1/4 bg-black text-red-500 px-2 py-1 rounded-lg"
 											@click.prevent="decreaseCount(grade?.level)"
 											style="touch-action: manipulation"
 											:disabled="solvedCounts[grade?.level] === 0"
@@ -264,7 +264,7 @@
 										}}</span>
 										<button
 											type="button"
-											class="w-1/4 bg-black text-white px-2 py-1 rounded-lg"
+											class="w-1/4 bg-black text-red-500 px-2 py-1 rounded-lg"
 											@click.prevent="increaseCount(grade?.level)"
 											style="touch-action: manipulation"
 											:disabled="solvedCounts[grade?.level] >= 30"
