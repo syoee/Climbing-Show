@@ -74,7 +74,7 @@
 							</p>
 						</div>
 						<p class="mt-2 text-gray-700 font-bold">
-							🥈{{ topRanks[1]?.name || '' }}
+							🥈{{ topRanks[1]?.crew_info.name || '' }}
 						</p>
 					</div>
 
@@ -96,7 +96,7 @@
 							</p>
 						</div>
 						<p class="mt-2 text-gray-700 font-bold">
-							🥇{{ topRanks[0]?.name || '' }}
+							🥇{{ topRanks[0]?.crew_info.name || '' }}
 						</p>
 					</div>
 
@@ -118,7 +118,7 @@
 							</p>
 						</div>
 						<p class="mt-2 text-gray-700 font-bold">
-							🥉{{ topRanks[2]?.name || '' }}
+							🥉{{ topRanks[2]?.crew_info.name || '' }}
 						</p>
 					</div>
 				</div>
@@ -126,13 +126,13 @@
 				<!-- 랭크 리스트 -->
 				<div class="space-y-4">
 					<div
-						v-for="(crew, index) in remainingRanks"
+						v-for="(crew, index) in paginatedRanks"
 						:key="crew.crew_info.id"
 						class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors"
 					>
 						<div class="flex items-center space-x-4">
 							<span class="text-lg font-semibold w-12">
-								{{ startRank + index }}위
+								{{ index + currentPage * pageSize + 4 }}위
 							</span>
 							<img
 								:src="crew.crew_info.profile"
@@ -154,10 +154,7 @@
 				</div>
 
 				<!-- 페이지네이션 -->
-				<div class="mt-8 flex justify-between items-center">
-					<div class="text-sm text-gray-500">
-						총 {{ totalElements }}개의 크루
-					</div>
+				<div class="mt-8 flex flex-col justify-between items-center">
 					<div class="flex space-x-2">
 						<button
 							@click="changePage(currentPage - 1)"
@@ -327,12 +324,10 @@ export default {
 			climbingEvents: [], // API에서 받은 데이터
 			selectedGyms: null, // 체크된 암장 ID 배열
 			solvedCounts: {}, // 암장별 난이도 개수
-			content: [], // Top 3 랭킹 데이터
+			allRanks: [], // 전체 랭킹 데이터
 			currentPage: 0,
-			pageSize: 5, // 페이지당 크루 수
+			pageSize: 3,
 			totalPages: 0,
-			totalElements: 0,
-			remainingRanks: [], // 4위 이후 랭킹 데이터
 			savedHistory: [], // 저장된 기록을 저장할 배열
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
@@ -349,7 +344,7 @@ export default {
 	async mounted() {
 		// 먼저 데이터를 가져온 후 애니메이션 시작
 		await this.eventData();
-		await this.fetchRemainingRanks();
+		await this.fetchRanks();
 
 		// content 데이터가 있고 topRanks가 유효한 경우에만 애니메이션 실행
 		if (this.topRanks && this.topRanks.length > 0) {
@@ -371,15 +366,16 @@ export default {
 
 		// Top 3 랭킹
 		topRanks() {
-			return this.sortedRanks.slice(0, 3).map((rank, index) => ({
+			return this.allRanks.slice(0, 3).map((rank, index) => ({
 				...rank,
 				rank: index + 1,
-				duration: rank.duration || 2, // 기본 애니메이션 시간 설정
 			}));
 		},
 
-		startRank() {
-			return this.currentPage * this.pageSize + 4; // 4위부터 시작
+		paginatedRanks() {
+			const start = this.currentPage * this.pageSize; // 현재 페이지에 따라 시작 인덱스 계산
+			const end = start + this.pageSize;
+			return this.allRanks.slice(3 + start, 3 + end); // 4위 이후 데이터
 		},
 
 		displayedPages() {
@@ -409,46 +405,37 @@ export default {
 
 	methods: {
 		// 랭킹 시스템
-		async fetchRemainingRanks() {
+		async fetchRanks() {
 			try {
-				const response = await axios.get(
+				const response = await this.$axios.get(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/rank`,
 					{
 						params: {
 							climbing_event_id: 1,
-							size: this.pageSize,
-							page: this.currentPage,
+							size: 50, // 전체 데이터 가져오기
+							page: 0, // 첫 페이지
 						},
 					}
 				);
 
-				const { content, total_pages, total_elements } = response.data;
+				const { content } = response.data;
 
-				// 상위 3개의 데이터는 content에 저장
-				if (Array.isArray(content) && content.length > 0) {
-					this.content = content.slice(0, 3); // Top 3를 위한 데이터
-					this.remainingRanks = content.slice(3); // 4위 이후 데이터
-					this.totalPages = total_pages;
-					this.totalElements = total_elements;
+				// API 응답 데이터 검증
+				if (Array.isArray(content)) {
+					this.allRanks = content; // 전체 랭킹 데이터 저장
+					// 전체 데이터 수에서 3을 빼고 페이지당 항목 수로 나누기
+					this.totalPages = Math.ceil((content.length - 3) / this.pageSize);
 				} else {
 					console.error('Invalid API response format:', response.data);
-					// 빈 배열로 초기화해서 에러 방지
-					this.content = [];
-					this.remainingRanks = [];
 				}
 			} catch (error) {
 				console.error('랭킹 조회 실패:', error);
-				// 에러 시 빈 배열로 초기화
-				this.content = [];
-				this.remainingRanks = [];
 			}
 		},
 
-		async changePage(page) {
+		changePage(page) {
 			if (page < 0 || page >= this.totalPages) return;
-			this.currentPage = page;
-			await this.fetchRemainingRanks();
-			window.scrollTo({ top: 0, behavior: 'smooth' });
+			this.currentPage = page; // 현재 페이지 업데이트
 		},
 
 		// 이벤트 암장 정보
