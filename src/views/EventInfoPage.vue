@@ -512,12 +512,10 @@ export default {
 			const interval = setInterval(() => {
 				if (currentScore >= targetScore) {
 					clearInterval(interval);
-					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
 					this.animatedScores[index] = targetScore;
-					this.animatedHeights[index] = 100; // Assuming animatedHeights is also a reactive property
+					this.animatedHeights[index] = 100;
 				} else {
 					currentScore += 1;
-					// Vue 3에서는 this.$set을 사용하지 않고 직접 할당
 					this.animatedScores[index] = currentScore;
 					this.animatedHeights[index] = (currentScore / targetScore) * 100;
 				}
