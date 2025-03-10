@@ -36,8 +36,8 @@
 					<div
 						class="absolute"
 						:style="{
-							top: `${this.overlayPosition.y}px`,
-							left: `${this.overlayPosition.x}px`,
+							top: `${overlayPosition.y}px`,
+							left: `${overlayPosition.x}px`,
 						}"
 					>
 						<div class="p-1 rounded-lg border">
@@ -52,14 +52,17 @@
 				</div>
 
 				<!-- Top 3 -->
-				<div class="mt-24 flex justify-center items-end text-center gap-3">
+				<div
+					class="mt-24 flex justify-center items-end text-center gap-3"
+					v-if="topRanks.length > 0"
+				>
 					<!-- Rank 2 -->
-					<div class="flex flex-col items-center">
+					<div class="flex flex-col items-center" v-if="topRanks.length > 1">
 						<div class="relative h-24 w-12 bg-transparent rounded-t-lg">
 							<div
 								class="bg-[#DDDDDE] w-full rounded-t-lg absolute bottom-0"
 								:style="{
-									animationDuration: `${topRanks[1].duration}s`,
+									animationDuration: `${topRanks[1]?.duration || 2}s`,
 									height: `${animatedHeights[1]}%`,
 								}"
 							></div>
@@ -70,16 +73,18 @@
 								{{ animatedScores[1] }}
 							</p>
 						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥈{{ topRanks[1].name }}</p>
+						<p class="mt-2 text-gray-700 font-bold">
+							🥈{{ topRanks[1]?.crew_info.name || '' }}
+						</p>
 					</div>
 
 					<!-- Rank 1 -->
-					<div class="flex flex-col items-center">
+					<div class="flex flex-col items-center" v-if="topRanks.length > 0">
 						<div class="relative h-32 w-16 bg-transparent rounded-t-lg">
 							<div
 								class="bg-[#FFD812] w-full rounded-t-lg absolute bottom-0"
 								:style="{
-									animationDuration: `${topRanks[0].duration}s`,
+									animationDuration: `${topRanks[0]?.duration || 2}s`,
 									height: `${animatedHeights[0]}%`,
 								}"
 							></div>
@@ -90,16 +95,18 @@
 								{{ animatedScores[0] }}
 							</p>
 						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥇{{ topRanks[0].name }}</p>
+						<p class="mt-2 text-gray-700 font-bold">
+							🥇{{ topRanks[0]?.crew_info.name || '' }}
+						</p>
 					</div>
 
 					<!-- Rank 3 -->
-					<div class="flex flex-col items-center">
+					<div class="flex flex-col items-center" v-if="topRanks.length > 2">
 						<div class="relative h-20 w-12 bg-transparent rounded-t-lg">
 							<div
 								class="bg-[#CE7A28] w-full rounded-t-lg absolute bottom-0"
 								:style="{
-									animationDuration: `${topRanks[2].duration}s`,
+									animationDuration: `${topRanks[2]?.duration || 2}s`,
 									height: `${animatedHeights[2]}%`,
 								}"
 							></div>
@@ -110,21 +117,72 @@
 								{{ animatedScores[2] }}
 							</p>
 						</div>
-						<p class="mt-2 text-gray-700 font-bold">🥉{{ topRanks[2].name }}</p>
+						<p class="mt-2 text-gray-700 font-bold">
+							🥉{{ topRanks[2]?.crew_info.name || '' }}
+						</p>
 					</div>
 				</div>
 
 				<!-- 랭크 리스트 -->
-				<ul class="mt-6 px-4">
-					<li
-						v-for="rank in remainingRanks"
-						:key="rank.name"
-						class="p-4 flex justify-between items-center mb-2 bg-white rounded-lg shadow-md"
-					>
-						<span>{{ rank.rank }}. {{ rank.name }}</span>
-						<span class="font-bold text-gray-700">{{ rank.score }}점</span>
-					</li>
-				</ul>
+				<div class="space-y-7 px-5 pt-10">
+					<div v-for="(crew, index) in paginatedRanks" :key="crew.crew_info.id">
+						<div class="grid grid-cols-8">
+							<span
+								class="col-span-1 content-center text-lg font-semibold w-12"
+							>
+								{{ index + currentPage * pageSize + 4 }}위
+							</span>
+							<img
+								:src="crew.crew_info.profile"
+								:alt="crew.crew_info.name"
+								class="w-16 col-span-2 content-center rounded-full object-cover"
+							/>
+							<div class="col-span-4 text-lg content-center font-bold">
+								{{ crew.crew_info.name }}
+							</div>
+							<div
+								class="col-span-1 text-lg content-center font-bold text-red-600"
+							>
+								{{ crew.score }}점
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 페이지네이션 -->
+				<div class="mt-8 flex flex-col justify-between items-center">
+					<div class="flex space-x-2">
+						<button
+							@click="changePage(currentPage - 1)"
+							:disabled="currentPage === 0"
+							class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+						>
+							이전
+						</button>
+
+						<button
+							v-for="page in displayedPages"
+							:key="page"
+							@click="changePage(page - 1)"
+							:class="[
+								'px-4 py-2 rounded-lg',
+								currentPage === page - 1
+									? 'bg-red-500 text-white'
+									: 'bg-gray-100 hover:bg-gray-200',
+							]"
+						>
+							{{ page }}
+						</button>
+
+						<button
+							@click="changePage(currentPage + 1)"
+							:disabled="currentPage === totalPages - 1"
+							class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+						>
+							다음
+						</button>
+					</div>
+				</div>
 
 				<!-- 점수 기록 버튼 -->
 				<div class="fixed bottom-20 right-5">
@@ -235,7 +293,7 @@
 						<div class="flex justify-end">
 							<button
 								@click="saveScore"
-								class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+								class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
 							>
 								저장
 							</button>
@@ -262,18 +320,10 @@ export default {
 			climbingEvents: [], // API에서 받은 데이터
 			selectedGyms: null, // 체크된 암장 ID 배열
 			solvedCounts: {}, // 암장별 난이도 개수
-			ranks: [
-				{ name: '크루 A', score: 95 },
-				{ name: '크루 B', score: 85 },
-				{ name: '크루 C', score: 70 },
-				{ name: '크루 D', score: 60 },
-				{ name: '크루 E', score: 50 },
-				{ name: '크루 F', score: 40 },
-				{ name: '크루 G', score: 40 },
-				{ name: '크루 H', score: 40 },
-				{ name: '크루 J', score: 30 },
-				{ name: '크루 I', score: 40 },
-			],
+			allRanks: [], // 전체 랭킹 데이터
+			currentPage: 0,
+			pageSize: 2,
+			totalPages: 0,
 			savedHistory: [], // 저장된 기록을 저장할 배열
 			showOverlay: false, // 오버레이 표시 여부
 			overlayPosition: { x: 0, y: 0 }, // 오버레이 위치
@@ -287,70 +337,104 @@ export default {
 		};
 	},
 
-	mounted() {
-		// 애니메이션 시작
-		this.topRanks.forEach((rank, index) => {
-			this.animateScore(index, rank.score, rank.duration);
-		});
-		this.eventData();
+	async mounted() {
+		// 먼저 데이터를 가져온 후 애니메이션 시작
+		await this.eventData();
+		await this.fetchRanks();
+
+		// content 데이터가 있고 topRanks가 유효한 경우에만 애니메이션 실행
+		if (this.topRanks && this.topRanks.length > 0) {
+			this.topRanks.forEach((rank, index) => {
+				if (rank) {
+					this.animateScore(index, rank.score, rank.duration || 2);
+				}
+			});
+		}
 	},
 
 	computed: {
 		// 점수 측정
 		sortedRanks() {
-			return [...this.ranks].sort((a, b) => b.score - a.score);
+			return this.content && Array.isArray(this.content)
+				? [...this.content].sort((a, b) => b.score - a.score)
+				: [];
 		},
 
 		// Top 3 랭킹
 		topRanks() {
-			let rank = 1; // 초기 등수
-			return this.sortedRanks.slice(0, 3).map((item, index, ranks) => {
-				// 동일 점수일 경우 이전 등수를 유지
-				if (index > 0 && item.score === ranks[index - 1].score) {
-					item.rank = ranks[index - 1].rank;
-				} else {
-					item.rank = rank;
-				}
-				rank++;
-				return { ...item, duration: 2 + index * 0.5 }; // 애니메이션 지속 시간
-			});
+			return this.allRanks.slice(0, 3).map((rank, index) => ({
+				...rank,
+				rank: index + 1,
+			}));
 		},
 
-		// Top 3 제외한 나머지 랭킹
-		remainingRanks() {
-			let rank = 4; // 4위부터 시작
-			return this.sortedRanks.slice(3).map((item, index, ranks) => {
-				// 동일 점수일 경우 이전 등수를 유지
-				if (index > 0 && item.score === ranks[index - 1].score) {
-					item.rank = ranks[index - 1].rank;
-				} else {
-					item.rank = rank;
-				}
-				rank++;
-				return { ...item };
-			});
+		paginatedRanks() {
+			const start = this.currentPage * this.pageSize; // 현재 페이지에 따라 시작 인덱스 계산
+			const end = start + this.pageSize;
+			return this.allRanks.slice(3 + start, 3 + end); // 4위 이후 데이터
+		},
+
+		displayedPages() {
+			const range = 2;
+			let start = Math.max(1, this.currentPage - range);
+			let end = Math.min(this.totalPages, this.currentPage + range + 1);
+
+			if (start === 1) end = Math.min(5, this.totalPages);
+			if (end === this.totalPages) start = Math.max(1, this.totalPages - 4);
+
+			return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 		},
 
 		// 난이도 별로 id가 높기 때문에 id 대신 level 사용
 		// 전체 점수 합산
 		totalUserScore() {
-			// 클라이밍 이벤트를 순회하면서 점수계산
 			let totalScore = 0;
-			this.climbingEvents.forEach((event) => {
-				event.climbing_info_list.forEach((gym) => {
-					gym.climbing_level_list.forEach((level) => {
-						const count = this.solvedCounts[level.level] || 0;
-						totalScore += count * level.level;
-					});
-				});
+
+			// solvedCounts 객체의 각 난이도별로 점수 계산
+			Object.entries(this.solvedCounts).forEach(([level, count]) => {
+				const score = count * Number(level);
+				totalScore += score;
 			});
 			return totalScore;
 		},
 	},
 
 	methods: {
-		// 이벤트 암장 정보
+		// 랭킹 시스템
+		async fetchRanks() {
+			try {
+				const response = await this.$axios.get(
+					`${process.env.VUE_APP_API_HOST}/climbing-events/rank`,
+					{
+						params: {
+							climbing_event_id: 1,
+							size: 50, // 전체 데이터 가져오기
+							page: 0, // 첫 페이지
+						},
+					}
+				);
 
+				const { content } = response.data;
+
+				// API 응답 데이터 검증
+				if (Array.isArray(content)) {
+					this.allRanks = content; // 전체 랭킹 데이터 저장
+					// 전체 데이터 수에서 3을 빼고 페이지당 항목 수로 나누기
+					this.totalPages = Math.ceil((content.length - 3) / this.pageSize);
+				} else {
+					console.error('Invalid API response format:', response.data);
+				}
+			} catch (error) {
+				console.error('랭킹 조회 실패:', error);
+			}
+		},
+
+		changePage(page) {
+			if (page < 0 || page >= this.totalPages) return;
+			this.currentPage = page; // 현재 페이지 업데이트
+		},
+
+		// 이벤트 암장 정보
 		async eventData() {
 			try {
 				const res = await axios.get(
@@ -371,14 +455,13 @@ export default {
 				});
 			} catch (error) {
 				console.error('요청 설정 오류', error.message);
+				this.climbingEvents = []; // 에러 시 빈 배열로 초기화
 			}
 		},
 
 		toggleOverlay(event) {
 			// 클릭한 위치 기준으로 오버레이 표시
 			this.showOverlay = !this.showOverlay;
-
-			let hideOverlayTimeout = null; // 오버레이 숨김 타이머
 
 			if (this.showOverlay) {
 				// 오버레이 위치 설정
@@ -387,13 +470,8 @@ export default {
 					y: event.clientY + 10,
 				};
 
-				// 기존 타이머 초기화
-				if (hideOverlayTimeout) {
-					clearTimeout(hideOverlayTimeout);
-				}
-
 				// 5초 뒤 오버레이 숨김
-				hideOverlayTimeout = setTimeout(() => {
+				setTimeout(() => {
 					this.closeOverlay();
 				}, 3000);
 			}
@@ -406,6 +484,11 @@ export default {
 
 		// 점수 애니메이션
 		animateScore(index, targetScore, duration) {
+			if (targetScore === undefined || targetScore === null) {
+				console.warn(`Target score is undefined for index ${index}`);
+				return;
+			}
+
 			const stepTime = (duration * 1000) / targetScore;
 			let currentScore = 0;
 
@@ -419,7 +502,7 @@ export default {
 					this.animatedScores[index] = currentScore;
 					this.animatedHeights[index] = (currentScore / targetScore) * 100;
 				}
-			}, stepTime);
+			}, Math.max(stepTime, 10)); // 최소 10ms 간격으로 제한
 		},
 
 		// 팝업 표시/숨기기
@@ -443,10 +526,6 @@ export default {
 					);
 
 					this.savedHistory = response.data;
-					console.log(
-						'Raw History Data:',
-						JSON.stringify(this.savedHistory, null, 2)
-					);
 
 					if (this.savedHistory.length > 0) {
 						// solvedCounts 초기화
@@ -482,14 +561,14 @@ export default {
 			}
 		},
 
-		// 암장 선택 메서드 수정
+		// 암장 선택
 		selectSingleGym(gymId) {
 			this.selectedGyms = gymId;
 			// 암장 변경 시 해당 암장의 레벨별 solved_count 업데이트
 			this.updateSolvedCountsForGym(gymId);
 		},
 
-		// 새로운 메서드 추가
+		// 개수 업데이트
 		updateSolvedCountsForGym(gymId) {
 			if (!this.climbingEvents.length) return;
 
@@ -509,22 +588,18 @@ export default {
 			});
 
 			// 저장된 기록에서 현재 선택된 암장의 레벨에 해당하는 solved_count 찾기
-			if (this.savedHistory) {
+			if (this.savedHistory && Array.isArray(this.savedHistory)) {
 				selectedGym.climbing_level_list.forEach((gymLevel) => {
 					const record = this.savedHistory.find(
-						(history) => history.climbing_level.id === gymLevel.id
+						(history) =>
+							history.climbing_level &&
+							history.climbing_level.id === gymLevel.id
 					);
 					if (record) {
 						this.solvedCounts[gymLevel.level] = record.solved_count;
 					}
 				});
 			}
-
-			console.log('Updated Gym:', gymId);
-			console.log(
-				'Updated solvedCounts:',
-				JSON.stringify(this.solvedCounts, null, 2)
-			);
 		},
 
 		// 취소 버튼
@@ -602,9 +677,6 @@ export default {
 					climbing_info_list_id: this.selectedGyms,
 					climbing_level_list,
 				};
-
-				console.log('Request Data:', requestData);
-				console.log('Climbing Level List:', climbing_level_list);
 
 				const response = await axios.post(
 					`${process.env.VUE_APP_API_HOST}/climbing-events/history`,
