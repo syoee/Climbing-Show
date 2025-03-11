@@ -149,41 +149,6 @@
 					</div>
 				</div>
 
-				<!-- 페이지네이션 -->
-				<div class="mt-8 flex flex-col justify-between items-center">
-					<div class="flex space-x-2">
-						<button
-							@click="changePage(currentPage - 1)"
-							:disabled="currentPage === 0"
-							class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-						>
-							이전
-						</button>
-
-						<button
-							v-for="page in displayedPages"
-							:key="page"
-							@click="changePage(page - 1)"
-							:class="[
-								'px-4 py-2 rounded-lg',
-								currentPage === page - 1
-									? 'bg-red-500 text-white'
-									: 'bg-gray-100 hover:bg-gray-200',
-							]"
-						>
-							{{ page }}
-						</button>
-
-						<button
-							@click="changePage(currentPage + 1)"
-							:disabled="currentPage === totalPages - 1"
-							class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-						>
-							다음
-						</button>
-					</div>
-				</div>
-
 				<!-- 점수 기록 버튼 -->
 				<div class="fixed bottom-20 right-5">
 					<button
@@ -305,6 +270,40 @@
 							</button>
 						</div>
 					</div>
+				</div>
+			</div>
+			<!-- 페이지네이션 -->
+			<div class="mt-8 flex flex-col justify-between items-center">
+				<div class="flex space-x-2">
+					<button
+						@click="changePage(currentPage - 1)"
+						:disabled="currentPage === 0"
+						class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+					>
+						이전
+					</button>
+
+					<button
+						v-for="page in displayedPages"
+						:key="page"
+						@click="changePage(page - 1)"
+						:class="[
+							'px-4 py-2 rounded-lg',
+							currentPage === page - 1
+								? 'bg-red-500 text-white'
+								: 'bg-gray-100 hover:bg-gray-200',
+						]"
+					>
+						{{ page }}
+					</button>
+
+					<button
+						@click="changePage(currentPage + 1)"
+						:disabled="currentPage === totalPages - 1"
+						class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+					>
+						다음
+					</button>
 				</div>
 			</div>
 		</div>
