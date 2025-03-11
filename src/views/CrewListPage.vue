@@ -5,19 +5,19 @@
 				v-for="item in paginatedItems"
 				:key="item.id"
 				@click="goToCrewPage(item.id)"
-				class="mx-5 pb-3 border-solid border-b-2 cursor-pointer"
+				class="mx-5 p-3 rounded-lg shadow-md"
 			>
-				<div class="grid grid-cols-5">
+				<div class="flex flex-row items-center">
 					<img
 						:src="item.profile"
 						alt="profile img"
-						class="aspect-square object-cover rounded-full"
+						class="w-1/6 aspect-square object-cover rounded-full"
 					/>
-					<div class="pl-3 col-span-3">
-						<div class="text-xl font-bold">
+					<div class="pl-3">
+						<div class="text-base font-bold">
 							{{ item.name }}
 						</div>
-						<div class="mt-1 text-sm text-gray-400 line-clamp-2">
+						<div class="mt-1 text-xs text-gray-400 line-clamp-2">
 							{{ item.description }}
 						</div>
 					</div>
@@ -40,7 +40,7 @@
 			</button>
 		</div>
 
-		<div class="absolute bottom-20 right-5">
+		<div class="fixed bottom-20 right-5">
 			<button
 				@click="redirectToGoogleForm"
 				class="px-2 py-1 bg-black text-red-600 font-semibold rounded-lg"

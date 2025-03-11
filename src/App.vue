@@ -1,6 +1,6 @@
 <template>
 	<PageHeader />
-	<router-view />
+	<router-view class="my-24" />
 	<PageFooter />
 </template>
 

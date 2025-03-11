@@ -4,7 +4,7 @@
 			<div class="w-1/4 relative">
 				<!-- 프로필 이미지 -->
 				<img
-					:src="crew.profile"
+					:src="profileImage"
 					alt="profile"
 					class="mb-5 aspect-square object-cover rounded-full"
 				/>
@@ -78,6 +78,29 @@
 				</button>
 			</div>
 
+			<!-- 가입 신청 버튼 -->
+			<div class="mt-5">
+				<button
+					v-if="status === 'APPLY' && !crewMember"
+					@click="cancelReception"
+					class="w-full h-[5vh] bg-red-600 text-xl text-black rounded-3xl"
+				>
+					취 소
+				</button>
+				<button
+					v-if="
+						status !== 'APPLY' &&
+						!crewMember &&
+						leader !== 'OWNER' &&
+						leader !== 'MAINTAINER'
+					"
+					@click="crewReception"
+					class="w-full h-[5vh] bg-black text-red-600 text-xl font-semibold rounded-3xl"
+				>
+					가 입
+				</button>
+			</div>
+
 			<!-- 수정 및 신청 현황 버튼 -->
 			<div
 				v-if="!isEditing"
@@ -127,6 +150,7 @@ export default {
 				description: '',
 			},
 			selectedFile: null, // 사용자가 선택한 파일
+			previewProfile: null, // 이미지 프리뷰 URL
 		};
 	},
 
@@ -136,8 +160,8 @@ export default {
 			this.token = userToken;
 		}
 
-		// // console.error  비활성화
-		// console.error = function () {};
+		// console.error  비활성화
+		console.error = function () {};
 	},
 
 	mounted() {
@@ -145,6 +169,13 @@ export default {
 		this.crewData();
 		this.receptionCheck();
 		this.authorityCheck();
+	},
+
+	computed: {
+		profileImage() {
+			// 프리뷰 이미지 우선 표시, 없으면 서버 이미지
+			return this.previewProfile || `${this.crew?.profile}?t=${Date.now()}`;
+		},
 	},
 
 	methods: {
@@ -257,7 +288,7 @@ export default {
 				this.crew = res.data;
 				this.updatedCrew = { ...this.crew };
 
-				// 캐시 방지 쿼리 추가
+				// 프로필 URL에 항상 캐시 방지 쿼리 추가
 				if (this.crew.profile) {
 					this.crew.profile += `?t=${Date.now()}`;
 				}
@@ -296,21 +327,47 @@ export default {
 		onFileSelected(event) {
 			const file = event.target.files[0];
 			if (file) {
-				this.selectedFile = file;
-
 				// 선택된 이미지 미리보기 설정
 				const reader = new FileReader();
 				reader.onload = (e) => {
+					this.previewProfile = e.target.result; // 미리보기용 변수에 저장
 					this.crew.profile = e.target.result;
 				};
 				reader.readAsDataURL(file);
 			}
 		},
-
 		// 저장 버튼 클릭 시 데이터 저장
 		async saveChanges() {
 			try {
-				// 크루 이름/설명 업데이트
+				// 이미지 업로드
+				if (this.selectedFile) {
+					const formData = new FormData();
+					formData.append('profile', this.selectedFile);
+
+					console.log('이미지 업로드 시작', formData); // 디버깅용 로그
+
+					const response = await axios.post(
+						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
+						formData,
+						{
+							headers: {
+								Authorization: `Bearer ${this.token}`,
+								'Content-Type': 'multipart/form-data',
+							},
+						}
+					);
+
+					console.log('이미지 업로드 성공:', response.data); // 성공 로그
+
+					// 서버에서 반환된 이미지 URL이 없다면 캐시 방지 쿼리 추가
+					this.crew.profile = `${
+						this.crew.profile.split('?')[0]
+					}?t=${Date.now()}`;
+					this.previewProfile = null;
+					this.selectedFile = null;
+				}
+
+				// 이름/설명 업데이트
 				await axios.put(
 					`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}`,
 					{
@@ -324,37 +381,18 @@ export default {
 					}
 				);
 
-				// 선택된 파일이 있을 경우 프로필 이미지 업데이트
-				if (this.selectedFile) {
-					const formData = new FormData();
-					formData.append('profile', this.selectedFile);
-
-					await axios.post(
-						`${process.env.VUE_APP_API_HOST}/crew-infos/${this.id}/profile`,
-						formData,
-						{
-							headers: {
-								Authorization: `Bearer ${this.token}`,
-								'Content-Type': 'multipart/form-data',
-							},
-						}
-					);
-
-					// 프로필 이미지 URL 갱신
-					this.crew.profile = `${
-						this.crew.profile.split('?')[0]
-					}?t=${Date.now()}`;
-				}
-
-				// 변경된 데이터 반영
+				// 수정 반영
 				this.crew.name = this.updatedCrew.name;
 				this.crew.description = this.updatedCrew.description;
+
+				// 캐시 방지 쿼리 추가
+				this.crew.profile = `${this.crew.profile}?t=${Date.now()}`;
 				this.isEditing = false;
-				this.selectedFile = null; // 선택된 파일 초기화
+
 				alert('크루 정보가 성공적으로 수정되었습니다.');
 			} catch (err) {
-				console.error('수정 중 오류 발생:', err);
-				alert('수정 중 오류가 발생했습니다.');
+				console.error('저장 중 오류 발생:', err);
+				alert('저장 중 오류가 발생했습니다.');
 			}
 		},
 	},

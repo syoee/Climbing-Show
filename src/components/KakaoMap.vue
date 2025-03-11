@@ -18,12 +18,14 @@ export default {
 			required: true,
 		},
 	},
+
 	data() {
 		return {
 			markers: [],
 			overlays: [],
 		};
 	},
+
 	mounted() {
 		if (window.kakao && window.kakao.maps) {
 			this.initMap();
@@ -35,6 +37,7 @@ export default {
 			document.head.appendChild(script);
 		}
 	},
+
 	methods: {
 		initMap() {
 			const container = document.getElementById('map');
